@@ -6,7 +6,7 @@ spring:
  rabbitmq:
   host: squirrel.rmq.cloudamqp.com
   username: yqfycpqy
-  password: 1P0JZjqqyU3k7onNOuY-Owhsavca0-pe
+  password:
   virtual-host: yqfycpqy
 
   listener:

@@ -3,15 +3,13 @@ package no.fint.rest;
 import no.fint.events.FintEvents;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/provider")
+@RequestMapping(value = "/provider", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProviderController {
 
     @Autowired
@@ -25,5 +23,15 @@ public class ProviderController {
         } else {
             return "";
         }
+    }
+
+    @RequestMapping(value = "/organizations", method = RequestMethod.POST)
+    public void createOrganization(@RequestBody String orgId) {
+        events.addOrganization(orgId);
+    }
+
+    @RequestMapping(value  = "/organizations", method = RequestMethod.DELETE)
+    public void removeOrganization(@RequestBody String orgId) {
+        events.removeOrganization(orgId);
     }
 }

@@ -45,7 +45,7 @@ repositories {
 
 
 dependencies {
-    compile('no.fint:fint-events:0.0.8')
+    compile('no.fint:fint-events:0.0.9')
     compile('no.fint:fint-event-model:0.0.1')
     compileOnly('org.projectlombok:lombok')
     compile('com.github.springfox.loader:springfox-loader:0.1.1')
