@@ -1,0 +1,63 @@
+buildscript {
+    ext {
+        springBootVersion = '1.4.2.RELEASE'
+    }
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('org.ajoberstar:gradle-git:1.5.1')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
+
+import org.ajoberstar.grgit.Grgit
+jar {
+    version = Grgit.open().head().id.take(7)
+    baseName = 'fint-employee-provider'
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+afterEvaluate {
+    configure(processResources) {
+        filesMatching('**/*.yml') {
+            filter(ReplaceTokens, tokens: [version: jar.version])
+        }
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    maven {
+        url "http://dl.bintray.com/fint/maven"
+    }
+    jcenter()
+    mavenCentral()
+}
+
+
+dependencies {
+    compile('no.fint:fint-events:0.0.8')
+    compile('no.fint:fint-event-model:0.0.1')
+    compileOnly('org.projectlombok:lombok')
+    compile('com.github.springfox.loader:springfox-loader:0.1.1')
+
+    compile('org.springframework.boot:spring-boot-starter-amqp')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    runtime('org.springframework.boot:spring-boot-devtools')
+
+    testCompile('org.spockframework:spock-spring:1.0-groovy-2.4')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+bootRun {
+    systemProperties System.properties
+}
