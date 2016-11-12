@@ -19,6 +19,3 @@ spring:
 logging.level.org.springframework.retry.support.RetryTemplate: DEBUG
 
 fint.events.orgs: hfk.no, vaf.no, rogfk.no
-
-
-my-test: test123
