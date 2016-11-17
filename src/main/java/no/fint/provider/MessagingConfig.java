@@ -1,7 +1,7 @@
-package no.fint;
+package no.fint.provider;
 
 import no.fint.events.FintEvents;
-import no.fint.subscriber.InputSubscriber;
+import no.fint.provider.subscriber.InputSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 

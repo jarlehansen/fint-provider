@@ -1,4 +1,4 @@
-package no.fint;
+package no.fint.provider;
 
 import com.github.springfox.loader.EnableSpringfox;
 import no.fint.events.EnableFintEvents;
