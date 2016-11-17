@@ -1,7 +1,6 @@
 package no.fint.provider.eventstate;
 
 import no.fint.event.model.Event;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -31,7 +30,6 @@ public class EventStateService {
         eventStateMap.remove(event.getCorrId());
     }
 
-    @Profile("test")
     public Map<String, EventState> getEventStateMap() {
         return eventStateMap;
     }

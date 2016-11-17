@@ -1,11 +1,9 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
-import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
 
-@ActiveProfiles("test")
 class EventStateServiceSpec extends Specification {
 
     private EventStateService eventStateService
