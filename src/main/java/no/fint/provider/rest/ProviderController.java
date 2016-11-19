@@ -1,4 +1,4 @@
-package no.fint.rest;
+package no.fint.provider.rest;
 
 import no.fint.events.FintEvents;
 import org.springframework.amqp.core.Message;
