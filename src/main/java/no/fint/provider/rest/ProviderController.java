@@ -17,7 +17,7 @@ public class ProviderController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String receive(@RequestHeader("x-org-id") String orgId) {
-        Optional<Message> message = events.readInputMessage(orgId);
+        Optional<Message> message = events.readDownstreamMessage(orgId);
         if (message.isPresent()) {
             return new String(message.get().getBody());
         } else {

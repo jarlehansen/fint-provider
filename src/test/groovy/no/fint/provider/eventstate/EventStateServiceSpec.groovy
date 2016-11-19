@@ -26,11 +26,11 @@ class EventStateServiceSpec extends Specification {
         boolean exists2 = eventStateService.exists(new Event("org2", "fk2", "GET", "client2"))
 
         then:
-        exists1 == true
-        exists2 == false
+        exists1
+        !exists2
     }
 
-    def "Add EventState" () {
+    def "Add EventState"() {
         given:
         Event event = new Event("org", "fk", "GET", "client")
 
@@ -42,7 +42,7 @@ class EventStateServiceSpec extends Specification {
 
     }
 
-    def "Clear EventState" () {
+    def "Clear EventState"() {
         given:
         Event event = new Event("org", "fk", "GET", "client")
         eventStateService.addEventState(event)
@@ -51,7 +51,7 @@ class EventStateServiceSpec extends Specification {
         eventStateService.clearEventState(event)
 
         then:
-        eventStateService.exists(event) == false
+        !eventStateService.exists(event)
         eventStateService.getEventStateMap().size() == 0
     }
 

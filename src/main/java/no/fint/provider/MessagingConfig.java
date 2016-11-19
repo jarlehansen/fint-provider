@@ -15,7 +15,7 @@ public class MessagingConfig {
 
     @PostConstruct
     public void init() {
-        events.registerInputListener(InputSubscriber.class);
+        events.registerDownstreamListener(InputSubscriber.class);
     }
 
 }
