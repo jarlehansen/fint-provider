@@ -1,19 +1,44 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.test.context.ContextConfiguration
+import redis.embedded.RedisServer
+import spock.lang.Shared
 import spock.lang.Specification
 
-
+@ContextConfiguration
+@SpringBootTest
 class EventStateServiceSpec extends Specification {
 
+    @Autowired
     private EventStateService eventStateService
 
-    void setup() {
-        eventStateService = new EventStateService()
+    @Autowired
+    private RedisRepository repository
+
+    @Autowired
+    private RedisTemplate redisTemplate
+
+    @Shared
+    private RedisServer redisServer
+
+    def setupSpec() {
+        redisServer = new RedisServer(6379)
+        redisServer.start();
     }
 
-    void cleanup() {
+    def cleanupSpec() {
+        redisServer.stop()
+    }
 
+    void setup() {
+        def keys = redisTemplate.keys("*")
+        keys.forEach({
+            redisTemplate.delete(it)
+        })
     }
 
     def "Check if EventState is present i EventStateService"() {
