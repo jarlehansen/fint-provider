@@ -1,5 +1,6 @@
 package no.fint.provider.rest;
 
+import com.google.common.collect.ImmutableMap;
 import no.fint.events.FintEvents;
 import org.springframework.amqp.core.Message;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,12 @@ public class ProviderController {
     private FintEvents events;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String receive(@RequestHeader("x-org-id") String orgId) {
-        Optional<Message> message = events.readInputMessage(orgId);
+    public ImmutableMap<String, String> receive(@RequestHeader("x-org-id") String orgId) {
+        Optional<Message> message = events.readDownstreamMessage(orgId);
         if (message.isPresent()) {
-            return new String(message.get().getBody());
+            return ImmutableMap.of("value", new String(message.get().getBody()));
         } else {
-            return "";
+            return ImmutableMap.of();
         }
     }
 
@@ -30,7 +31,7 @@ public class ProviderController {
         events.addOrganization(orgId);
     }
 
-    @RequestMapping(value  = "/organizations", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/organizations", method = RequestMethod.DELETE)
     public void removeOrganization(@RequestBody String orgId) {
         events.removeOrganization(orgId);
     }

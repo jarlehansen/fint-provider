@@ -15,7 +15,7 @@ public class MessagingConfig {
 
     @PostConstruct
     public void init() {
-        events.registerInputListener(InputSubscriber.class);
+        events.registerDownstreamListener("rogfk.no", InputSubscriber.class);
     }
 
 }

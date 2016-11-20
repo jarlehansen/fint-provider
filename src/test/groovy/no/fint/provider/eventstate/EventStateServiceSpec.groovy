@@ -3,29 +3,42 @@ package no.fint.provider.eventstate
 import no.fint.event.model.Event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.test.context.ContextConfiguration
 import redis.embedded.RedisServer
+import spock.lang.Shared
 import spock.lang.Specification
 
-@ContextConfiguration(classes = RedisConfiguration.class)
-@SpringBootTest(classes = TestApplication.class)
+@ContextConfiguration
+@SpringBootTest
 class EventStateServiceSpec extends Specification {
 
+    @Autowired
     private EventStateService eventStateService
+
     @Autowired
     private RedisRepository repository
+
+    @Autowired
+    private RedisTemplate redisTemplate
+
+    @Shared
     private RedisServer redisServer
 
-    void setup() {
+    def setupSpec() {
         redisServer = new RedisServer(6379)
         redisServer.start();
-        repository = new RedisRepository()
-        eventStateService = new EventStateService(redisRepository: repository)
     }
 
-    void cleanup() {
+    def cleanupSpec() {
         redisServer.stop()
+    }
 
+    void setup() {
+        def keys = redisTemplate.keys("*")
+        keys.forEach({
+            redisTemplate.delete(it)
+        })
     }
 
     def "Check if EventState is present i EventStateService"() {
@@ -38,11 +51,11 @@ class EventStateServiceSpec extends Specification {
         boolean exists2 = eventStateService.exists(new Event("org2", "fk2", "GET", "client2"))
 
         then:
-        exists1 == true
-        exists2 == false
+        exists1
+        !exists2
     }
 
-    def "Add EventState" () {
+    def "Add EventState"() {
         given:
         Event event = new Event("org", "fk", "GET", "client")
 
@@ -54,7 +67,7 @@ class EventStateServiceSpec extends Specification {
 
     }
 
-    def "Clear EventState" () {
+    def "Clear EventState"() {
         given:
         Event event = new Event("org", "fk", "GET", "client")
         eventStateService.addEventState(event)
@@ -63,7 +76,7 @@ class EventStateServiceSpec extends Specification {
         eventStateService.clearEventState(event)
 
         then:
-        eventStateService.exists(event) == false
+        !eventStateService.exists(event)
         eventStateService.getEventStateMap().size() == 0
     }
 

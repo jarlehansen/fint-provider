@@ -46,23 +46,23 @@ repositories {
 
 
 dependencies {
-    compile('no.fint:fint-events:0.0.9')
-    compile('no.fint:fint-event-model:0.0.4')
     compileOnly('org.projectlombok:lombok')
+
+    compile('no.fint:fint-events:0.0.15')
+    compile('no.fint:fint-event-model:0.0.5')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('redis.clients:jedis:2.9.0')
     compile('org.springframework.data:spring-data-redis:1.7.5.RELEASE')
-
-
+    compile('com.github.kstyrc:embedded-redis:0.6')
 
     compile('org.springframework.boot:spring-boot-starter-amqp')
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
 
+    testCompile('cglib:cglib-nodep:3.2.4')
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.github.kstyrc:embedded-redis:0.6')
-
 }
 
 bootRun {

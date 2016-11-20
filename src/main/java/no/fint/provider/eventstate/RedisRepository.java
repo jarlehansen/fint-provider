@@ -1,5 +1,7 @@
 package no.fint.provider.eventstate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
@@ -7,6 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @Repository
@@ -15,17 +19,13 @@ public class RedisRepository {
     @Value("${fint.provider.eventstate.hashmap-name:event-state}")
     private String key;
 
-    private RedisTemplate<String, EventState> redisTemplate;
-    private HashOperations hashOps;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Autowired
-    private RedisRepository(RedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    private ObjectMapper objectMapper;
 
-    public RedisRepository() {
-
-    }
+    private HashOperations<String, String, String> hashOps;
 
     @PostConstruct
     private void init() {
@@ -37,7 +37,12 @@ public class RedisRepository {
     }
 
     public void add(EventState eventState) {
-        hashOps.put(key, eventState.getEvent().getCorrId(), eventState);
+        try {
+            String json = objectMapper.writeValueAsString(eventState);
+            hashOps.put(key, eventState.getEvent().getCorrId(), json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void remove(String corrId) {
@@ -45,9 +50,19 @@ public class RedisRepository {
     }
 
     public Map<String, EventState> getMap() {
-        return hashOps.entries(key);
-    }
+        Map<String, String> entries = hashOps.entries(key);
+        Map<String, EventState> eventStateMap = new HashMap<>();
+        entries.keySet().forEach(key -> {
+            try {
+                EventState eventState = objectMapper.readValue(entries.get(key), EventState.class);
+                eventStateMap.put(key, eventState);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
+        return eventStateMap;
+    }
 
 
 }

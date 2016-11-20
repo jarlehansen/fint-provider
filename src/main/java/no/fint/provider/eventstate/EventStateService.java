@@ -12,16 +12,8 @@ public class EventStateService {
     @Autowired
     private RedisRepository redisRepository;
 
-    public EventStateService() {
-
-    }
-
     public boolean exists(Event event) {
-
-        if (redisRepository.exists(event.getCorrId())) {
-            return true;
-        }
-        return false;
+        return redisRepository.exists(event.getCorrId());
     }
 
     public void addEventState(Event event) {
@@ -31,7 +23,6 @@ public class EventStateService {
     public void clearEventState(Event event) {
         redisRepository.remove(event.getCorrId());
     }
-
 
     public Map<String, EventState> getEventStateMap() {
         return redisRepository.getMap();

@@ -1,0 +1,7 @@
+springfox:
+ title: 'test'
+ version: '1.0.0'
+
+fint:
+ events:
+  test-mode: true
