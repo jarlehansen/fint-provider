@@ -18,9 +18,8 @@ public class JanitorService {
     @Autowired
     EventStateService eventStateService;
 
-    @Scheduled(fixedDelayString = "${fint.provider.eventstate.run-interval:1000}")
+    @Scheduled(fixedDelayString = "${fint.provider.eventstate.run-interval:10000}")
     public void run() {
-        log.info("EventState Janitor running ...");
         Map<String, EventState> eventStateMap = eventStateService.getEventStateMap();
         eventStateMap.forEach((s, eventState) -> {
             if ((System.currentTimeMillis() - eventState.getTimestamp()) > eventStateTimeToLive) {
@@ -28,7 +27,5 @@ public class JanitorService {
                 eventStateService.clearEventState(eventState.getEvent());
             }
         });
-
-        log.info("EventState Janitor ending");
     }
 }
