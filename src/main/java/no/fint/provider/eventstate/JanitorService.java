@@ -18,15 +18,14 @@ public class JanitorService {
     @Autowired
     EventStateService eventStateService;
 
+    @Autowired
+    RedisRepository redisRepository;
+
     @Scheduled(fixedDelayString = "${fint.provider.eventstate.run-interval:1000}")
     public void run() {
-        log.info("EventState Janitor running ...");
+       log.info("EventState Janitor running ...");
 
-        Map<String, EventState> eventStateMap;
-
-        eventStateMap = eventStateService.getEventStateMap();
-
-        eventStateMap.forEach((s, eventState) -> {
+        eventStateService.getEventStateMap().forEach((s, eventState) -> {
             if ((System.currentTimeMillis() - eventState.getTimestamp() > eventStateTimeToLive)) {
                 eventStateService.clearEventState(eventState.getEvent());
             }

@@ -2,7 +2,9 @@ package no.fint.provider.eventstate;
 
 import no.fint.event.model.Event;
 
-public class EventState {
+import java.io.Serializable;
+
+public class EventState implements Serializable {
     private long timestamp;
     private Event event;
 

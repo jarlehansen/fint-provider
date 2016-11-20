@@ -1,36 +1,40 @@
 package no.fint.provider.eventstate;
 
 import no.fint.event.model.Event;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class EventStateService {
 
-    private Map<String, EventState> eventStateMap;
+    @Autowired
+    private RedisRepository redisRepository;
 
     public EventStateService() {
-        eventStateMap = new HashMap<>();
+
     }
 
     public boolean exists(Event event) {
-        if (eventStateMap.containsKey(event.getCorrId())) {
+
+        if (redisRepository.exists(event.getCorrId())) {
             return true;
         }
         return false;
     }
 
     public void addEventState(Event event) {
-        eventStateMap.put(event.getCorrId(), new EventState(event));
+        redisRepository.add(new EventState(event));
     }
 
     public void clearEventState(Event event) {
-        eventStateMap.remove(event.getCorrId());
+        redisRepository.remove(event.getCorrId());
     }
 
+
     public Map<String, EventState> getEventStateMap() {
-        return eventStateMap;
+        return redisRepository.getMap();
     }
+
 }
