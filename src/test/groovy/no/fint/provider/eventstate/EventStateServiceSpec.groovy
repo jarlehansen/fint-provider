@@ -4,11 +4,13 @@ import no.fint.event.model.Event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import redis.embedded.RedisServer
 import spock.lang.Shared
 import spock.lang.Specification
 
+@ActiveProfiles("test")
 @ContextConfiguration
 @SpringBootTest
 class EventStateServiceSpec extends Specification {

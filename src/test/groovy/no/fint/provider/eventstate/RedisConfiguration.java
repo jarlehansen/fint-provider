@@ -2,10 +2,12 @@ package no.fint.provider.eventstate;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Profile("test")
 @Configuration
 public class RedisConfiguration {
 
@@ -19,7 +21,7 @@ public class RedisConfiguration {
 
     @Bean
     public RedisTemplate<String, EventState> redisTemplate() {
-        RedisTemplate<String, EventState> template = new RedisTemplate<String, EventState>();
+        RedisTemplate<String, EventState> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
         template.setDefaultSerializer(new StringRedisSerializer());
         return template;
