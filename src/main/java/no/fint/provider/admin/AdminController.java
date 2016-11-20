@@ -1,5 +1,6 @@
 package no.fint.provider.admin;
 
+import no.fint.events.FintEvents;
 import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,19 @@ import java.util.Map;
 public class AdminController {
 
     @Autowired
+    private FintEvents fintEvents;
+
+    @Autowired
     private EventStateService eventStateService;
 
     @RequestMapping(value = "/eventStates", method = RequestMethod.GET)
     public Map<String, EventState> getEventState() {
         return eventStateService.getEventStateMap();
     }
+
+    @RequestMapping(value = "/downstream/messages", method = RequestMethod.POST)
+    public void createDownstreamMessage() {
+
+    }
+
 }

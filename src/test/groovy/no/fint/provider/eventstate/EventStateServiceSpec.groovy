@@ -1,5 +1,6 @@
 package no.fint.provider.eventstate
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -47,6 +48,7 @@ class EventStateServiceSpec extends Specification {
         given:
         Event event1 = new Event("org1", "fk1", "GET", "client1")
         eventStateService.addEventState(event1)
+        println new ObjectMapper().writeValueAsString(new Event("hfk.no", "fk", "GET", "client"))
 
         when:
         boolean exists1 = eventStateService.exists(event1)
