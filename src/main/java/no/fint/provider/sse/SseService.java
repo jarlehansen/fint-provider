@@ -37,7 +37,7 @@ public class SseService {
         List<String> toBeRemoved = new ArrayList<>();
         emitters.keySet().forEach(orgId -> {
             try {
-                SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getVerb()).data(event);
+                SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
                 emitters.get(orgId).send(builder);
             } catch (IOException | IllegalStateException e) {
                 toBeRemoved.add(orgId);
