@@ -1,7 +1,7 @@
 package no.fint.provider;
 
 import no.fint.events.FintEvents;
-import no.fint.provider.subscriber.DownstreamSubscriber;
+import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 

@@ -1,4 +1,4 @@
-package no.fint.provider.poll;
+package no.fint.provider.events.poll;
 
 
 import lombok.extern.slf4j.Slf4j;

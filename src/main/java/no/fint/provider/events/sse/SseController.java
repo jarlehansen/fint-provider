@@ -1,4 +1,4 @@
-package no.fint.provider.sse;
+package no.fint.provider.events.sse;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;

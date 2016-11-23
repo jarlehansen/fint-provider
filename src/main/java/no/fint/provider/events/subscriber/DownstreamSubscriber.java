@@ -1,9 +1,9 @@
-package no.fint.provider.subscriber;
+package no.fint.provider.events.subscriber;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import no.fint.event.model.Event;
 import no.fint.provider.eventstate.EventStateService;
-import no.fint.provider.sse.SseService;
+import no.fint.provider.events.sse.SseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

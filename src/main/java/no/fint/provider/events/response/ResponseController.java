@@ -1,4 +1,4 @@
-package no.fint.provider.response;
+package no.fint.provider.events.response;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;

@@ -1,4 +1,4 @@
-package no.fint.provider.poll
+package no.fint.provider.events.poll
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event

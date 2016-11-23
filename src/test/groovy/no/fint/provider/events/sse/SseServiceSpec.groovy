@@ -1,4 +1,4 @@
-package no.fint.provider.sse
+package no.fint.provider.events.sse
 
 import no.fint.event.model.Event
 import spock.lang.Specification
