@@ -1,5 +1,6 @@
 package no.fint.provider;
 
+import no.fint.events.Events;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,15 @@ import javax.annotation.PostConstruct;
 public class MessagingConfig {
 
     @Autowired
-    private FintEvents events;
+    private FintEvents fintEvents;
+
+    @Autowired
+    private Events events;
 
     @PostConstruct
     public void init() {
-        events.registerDownstreamListener("hfk.no", DownstreamSubscriber.class);
+       // events.registerListener("rogfk.no", "rogfk.no.downstream", DownstreamSubscriber.class);
+        fintEvents.registerDownstreamListener("rogfk.no", DownstreamSubscriber.class);
     }
 
 }

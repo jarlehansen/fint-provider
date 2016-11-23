@@ -15,6 +15,10 @@ public class SseService {
 
     private final Map<String, SseEmitter> emitters = new HashMap<>();
 
+    public boolean newListener(String orgId) {
+        return !(emitters.containsKey(orgId));
+    }
+
     public SseEmitter subscribe(String orgId) {
         if (emitters.containsKey(orgId)) {
             return emitters.get(orgId);

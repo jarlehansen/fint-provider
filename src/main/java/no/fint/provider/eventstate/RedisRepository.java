@@ -2,6 +2,8 @@ package no.fint.provider.eventstate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import no.fint.event.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Repository
 public class RedisRepository {
 
@@ -32,8 +35,21 @@ public class RedisRepository {
         hashOps = redisTemplate.opsForHash();
     }
 
-    public Boolean exists(String corrId) {
+    public boolean exists(String corrId) {
         return hashOps.hasKey(key, corrId);
+    }
+
+    public boolean exists(String corrId, Status status) {
+        if (exists(corrId)) {
+            String json = hashOps.get(key, corrId);
+            try {
+                EventState eventState= objectMapper.readValue(json, EventState.class);
+                    return (eventState.getEvent().getStatus() == status);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 
     public void add(EventState eventState) {
@@ -51,6 +67,16 @@ public class RedisRepository {
             hashOps.put(key, eventState.getEvent().getCorrId(), json);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        }
+    }
+
+    public EventState get(String corrId) {
+        try {
+            String json = hashOps.get(key, corrId);
+            return objectMapper.readValue(json, EventState.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

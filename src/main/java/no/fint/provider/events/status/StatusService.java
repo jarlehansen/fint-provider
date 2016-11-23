@@ -1,4 +1,4 @@
-package no.fint.provider.status;
+package no.fint.provider.events.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

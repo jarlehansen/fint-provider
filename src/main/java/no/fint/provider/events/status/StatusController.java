@@ -1,4 +1,4 @@
-package no.fint.provider.status;
+package no.fint.provider.events.status;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;

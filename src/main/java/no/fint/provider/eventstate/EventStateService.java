@@ -1,6 +1,7 @@
 package no.fint.provider.eventstate;
 
 import no.fint.event.model.Event;
+import no.fint.event.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,17 @@ public class EventStateService {
         return redisRepository.exists(event.getCorrId());
     }
 
+    public boolean exists(Event event, Status status) {
+        return redisRepository.exists(event.getCorrId(), status);
+    }
+
     public void addEventState(Event event) {
         redisRepository.add(new EventState(event));
+    }
+
+    public Event getEvent(Event event) {
+        EventState eventState = redisRepository.get(event.getCorrId());
+        return eventState.getEvent();
     }
 
     public void updateEventState(Event event) {
