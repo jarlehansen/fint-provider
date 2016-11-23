@@ -49,12 +49,14 @@ repositories {
 dependencies {
     compileOnly('org.projectlombok:lombok')
 
+    compile('no.fint:fint-audit-mongo-plugin:0.0.6')
     compile('no.fint:fint-events:0.0.16')
-    compile('no.fint:fint-event-model:0.0.6')
+    compile('no.fint:fint-event-model:0.0.7')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('redis.clients:jedis:2.9.0')
     compile('org.springframework.data:spring-data-redis:1.7.5.RELEASE')
     compile('com.github.kstyrc:embedded-redis:0.6')
+    compile('com.github.fakemongo:fongo:2.0.9')
 
     compile('org.springframework.boot:spring-boot-starter-amqp')
     compile('org.springframework.boot:spring-boot-starter-web')

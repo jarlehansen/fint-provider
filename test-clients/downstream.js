@@ -18,12 +18,12 @@ const config = {
 
 const message = {
     "corrId": uuid(),
-    "verb": "GET",
-    "status": "NEW",
-    "time": 1479663045761,
+    "action": "GET_ALL_EMPLOYEES",
+    "status": "DOWNSTREAM_QUEUE",
+    "time": new Date().getTime(),
     "orgId": config.orgId,
     "source": "fk",
-    "client": "client",
+    "client": "vfs",
     "message": null,
     "data": []
   }
@@ -31,10 +31,10 @@ const message = {
 const connectionString = `amqp://${config.user}:${config.password}@${config.host}:5672/${config.vhost}`
 amqp.connect(connectionString).then(function(conn) {
   return conn.createChannel().then(function(ch) {
-    var q = `${config.orgId}.downstream`
-    var json = JSON.stringify(message)
+    const q = `${config.orgId}.downstream`
+    const json = JSON.stringify(message)
 
-    var ok = ch.assertQueue(q, {durable: true});
+    const ok = ch.assertQueue(q, {durable: true});
     return ok.then(function(qok) {
       ch.sendToQueue(q, new Buffer(json))
       console.log('Message sent to', q)

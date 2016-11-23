@@ -20,7 +20,7 @@ public class PollController {
 
     @Autowired
     private PollService pollService;
-    
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity poll(@RequestHeader("x-org-id") String orgId) {
         Optional<Event> event = pollService.readEvent(orgId);

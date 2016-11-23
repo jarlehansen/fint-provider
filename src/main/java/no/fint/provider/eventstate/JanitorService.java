@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class JanitorService {
 
-    @Value("${fint.provider.eventstate.ttl:5000}")
+    @Value("${fint.provider.eventstate.ttl:120000}")
     private long eventStateTimeToLive;
 
     @Autowired
