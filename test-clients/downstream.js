@@ -25,7 +25,9 @@ const message = {
     "source": "fk",
     "client": "vfs",
     "message": null,
-    "data": []
+    "data": [
+      'test1', 'test2'
+    ]
   }
 
 const connectionString = `amqp://${config.user}:${config.password}@${config.host}:5672/${config.vhost}`

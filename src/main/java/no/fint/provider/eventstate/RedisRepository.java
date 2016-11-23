@@ -45,6 +45,15 @@ public class RedisRepository {
         }
     }
 
+    public void update(EventState eventState) {
+        try {
+            String json = objectMapper.writeValueAsString(eventState);
+            hashOps.put(key, eventState.getEvent().getCorrId(), json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void remove(String corrId) {
         hashOps.delete(key, corrId);
     }

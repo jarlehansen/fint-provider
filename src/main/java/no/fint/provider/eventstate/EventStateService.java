@@ -20,6 +20,10 @@ public class EventStateService {
         redisRepository.add(new EventState(event));
     }
 
+    public void updateEventState(Event event) {
+        redisRepository.update(new EventState(event));
+    }
+
     public void clearEventState(Event event) {
         redisRepository.remove(event.getCorrId());
     }
