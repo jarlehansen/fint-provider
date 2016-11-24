@@ -27,8 +27,6 @@ public class SseController {
         log.info("{} connected", orgId);
         if (sseService.newListener(orgId)) {
             SseEmitter emitter = sseService.subscribe(orgId);
-
-            // TODO fix bug in fint-events on registration of listener (#134858743)
             fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
             return emitter;
         } else {

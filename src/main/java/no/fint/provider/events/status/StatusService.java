@@ -1,12 +1,10 @@
 package no.fint.provider.events.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.events.Events;
+import no.fint.events.FintEvents;
 import no.fint.provider.eventstate.EventStateService;
 import no.fint.provider.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +21,7 @@ public class StatusService {
     private FintAuditService fintAuditService;
 
     @Autowired
-    private Events events;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private FintEvents fintEvents;
 
     public void updateEventState(Event event) {
         if (eventStateService.exists(event)) {
@@ -38,14 +33,10 @@ public class StatusService {
                     event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                     event.setStatus(Status.UPSTREAM_QUEUE);
                     fintAuditService.audit(event, true);
-                    String json = objectMapper.writeValueAsString(event);
-
-                    // TODO add helper method to send messages back to rabbitmq
-                    events.rabbitTemplate().convertAndSend(event.getOrgId(), event.getOrgId() + ".upstream", json);
-
+                    fintEvents.sendUpstreamObject(event.getOrgId(), event);
                     eventStateService.clearEventState(event);
                     log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
-                } catch (JsonProcessingException e) {
+                } catch (IllegalArgumentException e) {
                     log.error("Unable to create json for event object", e);
                     throw new IllegalArgumentException("Invalid Event object from adapter", e);
                 }

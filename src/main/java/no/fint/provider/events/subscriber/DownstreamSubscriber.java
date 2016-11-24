@@ -1,6 +1,5 @@
 package no.fint.provider.events.subscriber;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
@@ -10,8 +9,6 @@ import no.fint.provider.eventstate.EventStateService;
 import no.fint.provider.exceptions.EventNotProviderApprovedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Slf4j
 @Component
@@ -26,23 +23,15 @@ public class DownstreamSubscriber {
     @Autowired
     private FintAuditService fintAuditService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    public void receive(byte[] body) {
-        try {
-            Event event = objectMapper.readValue(body, Event.class);
-            if (eventStateService.exists(event)) {
-                resendEvent(event);
-            } else {
-                event.setStatus(Status.DELIVERED_TO_PROVIDER);
-                sseService.send(event);
-                eventStateService.addEventState(event);
-                fintAuditService.audit(event, true);
-                throw new EventNotProviderApprovedException();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void receive(Event event) {
+        if (eventStateService.exists(event)) {
+            resendEvent(event);
+        } else {
+            event.setStatus(Status.DELIVERED_TO_PROVIDER);
+            sseService.send(event);
+            eventStateService.addEventState(event);
+            fintAuditService.audit(event, true);
+            throw new EventNotProviderApprovedException();
         }
     }
 
