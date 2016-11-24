@@ -27,7 +27,7 @@ public class PollController {
         if (event.isPresent()) {
             return ResponseEntity.ok(event.get());
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
     }
 }
