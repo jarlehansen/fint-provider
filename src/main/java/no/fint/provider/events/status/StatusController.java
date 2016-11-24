@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -30,6 +31,6 @@ public class StatusController {
 
     @ExceptionHandler(UnknownEventException.class)
     public ResponseEntity handleUnknownEventException() {
-        return ResponseEntity.badRequest().body("Unknown Event object from adapter");
+        return ResponseEntity.status(HttpStatus.GONE).body("Unknown Event object from adapter");
     }
 }

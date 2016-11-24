@@ -40,7 +40,7 @@ public class StatusService {
                     fintAuditService.audit(event, true);
                     String json = objectMapper.writeValueAsString(event);
 
-                    // TODO
+                    // TODO add helper method to send messages back to rabbitmq
                     events.rabbitTemplate().convertAndSend(event.getOrgId(), event.getOrgId() + ".upstream", json);
 
                     eventStateService.clearEventState(event);

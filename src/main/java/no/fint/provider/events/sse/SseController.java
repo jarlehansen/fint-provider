@@ -3,6 +3,7 @@ package no.fint.provider.events.sse;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class SseController {
             SseEmitter emitter = sseService.subscribe(orgId);
 
             // TODO fix bug in fint-events on registration of listener (#134858743)
-            // fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
+            fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
             return emitter;
         } else {
             Optional<SseEmitter> sseEmitter = sseService.getSseEmitter(orgId);

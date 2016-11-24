@@ -9,5 +9,5 @@ To run the test clients move into the test-clients directory and run npm command
 
 | Start command | Description |
 |---------------|-------------|
-| npm run sse *orgId* | Server-Sent-Events client that will connect to the backend and read messages |
+| npm run sse *orgId* | Server-Sent-Events client that will connect to the backend, read messages and post back results |
 | npm run downstream *rabbitmq-password* *orgId* | Publishes Event-objects to the downstream queue |
