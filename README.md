@@ -1,5 +1,13 @@
 # FINT provider
 
+## Configuration
+
+| Key | Default value |
+|-----|---------------|
+| fint.provider.eventstate.host | localhost |
+| fint.provider.eventstate.port | 6379 |
+| fint.provider.test-mode | false |
+
 ## Test clients
 
 Simple test clients written in nodejs to help test various elements of the fint-provider application.  
