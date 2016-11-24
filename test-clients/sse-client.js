@@ -14,7 +14,7 @@ const es = new EventSource('http://localhost:8080/provider/sse', headers)
 
 es.on('event', (e) => {
   console.log('Received event data:', e.data)
-  sleep.sleep(20)
+  sleep.sleep(2)
 
   var event = JSON.parse(e.data)
   event.status = 'PROVIDER_ACCEPTED'
