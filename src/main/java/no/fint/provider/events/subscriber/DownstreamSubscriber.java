@@ -25,19 +25,29 @@ public class DownstreamSubscriber {
 
     public void receive(Event event) {
         if (eventStateService.exists(event)) {
-            resendEvent(event);
+            Event persistedEvent = eventStateService.getEvent(event);
+            handleEvent(persistedEvent);
         } else {
-            event.setStatus(Status.DELIVERED_TO_PROVIDER);
-            sseService.send(event);
-            eventStateService.addEventState(event);
-            fintAuditService.audit(event, true);
-            throw new EventNotProviderApprovedException();
+            sendInitialEvent(event);
         }
     }
 
-    private void resendEvent(Event event) {
-        Event persistedEvent = eventStateService.getEvent(event);
-        if (eventStateService.exists(persistedEvent, Status.DELIVERED_TO_PROVIDER)) {
+    private void sendInitialEvent(Event event) {
+        event.setStatus(Status.DELIVERED_TO_PROVIDER);
+        sseService.send(event);
+        eventStateService.addEventState(event);
+        fintAuditService.audit(event, true);
+
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException ignored) {
+        }
+
+        handleEvent(event);
+    }
+
+    private void handleEvent(Event event) {
+        if (eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)) {
             sseService.send(event);
             throw new EventNotProviderApprovedException();
         } else {

@@ -9,4 +9,3 @@ fint-provider:
   spring.rabbitmq.host: sr-is-docker-01
   spring.redis.host: sr-is-docker-01
   spring.data.mongodb.host: sr-is-docker-01
-  spring.rabbitmq.virtual-host:

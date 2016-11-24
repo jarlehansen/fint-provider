@@ -4,11 +4,6 @@ springfox:
 
 spring:
  rabbitmq:
-  host: squirrel.rmq.cloudamqp.com
-  username: yqfycpqy
-  password:
-  virtual-host: yqfycpqy
-
   listener:
    retry:
     initial-interval: 3000

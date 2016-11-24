@@ -3,3 +3,10 @@ fint:
   test-mode: true
  audit:
   test-mode: true
+
+spring:
+ rabbitmq:
+  host: squirrel.rmq.cloudamqp.com
+  username: yqfycpqy
+  password:
+  virtual-host: yqfycpqy
