@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/provider/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
 
     @Autowired
