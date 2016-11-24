@@ -5,7 +5,7 @@ const amqp = require('amqplib')
 
 console.log('Usage: npm run downstream <rabbitmq-password> <orgId>')
 
-const ymlConfig = fs.readFileSync('../src/main/resources/application.yml', 'utf-8')
+const ymlConfig = fs.readFileSync('../src/main/resources/application-local.yml', 'utf-8')
 const springConfig = YAML.parse(ymlConfig)
 
 const config = {

@@ -9,3 +9,4 @@ fint-provider:
   spring.rabbitmq.host: sr-is-docker-01
   fint.provider.eventstate.host: sr-is-docker-01
   fint.audit.mongo.hostname: sr-is-docker-01
+  server.context-path: /arbeidstakere
