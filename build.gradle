@@ -21,7 +21,7 @@ apply plugin: 'maven'
 import org.ajoberstar.grgit.Grgit
 jar {
     version = Grgit.open().head().id.take(7)
-    baseName = 'fint-employee-provider'
+    baseName = 'fint-provider'
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
