@@ -2,18 +2,17 @@ package no.fint.provider.eventstate
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
+import no.fint.provider.TestApplication
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
-import redis.embedded.RedisServer
-import spock.lang.Shared
 import spock.lang.Specification
 
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 @ContextConfiguration
-@SpringBootTest
+@SpringBootTest(classes = TestApplication)
 class EventStateServiceSpec extends Specification {
 
     @Autowired
@@ -24,18 +23,6 @@ class EventStateServiceSpec extends Specification {
 
     @Autowired
     private RedisTemplate redisTemplate
-
-    @Shared
-    private RedisServer redisServer
-
-    def setupSpec() {
-        redisServer = new RedisServer(6379)
-        redisServer.start();
-    }
-
-    def cleanupSpec() {
-        redisServer.stop()
-    }
 
     void setup() {
         def keys = redisTemplate.keys("*")

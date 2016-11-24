@@ -3,5 +3,11 @@ springfox:
  version: '1.0.0'
 
 fint:
+ audit:
+  test-mode: true
  events:
   test-mode: true
+
+spring:
+ redis:
+  port: 16379
