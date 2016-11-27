@@ -50,7 +50,10 @@ dependencies {
     compileOnly('org.projectlombok:lombok')
 
     compile('no.fint:fint-audit-mongo-plugin:0.0.10')
-    compile('no.fint:fint-events:0.0.18')
+    compile('no.fint:fint-events:0.0.19-SNAPSHOT')
+    compile('com.kohlschutter.junixsocket:junixsocket-common:2.0.4')
+    compile('com.kohlschutter.junixsocket:junixsocket-native-common:2.0.4')
+
     compile('no.fint:fint-event-model:0.0.9')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('redis.clients:jedis:2.9.0')

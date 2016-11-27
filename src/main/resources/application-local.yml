@@ -3,10 +3,14 @@ fint:
   test-mode: true
  audit:
   test-mode: true
+ events:
+  test-mode: false
+
+logging.level.com.spotify.docker.client.LoggingPullHandler: WARN
 
 spring:
  rabbitmq:
-  host: squirrel.rmq.cloudamqp.com
-  username: yqfycpqy
-  password:
-  virtual-host: yqfycpqy
+  host: localhost
+  username: guest
+  password: guest
+  virtual-host: /
