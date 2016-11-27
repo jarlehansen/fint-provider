@@ -10,7 +10,5 @@ logging.level.com.spotify.docker.client.LoggingPullHandler: WARN
 
 spring:
  rabbitmq:
-  host: localhost
   username: guest
   password: guest
-  virtual-host: /
