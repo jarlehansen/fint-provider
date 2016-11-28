@@ -39,7 +39,7 @@ public class DownstreamSubscriber {
         fintAuditService.audit(event, true);
 
         try {
-            Thread.sleep(5000L);
+            Thread.sleep(15000L);
         } catch (InterruptedException ignored) {
         }
 
