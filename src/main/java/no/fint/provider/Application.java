@@ -19,11 +19,11 @@ public class Application {
 
     @PreDestroy
     public void shutdown() {
-        LocalRabbit.stop();
+        /*LocalRabbit.stop();*/
     }
 
     public static void main(String[] args) {
-        LocalRabbit.start();
+        //LocalRabbit.start();
         SpringApplication.run(Application.class, args);
     }
 }
