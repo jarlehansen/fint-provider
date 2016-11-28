@@ -3,12 +3,10 @@ fint:
   test-mode: true
  audit:
   test-mode: true
- events:
-  test-mode: false
-
-logging.level.com.spotify.docker.client.LoggingPullHandler: WARN
-
-spring:
  rabbitmq:
+  host: localhost
+  port: 5672
   username: guest
   password: guest
+
+logging.level.com.spotify.docker.client.LoggingPullHandler: WARN
