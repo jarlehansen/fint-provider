@@ -8,5 +8,3 @@ fint:
   port: 5672
   username: guest
   password: guest
-
-logging.level.com.spotify.docker.client.LoggingPullHandler: WARN
