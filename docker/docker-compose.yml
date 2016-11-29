@@ -4,10 +4,10 @@ fint-provider:
  ports:
   - "8101:8080"
  environment:
-  spring.rabbitmq.username: guest
-  spring.rabbitmq.password: guest
-  spring.rabbitmq.host: sr-is-docker-01
-  spring.rabbitmq.virtual-host: employee
+  fint.rabbitmq.username: guest
+  fint.rabbitmq.password: guest
+  fint.rabbitmq.host: sr-is-docker-01
+  fint.rabbitmq.virtual-host: employee
   fint.provider.eventstate.host: sr-is-docker-01
   fint.audit.mongo.hostname: sr-is-docker-01
   server.context-path: /arbeidstakere
