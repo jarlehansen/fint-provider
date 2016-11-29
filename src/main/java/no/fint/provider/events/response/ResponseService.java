@@ -6,7 +6,6 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.provider.eventstate.EventStateService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +24,7 @@ public class ResponseService {
 
     public boolean handleAdapterResponse(Event event) {
         if (eventStateService.exists(event)) {
-            Event copy = new Event();
-            BeanUtils.copyProperties(event, copy);
-            fintAuditService.audit(copy, true);
-
+            fintAuditService.audit(event, true);
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintAuditService.audit(event, true);
             fintEvents.sendUpstreamObject(event.getOrgId(), event);
