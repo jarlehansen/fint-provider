@@ -48,7 +48,7 @@ public class SseService {
 
     public void send(Event event) {
         List<String> toBeRemoved = new ArrayList<>();
-        emitters.keySet().forEach(orgId -> {
+        emitters.keySet().stream().filter(orgId -> (event.getOrgId().equals(orgId))).forEach(orgId -> {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
                 emitters.get(orgId).send(builder);
