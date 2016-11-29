@@ -10,4 +10,5 @@ fint-provider:
   fint.rabbitmq.virtual-host: employee
   fint.provider.eventstate.host: sr-is-docker-01
   fint.audit.mongo.hostname: sr-is-docker-01
+  fint.audit.mongo.database: fint-audit-default
   server.context-path: /arbeidstakere
