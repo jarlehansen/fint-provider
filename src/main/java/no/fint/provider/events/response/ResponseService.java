@@ -23,6 +23,7 @@ public class ResponseService {
     private FintEvents fintEvents;
 
     public boolean handleAdapterResponse(Event event) {
+        log.info("Event received: {}", event.getCorrId());
         if (eventStateService.exists(event)) {
             fintAuditService.audit(event, true);
             event.setStatus(Status.UPSTREAM_QUEUE);
