@@ -37,12 +37,16 @@ public class DownstreamSubscriber {
         sseService.send(event);
         eventStateService.addEventState(event);
         fintAuditService.audit(event, true);
+
+        try {
+            Thread.sleep(3000L);
+        } catch (InterruptedException ignored) {
+        }
         handleEvent(event);
     }
 
     private void handleEvent(Event event) {
         if (eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)) {
-            sseService.send(event);
             throw new EventNotProviderApprovedException();
         } else {
             log.info("Event with corrId:{} approved by adapter. Consuming message from queue", event.getCorrId());
