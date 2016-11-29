@@ -3,8 +3,10 @@ package no.fint.provider.events.sse;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.*;
 
@@ -14,6 +16,11 @@ public class SseService {
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE;
 
     private final Map<String, SseEmitter> emitters = new HashMap<>();
+
+    @PreDestroy
+    public void shutdown() {
+        emitters.values().forEach(ResponseBodyEmitter::complete);
+    }
 
     public boolean newListener(String orgId) {
         return !(emitters.containsKey(orgId));
