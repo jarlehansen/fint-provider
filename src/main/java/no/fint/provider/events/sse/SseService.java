@@ -20,6 +20,12 @@ public class SseService {
     }
 
     public SseEmitter subscribe(String orgId) {
+        if (emitters.containsKey(orgId)) {
+            SseEmitter emitter = emitters.get(orgId);
+            emitter.complete();
+            emitters.remove(orgId);
+        }
+
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         emitter.onCompletion(() -> {
             log.info("onCompletion called for {}", orgId);
