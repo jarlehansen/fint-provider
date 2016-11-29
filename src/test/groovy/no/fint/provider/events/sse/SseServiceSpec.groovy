@@ -19,16 +19,6 @@ class SseServiceSpec extends Specification {
         sseService.getSseEmitter("hfk.no").isPresent()
     }
 
-
-    def "Return existing SseEmitter when subscribing with already registered orgId"() {
-        when:
-        def emitter1 = sseService.subscribe("hfk.no")
-        def emitter2 = sseService.subscribe("hfk.no")
-
-        then:
-        emitter1 == emitter2
-    }
-
     def "Send Event to registered emitter"() {
         given:
         def event = new Event("hfk.no", "FK", "GET_ALL_EMPLOYEES", "test")

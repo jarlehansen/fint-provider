@@ -24,6 +24,7 @@ public class ResponseService {
 
     public boolean handleAdapterResponse(Event event) {
         if (eventStateService.exists(event)) {
+            fintAuditService.audit(event, true);
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintAuditService.audit(event, true);
             fintEvents.sendUpstreamObject(event.getOrgId(), event);

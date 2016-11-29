@@ -20,21 +20,17 @@ public class SseService {
     }
 
     public SseEmitter subscribe(String orgId) {
-        if (emitters.containsKey(orgId)) {
-            return emitters.get(orgId);
-        } else {
-            SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
-            emitter.onCompletion(() -> {
-                log.info("onCompletion called for {}", orgId);
-                emitters.remove(orgId);
-            });
-            emitter.onTimeout(() -> {
-                log.info("onTimeout called for {}", orgId);
-                emitters.remove(orgId);
-            });
-            emitters.put(orgId, emitter);
-            return emitter;
-        }
+        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+        emitter.onCompletion(() -> {
+            log.info("onCompletion called for {}", orgId);
+            emitters.remove(orgId);
+        });
+        emitter.onTimeout(() -> {
+            log.info("onTimeout called for {}", orgId);
+            emitters.remove(orgId);
+        });
+        emitters.put(orgId, emitter);
+        return emitter;
     }
 
     public void send(Event event) {
