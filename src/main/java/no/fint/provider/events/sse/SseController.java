@@ -22,8 +22,12 @@ public class SseController {
     @Autowired
     private FintEvents fintEvents;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable(required = false) String id) {
+        if (id != null) {
+            log.info("id: {}", id);
+        }
+
         log.info("{} connected", orgId);
         if (sseService.newListener(orgId)) {
             SseEmitter emitter = sseService.subscribe(orgId);
