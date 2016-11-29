@@ -37,12 +37,6 @@ public class DownstreamSubscriber {
         sseService.send(event);
         eventStateService.addEventState(event);
         fintAuditService.audit(event, true);
-
-        try {
-            Thread.sleep(15000L);
-        } catch (InterruptedException ignored) {
-        }
-
         handleEvent(event);
     }
 

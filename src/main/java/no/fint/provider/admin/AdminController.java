@@ -2,6 +2,7 @@ package no.fint.provider.admin;
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/provider/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
 
     @Autowired
@@ -25,14 +27,22 @@ public class AdminController {
     private EventStateService eventStateService;
 
     @Autowired
+    private SseService sseService;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
-    @RequestMapping(value = "/eventStates", method = RequestMethod.GET)
+    @RequestMapping("/sse-clients")
+    public Set<String> getSseClients() {
+        return sseService.getSseClients();
+    }
+
+    @RequestMapping("/eventStates")
     public Map<String, EventState> getEventState() {
         return eventStateService.getEventStateMap();
     }
 
-    @RequestMapping(value = "/audit/events", method = RequestMethod.GET)
+    @RequestMapping("/audit/events")
     public List<MongoAuditEvent> getAllEvents() {
         return mongoTemplate.findAll(MongoAuditEvent.class);
     }

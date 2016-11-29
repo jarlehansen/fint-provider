@@ -55,4 +55,8 @@ public class SseService {
     Optional<SseEmitter> getSseEmitter(String orgId) {
         return Optional.ofNullable(emitters.get(orgId));
     }
+
+    public Set<String> getSseClients() {
+        return emitters.keySet();
+    }
 }
