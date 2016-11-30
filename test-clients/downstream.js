@@ -1,19 +1,14 @@
-const fs = require('fs')
 const uuid = require('uuid')
-const YAML = require('yamljs')
 const amqp = require('amqplib')
 
 console.log('Usage: npm run downstream <rabbitmq-password> <orgId>')
 
-const ymlConfig = fs.readFileSync('../src/main/resources/application-local.yml', 'utf-8')
-const springConfig = YAML.parse(ymlConfig)
-
 const config = {
-  host: springConfig.spring.rabbitmq.host,
-  user: springConfig.spring.rabbitmq.username,
-  vhost: springConfig.spring.rabbitmq['virtual-host'],
-  password: process.argv[2],
-  orgId: process.argv[3]
+    host: 'localhost',
+    user: 'guest',
+    password: 'guest',
+    vhost: '',
+    orgId: process.argv[2]
 }
 
 const message = {
@@ -25,10 +20,8 @@ const message = {
     "source": "fk",
     "client": "vfs",
     "message": null,
-    "data": [
-      'test1', 'test2'
-    ]
-  }
+    "data": []
+}
 
 const connectionString = `amqp://${config.user}:${config.password}@${config.host}:5672/${config.vhost}`
 amqp.connect(connectionString).then(function(conn) {

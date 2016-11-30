@@ -1,5 +1,6 @@
 const EventSource = require('eventsource')
-const http = require('https')
+const http = require('http')
+const uuid = require('uuid')
 const sleep = require('sleep')
 
 console.log('Usage: npm run sse <orgId>')
@@ -10,7 +11,8 @@ const headers = {
     'x-org-id': orgId
   }
 }
-const es = new EventSource('https://api.felleskomponent.no/arbeidstakere/provider/sse', headers)
+
+const es = new EventSource(`http://localhost:8080/provider/sse/${uuid()}`, headers)
 
 es.on('event', (e) => {
   console.log('Received event data:', e.data)
@@ -20,8 +22,8 @@ es.on('event', (e) => {
   event.status = 'PROVIDER_ACCEPTED'
 
   var options = {
-    hostname: 'api.felleskomponent.no',
-    //port: 443,
+    hostname: 'localhost',
+    port: 8080,
     path: '',
     method: 'POST',
     headers: {
@@ -31,7 +33,7 @@ es.on('event', (e) => {
   }
 
   var postResponse = function(response) {
-    console.log('POST status:', response)
+    console.log('POST status:', response.statusCode)
     sleep.sleep(2)
     event.status = 'PROVIDER_RESPONSE'
     event.data = [{
@@ -40,9 +42,9 @@ es.on('event', (e) => {
       key2: 'value2'
     }]
 
-    options.path = '/arbeidstakere/provider/response'
+    options.path = '/provider/response'
     var responseRequest = http.request(options, (response) => {
-      console.log('POST response:', response)
+      console.log('POST response:', response.statusCode)
     })
 
     console.log('Sending response request')
@@ -50,7 +52,7 @@ es.on('event', (e) => {
     responseRequest.end()
   }
 
-  options.path = '/arbeidstakere/provider/status'
+  options.path = '/provider/status'
   var statusRequest = http.request(options, postResponse)
   console.log('Sending status request')
   statusRequest.write(JSON.stringify(event))
