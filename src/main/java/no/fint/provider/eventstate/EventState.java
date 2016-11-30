@@ -1,11 +1,19 @@
 package no.fint.provider.eventstate;
 
+import lombok.Getter;
+import lombok.Setter;
 import no.fint.event.model.Event;
 
 import java.io.Serializable;
 
 public class EventState implements Serializable {
+    @Getter
     private long timestamp;
+    @Getter
+    @Setter
+    private String replyTo;
+    @Getter
+    @Setter
     private Event event;
 
     public EventState() {
@@ -15,17 +23,5 @@ public class EventState implements Serializable {
     public EventState(Event e) {
         timestamp = System.currentTimeMillis();
         event = e;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public Event getEvent() {
-        return event;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
     }
 }

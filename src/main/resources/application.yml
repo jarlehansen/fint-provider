@@ -12,6 +12,7 @@ spring:
     multiplier: 1.5
 
 logging.level.org.springframework.retry.support.RetryTemplate: DEBUG
+logging.level.org.apache.coyote.http11.Http11Processor: WARN
 
 fint:
  events:

@@ -20,7 +20,6 @@ public class JanitorService {
 
     @Scheduled(fixedDelayString = "${fint.provider.eventstate.run-interval:10000}")
     public void run() {
-        log.info("Starting JanitorService");
         Map<String, EventState> eventStateMap = eventStateService.getEventStateMap();
         eventStateMap.forEach((s, eventState) -> {
             if ((System.currentTimeMillis() - eventState.getTimestamp()) > eventStateTimeToLive) {

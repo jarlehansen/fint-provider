@@ -1,5 +1,6 @@
 package no.fint.provider.events.sse;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
@@ -8,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.Optional;
 
 @Slf4j
 @RequestMapping(value = "/provider/sse")
@@ -22,20 +21,17 @@ public class SseController {
     @Autowired
     private FintEvents fintEvents;
 
+    @Synchronized
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable(required = false) String id) {
-        if (id != null) {
-            log.info("id: {}", id);
-        }
-
-        log.info("{} connected", orgId);
         if (sseService.newListener(orgId)) {
+            log.info("id: {}", id);
+            log.info("{} connected", orgId);
             SseEmitter emitter = sseService.subscribe(orgId);
             fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
             return emitter;
         } else {
-            Optional<SseEmitter> sseEmitter = sseService.getSseEmitter(orgId);
-            return (sseEmitter.isPresent()) ? sseEmitter.get() : null;
+            return null;
         }
     }
 
