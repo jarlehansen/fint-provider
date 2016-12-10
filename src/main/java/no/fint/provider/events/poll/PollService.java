@@ -25,7 +25,7 @@ public class PollService {
     private FintAuditService fintAuditService;
 
     public Optional<Event> readEvent(String orgId) {
-        Optional<Event> optionalEvent = events.readDownstreamObject(orgId, Event.class);
+        Optional<Event> optionalEvent = events.readDownstream(orgId, Event.class);
         if (optionalEvent.isPresent()) {
             Event event = optionalEvent.get();
             event.setStatus(Status.DELIVERED_TO_PROVIDER);

@@ -17,11 +17,17 @@ public class EventState implements Serializable {
     private Event event;
 
     public EventState() {
-        timestamp = System.currentTimeMillis();
+        this.timestamp = System.currentTimeMillis();
     }
 
-    public EventState(Event e) {
-        timestamp = System.currentTimeMillis();
-        event = e;
+    public EventState(Event event) {
+        this.timestamp = System.currentTimeMillis();
+        this.event = event;
+    }
+
+    public EventState(String replyTo, Event event) {
+        this.timestamp = System.currentTimeMillis();
+        this.replyTo = replyTo;
+        this.event = event;
     }
 }

@@ -25,6 +25,10 @@ public class EventStateService {
         redisRepository.add(new EventState(event));
     }
 
+    public void addEventState(String replyTo, Event event) {
+        redisRepository.add(new EventState(replyTo, event));
+    }
+
     public Event getEvent(Event event) {
         EventState eventState = redisRepository.get(event.getCorrId());
         return eventState.getEvent();

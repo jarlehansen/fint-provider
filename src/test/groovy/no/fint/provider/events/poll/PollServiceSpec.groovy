@@ -24,7 +24,7 @@ class PollServiceSpec extends Specification {
         def event = pollService.readEvent('hfk.no')
 
         then:
-        1 * fintEvents.readDownstreamObject('hfk.no', Event) >> Optional.empty()
+        1 * fintEvents.readDownstream('hfk.no', Event) >> Optional.empty()
         !event.isPresent()
     }
 
@@ -33,7 +33,7 @@ class PollServiceSpec extends Specification {
         def event = pollService.readEvent('hfk.no')
 
         then:
-        1 * fintEvents.readDownstreamObject('hfk.no', Event) >> Optional.of(new Event('hfk.no', 'test', 'test', 'test'))
+        1 * fintEvents.readDownstream('hfk.no', Event) >> Optional.of(new Event('hfk.no', 'test', 'test', 'test'))
         1 * eventStateService.addEventState(_ as Event)
         1 * fintAuditService.audit(_ as Event, _ as Boolean)
         event.isPresent()

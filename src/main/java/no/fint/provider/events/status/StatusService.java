@@ -33,7 +33,7 @@ public class StatusService {
                     event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                     event.setStatus(Status.UPSTREAM_QUEUE);
                     fintAuditService.audit(event, true);
-                    fintEvents.sendUpstreamObject(event.getOrgId(), event);
+                    fintEvents.sendUpstream(event.getOrgId(), event);
                     eventStateService.clearEventState(event);
                     log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 } catch (IllegalArgumentException e) {
