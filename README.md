@@ -1,5 +1,7 @@
 # FINT provider
 
+[![Build Status](https://travis-ci.org/FINTprosjektet/fint-provider.svg?branch=master)](https://travis-ci.org/FINTprosjektet/fint-provider)
+
 ## Configuration
 
 | Key | Default value |
