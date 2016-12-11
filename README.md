@@ -1,6 +1,7 @@
 # FINT provider
 
 [![Build Status](https://travis-ci.org/FINTprosjektet/fint-provider.svg?branch=master)](https://travis-ci.org/FINTprosjektet/fint-provider)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1b8e2b2813394091b02048f6db310547)](https://www.codacy.com/app/FINT/fint-provider?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FINTprosjektet/fint-provider&amp;utm_campaign=Badge_Grade)
 
 ## Configuration
 
