@@ -27,14 +27,14 @@ public class StatusService {
         if (eventStateService.exists(event)) {
             fintAuditService.audit(event, true);
             if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
-                eventStateService.updateEventState(event);
+                eventStateService.update(event);
             } else {
                 try {
                     event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                     event.setStatus(Status.UPSTREAM_QUEUE);
                     fintAuditService.audit(event, true);
                     fintEvents.sendUpstream(event.getOrgId(), event);
-                    eventStateService.clearEventState(event);
+                    eventStateService.clear(event);
                     log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 } catch (IllegalArgumentException e) {
                     log.error("Unable to create json for event object", e);

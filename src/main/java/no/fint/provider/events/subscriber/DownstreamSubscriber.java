@@ -5,10 +5,13 @@ import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.provider.events.sse.SseService;
+import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
 import no.fint.provider.exceptions.EventNotProviderApprovedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -25,8 +28,8 @@ public class DownstreamSubscriber {
 
     public void receive(Event event) {
         if (eventStateService.exists(event)) {
-            Event persistedEvent = eventStateService.getEvent(event);
-            handleEvent(persistedEvent);
+            Optional<EventState> eventState = eventStateService.getEventState(event);
+            eventState.ifPresent(es -> handleEvent(es.getEvent()));
         } else {
             sendInitialEvent(event);
         }
@@ -44,7 +47,7 @@ public class DownstreamSubscriber {
     private void sendInitialEvent(Event event) {
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         sseService.send(event);
-        eventStateService.addEventState(event);
+        eventStateService.add(event);
         fintAuditService.audit(event, true);
 
         try {

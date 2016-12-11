@@ -16,15 +16,15 @@ public class JanitorService {
     private long eventStateTimeToLive;
 
     @Autowired
-    EventStateService eventStateService;
+    private EventStateService eventStateService;
 
     @Scheduled(fixedDelayString = "${fint.provider.eventstate.run-interval:10000}")
     public void run() {
-        Map<String, EventState> eventStateMap = eventStateService.getEventStateMap();
+        Map<String, EventState> eventStateMap = eventStateService.getMap();
         eventStateMap.forEach((s, eventState) -> {
             if ((System.currentTimeMillis() - eventState.getTimestamp()) > eventStateTimeToLive) {
                 log.info("Clearing event {}", eventState.getEvent().getCorrId());
-                eventStateService.clearEventState(eventState.getEvent());
+                eventStateService.clear(eventState.getEvent());
             }
         });
     }

@@ -8,6 +8,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.embedded.RedisServer;
 
@@ -63,7 +64,8 @@ public class RedisConfiguration {
     public RedisTemplate<String, EventState> redisTemplate() {
         RedisTemplate<String, EventState> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
-        template.setDefaultSerializer(new StringRedisSerializer());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(EventState.class));
         return template;
     }
 

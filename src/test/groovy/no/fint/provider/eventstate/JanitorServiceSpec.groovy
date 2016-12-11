@@ -19,14 +19,14 @@ class JanitorServiceSpec extends Specification {
         Event event2 = new Event("org2", "fk2", "GET", "client2")
         def eventStates = [(event1.corrId): new EventState(event1), (event2.corrId): new EventState(event2)]
 
-        eventStateService.addEventState(event1)
-        eventStateService.addEventState(event2)
+        eventStateService.add(event1)
+        eventStateService.add(event2)
 
         when:
         janitorService.run()
 
         then:
-        1 * eventStateService.getEventStateMap() >> eventStates
-        2 * eventStateService.clearEventState(_ as Event)
+        1 * eventStateService.getMap() >> eventStates
+        2 * eventStateService.clear(_ as Event)
     }
 }

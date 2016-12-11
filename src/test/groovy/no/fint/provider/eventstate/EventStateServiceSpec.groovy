@@ -1,25 +1,19 @@
 package no.fint.provider.eventstate
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
-import no.fint.provider.TestApplication
+import no.fint.provider.testutils.LocalProfileTest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ActiveProfiles("local")
-@ContextConfiguration
-@SpringBootTest(classes = TestApplication)
+@LocalProfileTest
 class EventStateServiceSpec extends Specification {
 
     @Autowired
     private EventStateService eventStateService
 
     @Autowired
-    private RedisRepository repository
+    private EventStateRepository repository
 
     @Autowired
     private RedisTemplate redisTemplate
@@ -34,8 +28,7 @@ class EventStateServiceSpec extends Specification {
     def "Check if EventState is present i EventStateService"() {
         given:
         Event event1 = new Event("org1", "fk1", "GET", "client1")
-        eventStateService.addEventState(event1)
-        println new ObjectMapper().writeValueAsString(new Event("hfk.no", "fk", "GET", "client"))
+        eventStateService.add(event1)
 
         when:
         boolean exists1 = eventStateService.exists(event1)
@@ -51,24 +44,24 @@ class EventStateServiceSpec extends Specification {
         Event event = new Event("org", "fk", "GET", "client")
 
         when:
-        eventStateService.addEventState(event)
+        eventStateService.add(event)
 
         then:
-        eventStateService.getEventStateMap().size() == 1
+        eventStateService.getMap().size() == 1
 
     }
 
     def "Clear EventState"() {
         given:
         Event event = new Event("org", "fk", "GET", "client")
-        eventStateService.addEventState(event)
+        eventStateService.add(event)
 
         when:
-        eventStateService.clearEventState(event)
+        eventStateService.clear(event)
 
         then:
         !eventStateService.exists(event)
-        eventStateService.getEventStateMap().size() == 0
+        eventStateService.getMap().size() == 0
     }
 
 }

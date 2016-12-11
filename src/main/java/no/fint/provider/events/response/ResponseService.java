@@ -29,7 +29,7 @@ public class ResponseService {
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintAuditService.audit(event, true);
             fintEvents.sendUpstream(event.getOrgId(), event);
-            eventStateService.clearEventState(event);
+            eventStateService.clear(event);
             return true;
         } else {
             event.setStatus(Status.PROVIDER_RESPONSE_ORPHANT);

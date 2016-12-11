@@ -20,7 +20,7 @@ public class MockData {
 
         for (int i = 0; i < 10; i++) {
             event = new Event("org" + i, "fk", "GET", "client" + 1);
-            eventStateService.addEventState(event);
+            eventStateService.add(event);
         }
 
 

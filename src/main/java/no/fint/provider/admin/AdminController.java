@@ -3,7 +3,7 @@ package no.fint.provider.admin;
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
-import no.fint.provider.eventstate.EventStateService;
+import no.fint.provider.eventstate.EventStateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
@@ -20,7 +20,7 @@ import java.util.Set;
 public class AdminController {
 
     @Autowired
-    private EventStateService eventStateService;
+    private EventStateRepository eventStateRepository;
 
     @Autowired
     private SseService sseService;
@@ -35,7 +35,7 @@ public class AdminController {
 
     @RequestMapping("/eventStates")
     public Map<String, EventState> getEventState() {
-        return eventStateService.getEventStateMap();
+        return eventStateRepository.getMap();
     }
 
     @RequestMapping("/audit/events")

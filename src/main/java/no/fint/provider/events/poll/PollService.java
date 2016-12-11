@@ -29,7 +29,7 @@ public class PollService {
         if (optionalEvent.isPresent()) {
             Event event = optionalEvent.get();
             event.setStatus(Status.DELIVERED_TO_PROVIDER);
-            eventStateService.addEventState(event);
+            eventStateService.add(event);
             fintAuditService.audit(event, true);
             return Optional.of(event);
         }

@@ -6,44 +6,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class EventStateService {
 
     @Autowired
-    private RedisRepository redisRepository;
+    private EventStateRepository eventStateRepository;
 
     public boolean exists(Event event) {
-        return redisRepository.exists(event.getCorrId());
+        return eventStateRepository.exists(event.getCorrId());
     }
 
     public boolean exists(Event event, Status status) {
-        return redisRepository.exists(event.getCorrId(), status);
+        return eventStateRepository.exists(event.getCorrId(), status);
     }
 
-    public void addEventState(Event event) {
-        redisRepository.add(new EventState(event));
+    public void add(Event event) {
+        eventStateRepository.add(new EventState(event));
     }
 
-    public void addEventState(String replyTo, Event event) {
-        redisRepository.add(new EventState(replyTo, event));
+    public void add(String replyTo, Event event) {
+        eventStateRepository.add(new EventState(replyTo, event));
     }
 
-    public Event getEvent(Event event) {
-        EventState eventState = redisRepository.get(event.getCorrId());
-        return eventState.getEvent();
+    public void update(Event event) {
+        eventStateRepository.add(new EventState(event));
     }
 
-    public void updateEventState(Event event) {
-        redisRepository.update(new EventState(event));
+    public Optional<EventState> getEventState(Event event) {
+        return eventStateRepository.get(event.getCorrId());
     }
 
-    public void clearEventState(Event event) {
-        redisRepository.remove(event.getCorrId());
+    public void clear(Event event) {
+        eventStateRepository.remove(event.getCorrId());
     }
 
-    public Map<String, EventState> getEventStateMap() {
-        return redisRepository.getMap();
+    public Map<String, EventState> getMap() {
+        return eventStateRepository.getMap();
     }
 
 }

@@ -34,7 +34,7 @@ class PollServiceSpec extends Specification {
 
         then:
         1 * fintEvents.readDownstream('hfk.no', Event) >> Optional.of(new Event('hfk.no', 'test', 'test', 'test'))
-        1 * eventStateService.addEventState(_ as Event)
+        1 * eventStateService.add(_ as Event)
         1 * fintAuditService.audit(_ as Event, _ as Boolean)
         event.isPresent()
     }
