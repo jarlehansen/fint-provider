@@ -1,7 +1,6 @@
 package no.fint.provider.admin;
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
-import no.fint.events.FintEvents;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
@@ -19,9 +18,6 @@ import java.util.Set;
 @RestController
 @RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
-
-    @Autowired
-    private FintEvents fintEvents;
 
     @Autowired
     private EventStateService eventStateService;
