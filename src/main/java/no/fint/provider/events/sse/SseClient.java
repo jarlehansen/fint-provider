@@ -1,9 +1,17 @@
 package no.fint.provider.events.sse;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class SseClient {
+    private String id;
     private String orgId;
-    private long registered;
+    private SseEmitter emitter;
+
+    public void close() {
+        emitter.complete();
+    }
 }

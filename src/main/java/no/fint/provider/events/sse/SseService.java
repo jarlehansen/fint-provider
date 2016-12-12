@@ -2,100 +2,69 @@ package no.fint.provider.events.sse;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class SseService {
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE;
 
-    private final ConcurrentHashMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, SseClient> clients = new ConcurrentHashMap<>();
 
     @PreDestroy
     public void shutdown() {
-        emitters.values().forEach(ResponseBodyEmitter::complete);
-    }
-
-    public boolean newListener(String orgId) {
-        return !(emitters.containsKey(orgId));
+        clients.values().forEach(SseClient::close);
     }
 
     public SseEmitter subscribe(String orgId) {
-        if (emitters.containsKey(orgId)) {
-            SseEmitter emitter = emitters.get(orgId);
-            emitter.complete();
-            emitters.remove(orgId);
-        }
-
+        String id = UUID.randomUUID().toString();
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         emitter.onCompletion(() -> {
-            log.info("onCompletion called for {}", orgId);
-            emitters.remove(orgId);
+            log.info("onCompletion called for {}, id: {}", orgId);
+            clients.remove(id);
         });
         emitter.onTimeout(() -> {
-            log.info("onTimeout called for {}", orgId);
-            emitters.remove(orgId);
+            log.info("onTimeout called for {}, id: {}", orgId);
+            clients.remove(id);
         });
-        emitters.put(orgId, emitter);
+
+        SseClient sseClient = new SseClient(id, orgId, emitter);
+        clients.put(id, sseClient);
         return emitter;
     }
 
     public void send(Event event) {
         String orgId = event.getOrgId();
-        SseEmitter emitter = emitters.get(orgId);
-        if (emitter != null) {
+        List<SseClient> orgClients = this.clients.values().stream().filter(client -> client.getOrgId().equals(orgId)).collect(Collectors.toList());
+        orgClients.forEach(orgClient -> {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
-                emitter.send(builder);
+                orgClient.getEmitter().send(builder);
             } catch (IOException | IllegalStateException e) {
-                removeEmitter(orgId);
-            }
-        }
-    }
-
-    @Scheduled(fixedDelayString = "3000")
-    public void ping() {
-        List<String> toBeRemoved = new ArrayList<>();
-        SseEmitter.SseEventBuilder builder = SseEmitter.event().id(UUID.randomUUID().toString()).name("ping");
-        for (Map.Entry<String, SseEmitter> entry : emitters.entrySet()) {
-            String orgId = entry.getKey();
-            try {
-                SseEmitter emitter = emitters.get(orgId);
-                if (emitter == null) {
-                    toBeRemoved.add(orgId);
-                } else {
-                    emitter.send(builder);
+                log.warn("Removing subscriber {}", orgId);
+                if(orgClient.getEmitter() != null) {
+                    orgClient.getEmitter().complete();
                 }
-            } catch (IllegalStateException | IOException e) {
-                toBeRemoved.add(orgId);
+
+                clients.remove(orgClient.getId());
             }
-        }
-
-        toBeRemoved.forEach(this::removeEmitter);
+        });
     }
 
-    private void removeEmitter(String orgId) {
-        log.warn("Removing subscriber {}", orgId);
-        SseEmitter emitter = emitters.get(orgId);
-        if (emitter != null) {
-            emitter.complete();
-        }
-        emitters.remove(orgId);
-    }
+    public Map<String, Integer> getSseClients() {
+        Map<String, Integer> sseClients = new HashMap<>();
+        clients.keySet().fo;
 
-    Optional<SseEmitter> getSseEmitter(String orgId) {
-        return Optional.ofNullable(emitters.get(orgId));
-    }
+        Set<String> keys = emitters.keySet();
 
-    public Set<String> getSseClients() {
+
         return emitters.keySet();
     }
 }
