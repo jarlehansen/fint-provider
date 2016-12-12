@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -29,7 +28,7 @@ public class AdminController {
     private MongoTemplate mongoTemplate;
 
     @RequestMapping("/sse-clients")
-    public Set<String> getSseClients() {
+    public Map<String, Integer> getSseClients() {
         return sseService.getSseClients();
     }
 

@@ -1,10 +1,10 @@
 package no.fint.provider.events.sse;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class SseClient {
     private String id;

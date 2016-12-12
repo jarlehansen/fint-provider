@@ -7,7 +7,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -49,7 +52,7 @@ public class SseService {
                 orgClient.getEmitter().send(builder);
             } catch (IOException | IllegalStateException e) {
                 log.warn("Removing subscriber {}", orgId);
-                if(orgClient.getEmitter() != null) {
+                if (orgClient.getEmitter() != null) {
                     orgClient.getEmitter().complete();
                 }
 
@@ -60,11 +63,15 @@ public class SseService {
 
     public Map<String, Integer> getSseClients() {
         Map<String, Integer> sseClients = new HashMap<>();
-        clients.keySet().fo;
-
-        Set<String> keys = emitters.keySet();
-
-
-        return emitters.keySet();
+        clients.values().forEach(client -> {
+            String orgId = client.getOrgId();
+            Integer numOfClients = sseClients.get(orgId);
+            if (numOfClients == null) {
+                sseClients.put(orgId, 1);
+            } else {
+                sseClients.put(orgId, ++numOfClients);
+            }
+        });
+        return sseClients;
     }
 }

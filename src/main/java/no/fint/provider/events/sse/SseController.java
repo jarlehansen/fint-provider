@@ -24,15 +24,11 @@ public class SseController {
     @Synchronized
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable(required = false) String id) {
-        if (sseService.newListener(orgId)) {
-            log.info("id: {}", id);
-            log.info("{} connected", orgId);
-            SseEmitter emitter = sseService.subscribe(orgId);
-            fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
-            return emitter;
-        } else {
-            return null;
-        }
+        log.info("id: {}", id);
+        log.info("{} connected", orgId);
+        SseEmitter emitter = sseService.subscribe(orgId);
+        fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
+        return emitter;
     }
 
     @Profile("test")
