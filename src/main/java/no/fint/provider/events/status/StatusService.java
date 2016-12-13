@@ -26,6 +26,7 @@ public class StatusService {
     public void updateEventState(Event event) {
         if (eventStateService.exists(event)) {
             fintAuditService.audit(event, true);
+
             if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
                 eventStateService.update(event);
             } else {

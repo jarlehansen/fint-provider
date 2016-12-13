@@ -26,8 +26,10 @@ public class ResponseService {
         log.info("Event received: {}", event.getCorrId());
         if (eventStateService.exists(event)) {
             fintAuditService.audit(event, true);
+
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintAuditService.audit(event, true);
+
             fintEvents.sendUpstream(event.getOrgId(), event);
             eventStateService.clear(event);
             return true;
