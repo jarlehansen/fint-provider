@@ -1,77 +1,73 @@
 package no.fint.provider.events.sse;
 
+import com.google.common.collect.EvictingQueue;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class SseService {
+    private static final int MAX_NUMBER_OF_EMITTERS = 20;
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE;
 
-    private ConcurrentHashMap<String, SseClient> clients = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, EvictingQueue<SseEmitter>> clients = new ConcurrentHashMap<>();
 
     @PreDestroy
     public void shutdown() {
-        clients.values().forEach(SseClient::close);
+        clients.values().forEach(emitters -> emitters.forEach(SseEmitter::complete));
     }
 
+    @Synchronized
     public SseEmitter subscribe(String orgId) {
-        String id = UUID.randomUUID().toString();
+        EvictingQueue<SseEmitter> sseEmitters = clients.get(orgId);
+        if (sseEmitters == null) {
+            sseEmitters = EvictingQueue.create(MAX_NUMBER_OF_EMITTERS);
+        }
+
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         emitter.onCompletion(() -> {
             log.info("onCompletion called for {}, id: {}", orgId);
-            clients.remove(id);
+            removeEmitter(orgId, emitter);
         });
         emitter.onTimeout(() -> {
             log.info("onTimeout called for {}, id: {}", orgId);
-            clients.remove(id);
+            removeEmitter(orgId, emitter);
         });
 
-        SseClient sseClient = new SseClient(id, orgId, emitter);
-        clients.put(id, sseClient);
+        sseEmitters.add(emitter);
+        clients.put(orgId, sseEmitters);
         return emitter;
     }
 
+    private void removeEmitter(String orgId, SseEmitter emitter) {
+        if (orgId != null && emitter != null) {
+            EvictingQueue<SseEmitter> emitters = clients.get(orgId);
+            if (emitters != null) {
+                emitters.remove(emitter);
+            }
+        }
+    }
+
     public void send(Event event) {
-        String orgId = event.getOrgId();
-        List<SseClient> orgClients = this.clients.values().stream().filter(client -> client.getOrgId().equals(orgId)).collect(Collectors.toList());
-        orgClients.forEach(orgClient -> {
+        clients.get(event.getOrgId()).forEach(emitter -> {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
-                orgClient.getEmitter().send(builder);
-            } catch (IOException | IllegalStateException e) {
-                log.warn("Removing subscriber {}", orgId);
-                if (orgClient.getEmitter() != null) {
-                    orgClient.getEmitter().complete();
-                }
-
-                clients.remove(orgClient.getId());
+                emitter.send(builder);
+            } catch (Exception e) {
+                log.debug("Exception when trying to send message to SseEmitter", e);
+                log.warn("Removing subscriber {}", event.getOrgId());
+                removeEmitter(event.getOrgId(), emitter);
             }
         });
     }
 
-    public Map<String, Integer> getSseClients() {
-        Map<String, Integer> sseClients = new HashMap<>();
-        clients.values().forEach(client -> {
-            String orgId = client.getOrgId();
-            Integer numOfClients = sseClients.get(orgId);
-            if (numOfClients == null) {
-                sseClients.put(orgId, 1);
-            } else {
-                sseClients.put(orgId, ++numOfClients);
-            }
-        });
-        return sseClients;
+    public ConcurrentHashMap<String, EvictingQueue<SseEmitter>> getSseClients() {
+        return clients;
     }
 }

@@ -1,5 +1,6 @@
 package no.fint.provider.admin;
 
+import com.google.common.collect.EvictingQueue;
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
@@ -10,9 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -28,7 +31,7 @@ public class AdminController {
     private MongoTemplate mongoTemplate;
 
     @RequestMapping("/sse-clients")
-    public Map<String, Integer> getSseClients() {
+    public ConcurrentHashMap<String, EvictingQueue<SseEmitter>> getSseClients() {
         return sseService.getSseClients();
     }
 

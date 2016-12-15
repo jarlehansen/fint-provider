@@ -1,6 +1,8 @@
 package no.fint.provider.events.sse
 
+import com.google.common.collect.EvictingQueue
 import no.fint.event.model.Event
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
 
 class SseServiceSpec extends Specification {
@@ -39,5 +41,20 @@ class SseServiceSpec extends Specification {
 
         then:
         noExceptionThrown()
+    }
+
+    def "Remove registered emitter on exception when trying to send message"() {
+        given:
+        def emitter = Mock(SseEmitter)
+        def clients = EvictingQueue.create(1)
+        clients.add(emitter)
+        sseService.getSseClients().put('hfk.no', clients)
+
+        when:
+        sseService.send(new Event(orgId: 'hfk.no'))
+
+        then:
+        1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IllegalStateException('Test exception') }
+        sseService.getSseClients().get('hfk.no').size() == 0
     }
 }
