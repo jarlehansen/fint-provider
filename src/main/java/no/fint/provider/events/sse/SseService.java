@@ -4,6 +4,7 @@ import com.google.common.collect.EvictingQueue;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -13,8 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 public class SseService {
-    private static final int MAX_NUMBER_OF_EMITTERS = 20;
     private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE;
+
+    @Value("${fint.provider.max-number-of-emitters:20}")
+    private int maxNumberOfEmitters;
 
     private ConcurrentHashMap<String, EvictingQueue<SseEmitter>> clients = new ConcurrentHashMap<>();
 
@@ -27,7 +30,7 @@ public class SseService {
     public SseEmitter subscribe(String orgId) {
         EvictingQueue<SseEmitter> sseEmitters = clients.get(orgId);
         if (sseEmitters == null) {
-            sseEmitters = EvictingQueue.create(MAX_NUMBER_OF_EMITTERS);
+            sseEmitters = EvictingQueue.create(maxNumberOfEmitters);
         }
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
