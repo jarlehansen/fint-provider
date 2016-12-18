@@ -1,6 +1,5 @@
 package no.fint.provider.events.sse
 
-import com.google.common.collect.EvictingQueue
 import no.fint.event.model.Event
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
@@ -9,7 +8,7 @@ class SseServiceSpec extends Specification {
     private SseService sseService
 
     void setup() {
-        sseService = new SseService()
+        sseService = new SseService(maxNumberOfEmitters: 5)
     }
 
     def "Return SseEmitter when subscribing with new orgId"() {
@@ -46,7 +45,7 @@ class SseServiceSpec extends Specification {
     def "Remove registered emitter on exception when trying to send message"() {
         given:
         def emitter = Mock(SseEmitter)
-        def clients = EvictingQueue.create(1)
+        def clients = SseEmitters.with(5)
         clients.add(emitter)
         sseService.getSseClients().put('hfk.no', clients)
 

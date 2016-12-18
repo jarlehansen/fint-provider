@@ -1,6 +1,5 @@
 package no.fint.provider.events.sse;
 
-import com.google.common.collect.EvictingQueue;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
@@ -19,7 +18,7 @@ public class SseService {
     @Value("${fint.provider.max-number-of-emitters:20}")
     private int maxNumberOfEmitters;
 
-    private ConcurrentHashMap<String, EvictingQueue<SseEmitter>> clients = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, SseEmitters> clients = new ConcurrentHashMap<>();
 
     @PreDestroy
     public void shutdown() {
@@ -28,9 +27,9 @@ public class SseService {
 
     @Synchronized
     public SseEmitter subscribe(String orgId) {
-        EvictingQueue<SseEmitter> sseEmitters = clients.get(orgId);
+        SseEmitters sseEmitters = clients.get(orgId);
         if (sseEmitters == null) {
-            sseEmitters = EvictingQueue.create(maxNumberOfEmitters);
+            sseEmitters = SseEmitters.with(maxNumberOfEmitters, this::closeEmitter);
         }
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
@@ -48,11 +47,18 @@ public class SseService {
         return emitter;
     }
 
+    private Void closeEmitter(SseEmitter emitter) {
+        if (emitter != null) {
+            emitter.complete();
+        }
+        return null;
+    }
+
     private void removeEmitter(String orgId, SseEmitter emitter) {
         if (orgId != null && emitter != null) {
-            EvictingQueue<SseEmitter> emitters = clients.get(orgId);
-            if (emitters != null) {
-                emitters.remove(emitter);
+            SseEmitters sseEmitters = clients.get(orgId);
+            if (sseEmitters != null) {
+                sseEmitters.remove(emitter);
             }
         }
     }
@@ -70,7 +76,7 @@ public class SseService {
         });
     }
 
-    public ConcurrentHashMap<String, EvictingQueue<SseEmitter>> getSseClients() {
+    public ConcurrentHashMap<String, SseEmitters> getSseClients() {
         return clients;
     }
 }
