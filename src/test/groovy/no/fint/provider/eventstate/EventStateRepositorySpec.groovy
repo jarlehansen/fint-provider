@@ -1,7 +1,6 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
-import no.fint.event.model.Status
 import no.fint.provider.testutils.LocalProfileTest
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
@@ -18,13 +17,13 @@ class EventStateRepositorySpec extends Specification {
 
         when:
         repository.add(eventState)
-        def afterAdd = repository.exists('corrId')
+        def afterAdd = repository.get('corrId')
         repository.remove('corrId')
-        def afterRemove = repository.exists('corrId')
+        def afterRemove = repository.get('corrId')
 
         then:
-        afterAdd
-        !afterRemove
+        afterAdd.isPresent()
+        !afterRemove.isPresent()
     }
 
     def "Add event state and check map with correlation id and value"() {
@@ -38,18 +37,6 @@ class EventStateRepositorySpec extends Specification {
         then:
         states.keySet()[0] == 'corrId'
         states.values()[0].event.corrId == 'corrId'
-    }
-
-    def "Check if Event with status exists"() {
-        given:
-        def eventState = new EventState(new Event(corrId: 'corrId', status: Status.NEW))
-
-        when:
-        repository.add(eventState)
-        def exists = repository.exists('corrId', Status.NEW)
-
-        then:
-        exists
     }
 
 }

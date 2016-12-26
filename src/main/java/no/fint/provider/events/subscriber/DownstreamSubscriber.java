@@ -7,7 +7,7 @@ import no.fint.event.model.Status;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
-import no.fint.provider.exceptions.EventNotProviderApprovedException;
+import no.fint.provider.exceptions.EventNotApprovedByProviderException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +38,7 @@ public class DownstreamSubscriber {
     private void handleEvent(Event event) {
         if (eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)) {
             sseService.send(event);
-            throw new EventNotProviderApprovedException();
+            throw new EventNotApprovedByProviderException();
         } else {
             log.info("Event with corrId:{} approved by adapter. Consuming message from queue", event.getCorrId());
         }
@@ -56,7 +56,7 @@ public class DownstreamSubscriber {
         }
 
         if (eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)) {
-            throw new EventNotProviderApprovedException();
+            throw new EventNotApprovedByProviderException();
         } else {
             log.info("Event with corrId:{} approved by adapter. Consuming message from queue", event.getCorrId());
         }

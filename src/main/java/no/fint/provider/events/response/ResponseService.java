@@ -5,9 +5,12 @@ import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
+import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,13 +27,19 @@ public class ResponseService {
 
     public boolean handleAdapterResponse(Event event) {
         log.info("Event received: {}", event.getCorrId());
-        if (eventStateService.exists(event)) {
+        Optional<EventState> eventState = eventStateService.get(event.getCorrId());
+        if (eventState.isPresent()) {
             fintAuditService.audit(event, true);
 
-            event.setStatus(Status.UPSTREAM_QUEUE);
+            String replyTo = eventState.get().getReplyTo();
+            if (replyTo == null) {
+                event.setStatus(Status.UPSTREAM_QUEUE);
+                fintEvents.sendUpstream(event.getOrgId(), event);
+            } else {
+                fintEvents.reply(replyTo, event);
+                event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
+            }
             fintAuditService.audit(event, true);
-
-            fintEvents.sendUpstream(event.getOrgId(), event);
             eventStateService.clear(event);
             return true;
         } else {

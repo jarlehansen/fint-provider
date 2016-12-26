@@ -14,12 +14,25 @@ public class EventStateService {
     @Autowired
     private EventStateRepository eventStateRepository;
 
+    public Optional<EventState> get(String corrId) {
+        return eventStateRepository.get(corrId);
+    }
+
     public boolean exists(Event event) {
-        return eventStateRepository.exists(event.getCorrId());
+        Optional<EventState> eventState = eventStateRepository.get(event.getCorrId());
+        return eventState.isPresent();
     }
 
     public boolean exists(Event event, Status status) {
-        return eventStateRepository.exists(event.getCorrId(), status);
+        Optional<EventState> eventState = eventStateRepository.get(event.getCorrId());
+        if (eventState.isPresent()) {
+            Event e = eventState.get().getEvent();
+            if (e != null) {
+                return (e.getStatus() == status);
+            }
+        }
+
+        return false;
     }
 
     public void add(Event event) {

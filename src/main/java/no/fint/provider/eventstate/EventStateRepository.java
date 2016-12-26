@@ -1,7 +1,6 @@
 package no.fint.provider.eventstate;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fint.event.model.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.HashOperations;
@@ -29,26 +28,12 @@ public class EventStateRepository {
         hashOps = redisTemplate.opsForHash();
     }
 
-    public boolean exists(String corrId) {
-        return hashOps.hasKey(key, corrId);
-    }
-
-    public boolean exists(String corrId, Status status) {
-        boolean exists = hashOps.hasKey(key, corrId);
-        if (!exists) {
-            return false;
-        }
-
-        EventState eventState = hashOps.get(key, corrId);
-        return (eventState.getEvent().getStatus() == status);
-    }
-
     public void add(EventState eventState) {
         hashOps.put(key, eventState.getEvent().getCorrId(), eventState);
     }
 
     public Optional<EventState> get(String corrId) {
-        if (exists(corrId)) {
+        if (hashOps.hasKey(key, corrId)) {
             return Optional.ofNullable(hashOps.get(key, corrId));
         }
         return Optional.empty();

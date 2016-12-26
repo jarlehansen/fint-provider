@@ -1,6 +1,7 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
+import no.fint.event.model.Status
 import no.fint.provider.testutils.LocalProfileTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.RedisTemplate
@@ -25,23 +26,38 @@ class EventStateServiceSpec extends Specification {
         })
     }
 
-    def "Check if EventState is present i EventStateService"() {
+    def "Check if EventState is present"() {
         given:
-        Event event1 = new Event("org1", "fk1", "GET", "client1")
-        eventStateService.add(event1)
+        def event = new Event('org1', 'fk1', 'GET', 'client1')
+        eventStateService.add(event)
 
         when:
-        boolean exists1 = eventStateService.exists(event1)
-        boolean exists2 = eventStateService.exists(new Event("org2", "fk2", "GET", "client2"))
+        boolean exists1 = eventStateService.exists(event)
+        boolean exists2 = eventStateService.exists(new Event('org2', 'fk2', 'GET', 'client2'))
 
         then:
         exists1
         !exists2
     }
 
+    def "Check if EventState with status DELIVERED_TO_PROVIDER is present"() {
+        given:
+        def event = new Event('org1', 'fk1', 'GET', 'client1')
+        event.setStatus(Status.DELIVERED_TO_PROVIDER)
+        eventStateService.add(event)
+
+        when:
+        boolean correctStatus = eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)
+        boolean wrongStatus = eventStateService.exists(event, Status.DOWNSTREAM_QUEUE)
+
+        then:
+        correctStatus
+        !wrongStatus
+    }
+
     def "Add EventState"() {
         given:
-        Event event = new Event("org", "fk", "GET", "client")
+        def event = new Event("org", "fk", "GET", "client")
 
         when:
         eventStateService.add(event)
