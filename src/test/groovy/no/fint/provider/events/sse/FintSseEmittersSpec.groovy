@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import java.util.function.Function
 
-class SseEmittersSpec extends Specification {
+class FintSseEmittersSpec extends Specification {
     private static final int MAX_SIZE = 2
     private FintSseEmitters sseEmitters
     private Function<SseEmitter, Void> removeCallback

@@ -12,7 +12,7 @@ amqp.connect(rabbit.connectionString).then((conn) => {
 
     const ok = ch.assertQueue(q, {durable: true});
     return ok.then((qok) => {
-      ch.sendToQueue(q, new Buffer(json))
+      ch.sendToQueue(q, new Buffer(json), { contentType: 'application/json'})
       console.log('Message sent to', q)
       return ch.close()
     })

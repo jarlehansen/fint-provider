@@ -12,7 +12,7 @@ const headers = {
   }
 }
 
-const es = new EventSource(`http://localhost:8080/provider/sse`, headers)
+const es = new EventSource(`http://localhost:8080/provider/sse/${uuid()}`, headers)
 
 es.on('event', (e) => {
   console.log('Received event data:', e.data)

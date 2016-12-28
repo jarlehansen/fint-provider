@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,8 +31,16 @@ public class AdminController {
     private MongoTemplate mongoTemplate;
 
     @RequestMapping("/sse-clients")
-    public ConcurrentHashMap<String, FintSseEmitters> getSseClients() {
-        return sseService.getSseClients();
+    public List<SseOrg> getSseClients() {
+        ConcurrentHashMap<String, FintSseEmitters> clients = sseService.getSseClients();
+        List<SseOrg> orgs = new ArrayList<>();
+        clients.entrySet().forEach(client -> {
+            List<String> ids = new ArrayList<>();
+            FintSseEmitters emitters = client.getValue();
+            emitters.forEach(emitter -> ids.add(emitter.getId()));
+            orgs.add(new SseOrg(client.getKey(), ids));
+        });
+        return orgs;
     }
 
     @RequestMapping("/eventStates")
