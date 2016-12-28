@@ -5,14 +5,14 @@ const sleep = require('sleep')
 
 console.log('Usage: npm run sse <orgId>')
 
-const orgId = process.argv[2]
+const orgId = (process.argv[2] === undefined) ? 'rogfk.no' : process.argv[2]
 const headers = {
   headers: {
     'x-org-id': orgId
   }
 }
 
-const es = new EventSource(`http://localhost:8080/provider/sse/${uuid()}`, headers)
+const es = new EventSource(`http://localhost:8080/provider/sse`, headers)
 
 es.on('event', (e) => {
   console.log('Received event data:', e.data)

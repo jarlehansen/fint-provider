@@ -1,25 +1,23 @@
 package no.fint.provider.events.sse;
 
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class SseEmitters implements Iterable<SseEmitter> {
+public class FintSseEmitters implements Iterable<FintSseEmitter> {
 
     private final int maxSize;
-    private final Deque<SseEmitter> emitters;
-    private Function<SseEmitter, Void> removeCallback;
+    private final Deque<FintSseEmitter> emitters;
+    private Function<FintSseEmitter, Void> removeCallback;
 
-    public SseEmitters(int maxSize, Function<SseEmitter, Void> removeCallback) {
+    public FintSseEmitters(int maxSize, Function<FintSseEmitter, Void> removeCallback) {
         this.maxSize = maxSize;
         emitters = new ArrayDeque<>(maxSize);
         this.removeCallback = removeCallback;
     }
 
-    public void add(SseEmitter emitter) {
+    public void add(FintSseEmitter emitter) {
         if (emitters.size() == maxSize) {
             if (removeCallback != null) {
                 removeCallback.apply(emitter);
@@ -30,11 +28,11 @@ public class SseEmitters implements Iterable<SseEmitter> {
         emitters.add(emitter);
     }
 
-    public void remove(SseEmitter emitter) {
+    public void remove(FintSseEmitter emitter) {
         emitters.remove(emitter);
     }
 
-    public boolean contains(SseEmitter emitter) {
+    public boolean contains(FintSseEmitter emitter) {
         return emitters.contains(emitter);
     }
 
@@ -43,15 +41,15 @@ public class SseEmitters implements Iterable<SseEmitter> {
     }
 
     @Override
-    public Iterator<SseEmitter> iterator() {
+    public Iterator<FintSseEmitter> iterator() {
         return emitters.iterator();
     }
 
-    public static SseEmitters with(int maxSize) {
-        return new SseEmitters(maxSize, null);
+    public static FintSseEmitters with(int maxSize) {
+        return new FintSseEmitters(maxSize, null);
     }
 
-    public static SseEmitters with(int maxSize, Function<SseEmitter, Void> removeCallback) {
-        return new SseEmitters(maxSize, removeCallback);
+    public static FintSseEmitters with(int maxSize, Function<FintSseEmitter, Void> removeCallback) {
+        return new FintSseEmitters(maxSize, removeCallback);
     }
 }

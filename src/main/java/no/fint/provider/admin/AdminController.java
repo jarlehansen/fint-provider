@@ -1,7 +1,7 @@
 package no.fint.provider.admin;
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
-import no.fint.provider.events.sse.SseEmitters;
+import no.fint.provider.events.sse.FintSseEmitters;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateRepository;
@@ -30,7 +30,7 @@ public class AdminController {
     private MongoTemplate mongoTemplate;
 
     @RequestMapping("/sse-clients")
-    public ConcurrentHashMap<String, SseEmitters> getSseClients() {
+    public ConcurrentHashMap<String, FintSseEmitters> getSseClients() {
         return sseService.getSseClients();
     }
 

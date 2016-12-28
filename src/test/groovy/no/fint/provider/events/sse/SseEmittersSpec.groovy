@@ -7,24 +7,24 @@ import java.util.function.Function
 
 class SseEmittersSpec extends Specification {
     private static final int MAX_SIZE = 2
-    private SseEmitters sseEmitters
+    private FintSseEmitters sseEmitters
     private Function<SseEmitter, Void> removeCallback
     private boolean callback = false
 
     void setup() {
-        removeCallback = new Function<SseEmitter, Void>() {
+        removeCallback = new Function<FintSseEmitter, Void>() {
             @Override
-            Void apply(SseEmitter emitter) {
+            Void apply(FintSseEmitter emitter) {
                 callback = true
                 return null
             }
         }
-        sseEmitters = new SseEmitters(MAX_SIZE, removeCallback)
+        sseEmitters = new FintSseEmitters(MAX_SIZE, removeCallback)
     }
 
     def "Add emitter and size is 1"() {
         when:
-        sseEmitters.add(new SseEmitter())
+        sseEmitters.add(new FintSseEmitter())
         def size = sseEmitters.size()
 
         then:
@@ -33,14 +33,14 @@ class SseEmittersSpec extends Specification {
 
     def "Add more than max size, size is still max size"() {
         given:
-        def first = new SseEmitter()
-        def last = new SseEmitter()
+        def first = new FintSseEmitter()
+        def last = new FintSseEmitter()
 
         when:
         sseEmitters.add(first)
-        sseEmitters.add(new SseEmitter())
-        sseEmitters.add(new SseEmitter())
-        sseEmitters.add(new SseEmitter())
+        sseEmitters.add(new FintSseEmitter())
+        sseEmitters.add(new FintSseEmitter())
+        sseEmitters.add(new FintSseEmitter())
         sseEmitters.add(last)
         def size = sseEmitters.size()
 
@@ -53,7 +53,7 @@ class SseEmittersSpec extends Specification {
 
     def "Remove emitter"() {
         given:
-        def emitter = new SseEmitter()
+        def emitter = new FintSseEmitter()
 
         when:
         sseEmitters.add(emitter)

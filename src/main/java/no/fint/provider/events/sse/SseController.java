@@ -23,9 +23,9 @@ public class SseController {
 
     @Synchronized
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable(required = false) String id) {
+    public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable String id) {
         log.info("id: {}, {} connected", id, orgId);
-        SseEmitter emitter = sseService.subscribe(orgId);
+        SseEmitter emitter = sseService.subscribe(id, orgId);
         fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
         return emitter;
     }

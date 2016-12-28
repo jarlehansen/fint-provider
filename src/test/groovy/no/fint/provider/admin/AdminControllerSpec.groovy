@@ -1,7 +1,7 @@
 package no.fint.provider.admin
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent
-import no.fint.provider.events.sse.SseEmitters
+import no.fint.provider.events.sse.FintSseEmitters
 import no.fint.provider.events.sse.SseService
 import no.fint.provider.eventstate.EventState
 import no.fint.provider.eventstate.EventStateRepository
@@ -35,7 +35,7 @@ class AdminControllerSpec extends Specification {
         def response = mockMvc.perform(get('/provider/admin/sse-clients'))
 
         then:
-        1 * sseService.getSseClients() >> ['rogfk.no': SseEmitters.with(5)]
+        1 * sseService.getSseClients() >> ['rogfk.no': FintSseEmitters.with(5)]
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

@@ -1,8 +1,8 @@
 {
   "name": "test-clients",
   "scripts": {
-    "sse": "node sse-client.js",
-    "downstream": "node downstream.js"
+    "sse": "node sse/sse-client.js",
+    "downstream": "node events/downstream.js"
   },
   "dependencies": {
     "amqplib": "^0.5.1",

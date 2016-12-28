@@ -18,21 +18,21 @@ public class SseService {
     @Value("${fint.provider.max-number-of-emitters:20}")
     private int maxNumberOfEmitters;
 
-    private ConcurrentHashMap<String, SseEmitters> clients = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, FintSseEmitters> clients = new ConcurrentHashMap<>();
 
     @PreDestroy
     public void shutdown() {
-        clients.values().forEach(emitters -> emitters.forEach(SseEmitter::complete));
+        clients.values().forEach(emitters -> emitters.forEach(FintSseEmitter::complete));
     }
 
     @Synchronized
-    public SseEmitter subscribe(String orgId) {
-        SseEmitters sseEmitters = clients.get(orgId);
-        if (sseEmitters == null) {
-            sseEmitters = SseEmitters.with(maxNumberOfEmitters, this::closeEmitter);
+    public SseEmitter subscribe(String id, String orgId) {
+        FintSseEmitters fintSseEmitters = clients.get(orgId);
+        if (fintSseEmitters == null) {
+            fintSseEmitters = FintSseEmitters.with(maxNumberOfEmitters, this::closeEmitter);
         }
 
-        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+        FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
         emitter.onCompletion(() -> {
             log.info("onCompletion called for {}, id: {}", orgId);
             removeEmitter(orgId, emitter);
@@ -42,8 +42,8 @@ public class SseService {
             removeEmitter(orgId, emitter);
         });
 
-        sseEmitters.add(emitter);
-        clients.put(orgId, sseEmitters);
+        fintSseEmitters.add(emitter);
+        clients.put(orgId, fintSseEmitters);
         return emitter;
     }
 
@@ -54,11 +54,11 @@ public class SseService {
         return null;
     }
 
-    private void removeEmitter(String orgId, SseEmitter emitter) {
+    private void removeEmitter(String orgId, FintSseEmitter emitter) {
         if (orgId != null && emitter != null) {
-            SseEmitters sseEmitters = clients.get(orgId);
-            if (sseEmitters != null) {
-                sseEmitters.remove(emitter);
+            FintSseEmitters fintSseEmitters = clients.get(orgId);
+            if (fintSseEmitters != null) {
+                fintSseEmitters.remove(emitter);
             }
         }
     }
@@ -76,7 +76,7 @@ public class SseService {
         });
     }
 
-    public ConcurrentHashMap<String, SseEmitters> getSseClients() {
+    public ConcurrentHashMap<String, FintSseEmitters> getSseClients() {
         return clients;
     }
 }
