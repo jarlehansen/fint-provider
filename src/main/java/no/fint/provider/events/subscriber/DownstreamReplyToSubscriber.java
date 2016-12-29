@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class DownstreamSubscriber {
+public class DownstreamReplyToSubscriber {
 
     @Autowired
     private SseService sseService;
@@ -26,12 +26,12 @@ public class DownstreamSubscriber {
     @Autowired
     private FintAuditService fintAuditService;
 
-    public void receive(Event event) {
+    public void receiveReplyTo(String replyTo, Event event) {
         if (eventStateService.exists(event)) {
             Optional<EventState> eventState = eventStateService.getEventState(event);
             eventState.ifPresent(es -> handleEvent(es.getEvent()));
         } else {
-            eventStateService.add(event);
+            eventStateService.add(replyTo, event);
             sendInitialEvent(event);
         }
     }
@@ -61,5 +61,4 @@ public class DownstreamSubscriber {
             log.info("Event with corrId:{} approved by adapter. Consuming message from queue", event.getCorrId());
         }
     }
-
 }
