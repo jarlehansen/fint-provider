@@ -2,10 +2,12 @@ package no.fint.provider.eventstate;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import no.fint.event.model.Event;
 
 import java.io.Serializable;
 
+@ToString
 public class EventState implements Serializable {
     @Getter
     private long timestamp;
