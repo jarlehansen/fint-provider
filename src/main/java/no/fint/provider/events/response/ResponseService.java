@@ -32,6 +32,7 @@ public class ResponseService {
             fintAuditService.audit(event, true);
 
             log.info("Handle adapter response Event: {}", event);
+            log.info("EventState: {}", eventState.get());
             String replyTo = eventState.get().getReplyTo();
             if (replyTo == null) {
                 event.setStatus(Status.UPSTREAM_QUEUE);
