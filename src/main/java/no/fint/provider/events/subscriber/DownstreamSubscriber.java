@@ -31,6 +31,17 @@ public class DownstreamSubscriber {
             Optional<EventState> eventState = eventStateService.getEventState(event);
             eventState.ifPresent(es -> handleEvent(es.getEvent()));
         } else {
+            eventStateService.add(event);
+            sendInitialEvent(event);
+        }
+    }
+
+    public void receive(String replyTo, Event event) {
+        if (eventStateService.exists(event)) {
+            Optional<EventState> eventState = eventStateService.getEventState(event);
+            eventState.ifPresent(es -> handleEvent(es.getEvent()));
+        } else {
+            eventStateService.add(replyTo, event);
             sendInitialEvent(event);
         }
     }
@@ -47,7 +58,6 @@ public class DownstreamSubscriber {
     private void sendInitialEvent(Event event) {
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         sseService.send(event);
-        eventStateService.add(event);
         fintAuditService.audit(event, true);
 
         try {
