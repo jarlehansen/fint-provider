@@ -13,10 +13,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import spock.lang.Specification
 
 import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.CoreMatchers.notNullValue
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 class AdminControllerSpec extends Specification {
     private AdminController adminController
@@ -47,8 +46,10 @@ class AdminControllerSpec extends Specification {
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath('$[0].orgId').value(equalTo('rogfk.no')))
-                .andExpect(jsonPath('$[0].connectedIds[0]').value(equalTo('123')))
-                .andExpect(jsonPath('$[0].connectedIds[1]').value(equalTo('234')))
+                .andExpect(jsonPath('$[0].clients[0].id').value(equalTo('123')))
+                .andExpect(jsonPath('$[0].clients[0].registered').value(notNullValue()))
+                .andExpect(jsonPath('$[0].clients[1].id').value(equalTo('234')))
+                .andExpect(jsonPath('$[0].clients[1].registered').value(notNullValue()))
     }
 
     def "List current event states"() {

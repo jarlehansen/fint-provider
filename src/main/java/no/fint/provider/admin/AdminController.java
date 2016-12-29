@@ -35,10 +35,10 @@ public class AdminController {
         ConcurrentHashMap<String, FintSseEmitters> clients = sseService.getSseClients();
         List<SseOrg> orgs = new ArrayList<>();
         clients.entrySet().forEach(client -> {
-            List<String> ids = new ArrayList<>();
-            FintSseEmitters emitters = client.getValue();
-            emitters.forEach(emitter -> ids.add(emitter.getId()));
-            orgs.add(new SseOrg(client.getKey(), ids));
+            List<SseClient> sseClients = new ArrayList<>();
+            client.getValue().forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId())));
+
+            orgs.add(new SseOrg(client.getKey(), sseClients));
         });
         return orgs;
     }
