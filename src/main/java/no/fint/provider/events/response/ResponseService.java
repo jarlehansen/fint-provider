@@ -41,7 +41,7 @@ public class ResponseService {
                 event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             }
             fintAuditService.audit(event, true);
-            eventStateService.clear(event);
+            //eventStateService.clear(event);
             return true;
         } else {
             event.setStatus(Status.PROVIDER_RESPONSE_ORPHANT);

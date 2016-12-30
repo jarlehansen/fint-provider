@@ -26,7 +26,7 @@ public class SseController {
     public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable String id) {
         log.info("id: {}, {} connected", id, orgId);
         SseEmitter emitter = sseService.subscribe(id, orgId);
-        // fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
+        fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
         return emitter;
     }
 
