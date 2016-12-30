@@ -47,5 +47,4 @@ public class EventStateRepository {
         return hashOps.entries(key);
     }
 
-
 }
