@@ -4,7 +4,6 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
-import no.fint.provider.events.subscriber.DownstreamReplyToSubscriber;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -28,7 +27,6 @@ public class SseController {
         log.info("id: {}, {} connected", id, orgId);
         SseEmitter emitter = sseService.subscribe(id, orgId);
         fintEvents.registerDownstreamListener(orgId, DownstreamSubscriber.class);
-        fintEvents.registerDownstreamListener(orgId, DownstreamReplyToSubscriber.class);
         return emitter;
     }
 
