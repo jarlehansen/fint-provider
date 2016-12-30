@@ -46,9 +46,9 @@ public class DownstreamSubscriber {
 
     private void sendInitialEvent(String replyTo, Event event) {
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
-        sseService.send(event);
         eventStateService.add(replyTo, event);
         fintAuditService.audit(event, true);
+        sseService.send(event);
 
         try {
             Thread.sleep(3000L);

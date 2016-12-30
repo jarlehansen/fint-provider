@@ -5,10 +5,8 @@ import no.fint.event.model.Event
 import no.fint.events.FintEvents
 import no.fint.provider.eventstate.EventState
 import no.fint.provider.eventstate.EventStateService
-import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore
 class ResponseServiceSpec extends Specification {
     private ResponseService responseService
     private EventStateService eventStateService

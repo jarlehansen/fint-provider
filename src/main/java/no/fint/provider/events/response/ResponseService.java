@@ -41,7 +41,7 @@ public class ResponseService {
                 fintEvents.reply(replyTo, event);
             }
             fintAuditService.audit(event, true);
-            //eventStateService.clear(event);
+            eventStateService.clear(event);
             return true;
         } else {
             event.setStatus(Status.PROVIDER_RESPONSE_ORPHANT);
