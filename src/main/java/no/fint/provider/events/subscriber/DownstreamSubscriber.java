@@ -27,6 +27,7 @@ public class DownstreamSubscriber {
     private FintAuditService fintAuditService;
 
     public void receive(String replyTo, Event event) {
+        log.info("receive() reply_to header: {}", replyTo);
         if (eventStateService.exists(event)) {
             Optional<EventState> eventState = eventStateService.getEventState(event);
             eventState.ifPresent(es -> handleEvent(es.getEvent()));
