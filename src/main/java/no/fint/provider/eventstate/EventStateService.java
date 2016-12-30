@@ -44,7 +44,7 @@ public class EventStateService {
     }
 
     public void update(Event event) {
-        eventStateRepository.add(new EventState(event));
+        eventStateRepository.get(event.getCorrId()).ifPresent(es -> eventStateRepository.add(new EventState(es.getReplyTo(), event)));
     }
 
     public Optional<EventState> getEventState(Event event) {
