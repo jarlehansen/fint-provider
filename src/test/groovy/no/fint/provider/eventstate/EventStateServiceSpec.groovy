@@ -57,7 +57,7 @@ class EventStateServiceSpec extends Specification {
 
     def "Add EventState"() {
         given:
-        def event = new Event("org", "fk", "GET", "client")
+        def event = new Event('org', 'fk', 'GET', 'client')
 
         when:
         eventStateService.add(event)
@@ -69,7 +69,7 @@ class EventStateServiceSpec extends Specification {
 
     def "Clear EventState"() {
         given:
-        Event event = new Event("org", "fk", "GET", "client")
+        def event = new Event('org', 'fk', 'GET', 'client')
         eventStateService.add(event)
 
         when:
@@ -78,6 +78,20 @@ class EventStateServiceSpec extends Specification {
         then:
         !eventStateService.exists(event)
         eventStateService.getMap().size() == 0
+    }
+
+    def "Update EventState"() {
+        given:
+        def event = new Event('org', 'fk', 'GET', 'client')
+        eventStateService.add(event)
+
+        when:
+        eventStateService.update(new Event(corrId: event.getCorrId(), orgId: 'orgId2'))
+        def storedEvent = eventStateService.get(event.getCorrId())
+
+        then:
+        storedEvent.isPresent()
+        storedEvent.get().event.orgId == 'orgId2'
     }
 
 }
