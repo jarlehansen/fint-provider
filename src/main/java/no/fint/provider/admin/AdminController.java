@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,7 +32,9 @@ public class AdminController {
 
     @RequestMapping("/sse-clients")
     public List<SseOrg> getSseClients() {
-        ConcurrentHashMap<String, FintSseEmitters> clients = sseService.getSseClients();
+        Map<String, FintSseEmitters> clients = new HashMap<>();
+        clients.putAll(sseService.getSseClients());
+
         List<SseOrg> orgs = new ArrayList<>();
         clients.entrySet().forEach(client -> {
             List<SseClient> sseClients = new ArrayList<>();
