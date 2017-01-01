@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -76,7 +78,7 @@ public class SseService {
         });
     }
 
-    public ConcurrentHashMap<String, FintSseEmitters> getSseClients() {
-        return clients;
+    public Map<String, FintSseEmitters> getSseClients() {
+        return new HashMap<>(clients);
     }
 }

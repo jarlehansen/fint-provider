@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,8 +33,7 @@ public class AdminController {
 
     @RequestMapping("/sse-clients")
     public List<SseOrg> getSseClients() {
-        Map<String, FintSseEmitters> clients = new HashMap<>();
-        clients.putAll(sseService.getSseClients());
+        Map<String, FintSseEmitters> clients = sseService.getSseClients();
         log.info("Connected SSE clients: {}", clients);
 
         List<SseOrg> orgs = new ArrayList<>();

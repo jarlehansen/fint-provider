@@ -4,6 +4,8 @@ import no.fint.event.model.Event
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
 
+import java.util.concurrent.ConcurrentHashMap
+
 class SseServiceSpec extends Specification {
     private SseService sseService
 
@@ -45,9 +47,11 @@ class SseServiceSpec extends Specification {
     def "Remove registered emitter on exception when trying to send message"() {
         given:
         def emitter = Mock(FintSseEmitter)
-        def clients = FintSseEmitters.with(5)
-        clients.add(emitter)
-        sseService.getSseClients().put('hfk.no', clients)
+        def emitters = FintSseEmitters.with(5)
+        emitters.add(emitter)
+        def clients = ['hfk.no': emitters] as ConcurrentHashMap
+
+        sseService = new SseService(maxNumberOfEmitters: 5, clients: clients)
 
         when:
         sseService.send(new Event(orgId: 'hfk.no'))
