@@ -34,11 +34,11 @@ public class SseService {
 
         FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
         emitter.onCompletion(() -> {
-            log.info("onCompletion called for {}, id: {}", orgId);
+            log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
             removeEmitter(orgId, emitter);
         });
         emitter.onTimeout(() -> {
-            log.info("onTimeout called for {}, id: {}", orgId);
+            log.info("onTimeout called for {}, id: {}", orgId, emitter.getId());
             removeEmitter(orgId, emitter);
         });
 
