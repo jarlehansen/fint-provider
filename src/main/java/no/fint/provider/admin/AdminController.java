@@ -1,5 +1,6 @@
 package no.fint.provider.admin;
 
+import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.provider.events.sse.FintSseEmitters;
 import no.fint.provider.events.sse.SseService;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
@@ -33,6 +35,7 @@ public class AdminController {
     @RequestMapping("/sse-clients")
     public List<SseOrg> getSseClients() {
         Map<String, FintSseEmitters> clients = new HashMap<>();
+        log.info("Connected SSE clients: {}", clients);
         clients.putAll(sseService.getSseClients());
 
         List<SseOrg> orgs = new ArrayList<>();
