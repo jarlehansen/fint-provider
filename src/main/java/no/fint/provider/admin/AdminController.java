@@ -35,8 +35,8 @@ public class AdminController {
     @RequestMapping("/sse-clients")
     public List<SseOrg> getSseClients() {
         Map<String, FintSseEmitters> clients = new HashMap<>();
-        log.info("Connected SSE clients: {}", clients);
         clients.putAll(sseService.getSseClients());
+        log.info("Connected SSE clients: {}", clients);
 
         List<SseOrg> orgs = new ArrayList<>();
         clients.entrySet().forEach(client -> {
