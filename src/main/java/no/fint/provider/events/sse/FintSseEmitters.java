@@ -3,6 +3,7 @@ package no.fint.provider.events.sse;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class FintSseEmitters implements Iterable<FintSseEmitter> {
@@ -32,8 +33,8 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
         emitters.remove(emitter);
     }
 
-    public boolean contains(FintSseEmitter emitter) {
-        return emitters.contains(emitter);
+    public Optional<FintSseEmitter> get(String id) {
+        return emitters.stream().filter(registered -> registered.getId().equals(id)).findFirst();
     }
 
     public int size() {

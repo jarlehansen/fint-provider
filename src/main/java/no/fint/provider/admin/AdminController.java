@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/provider/admin", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/provider/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
 
     @Autowired
@@ -31,7 +31,7 @@ public class AdminController {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @RequestMapping("/sse-clients")
+    @RequestMapping(value = "/sse-clients", method = RequestMethod.GET)
     public List<SseOrg> getSseClients() {
         Map<String, FintSseEmitters> clients = sseService.getSseClients();
         log.info("Connected SSE clients: {}", clients);
@@ -46,12 +46,17 @@ public class AdminController {
         return orgs;
     }
 
-    @RequestMapping("/eventStates")
+    @RequestMapping(value = "/sse-clients", method = RequestMethod.DELETE)
+    public void removeSseClients() {
+        sseService.removeAll();
+    }
+
+    @RequestMapping(value = "/eventStates", method = RequestMethod.GET)
     public Map<String, EventState> getEventState() {
         return eventStateRepository.getMap();
     }
 
-    @RequestMapping("/audit/events")
+    @RequestMapping(value = "/audit/events", method = RequestMethod.GET)
     public List<MongoAuditEvent> getAllEvents() {
         return mongoTemplate.findAll(MongoAuditEvent.class);
     }

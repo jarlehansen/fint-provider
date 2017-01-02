@@ -25,7 +25,7 @@ class SseServiceSpec extends Specification {
     def "Return new SseEmitter when subscribing with already registered orgId"() {
         when:
         def emitter1 = sseService.subscribe('123', 'hfk.no')
-        def emitter2 = sseService.subscribe('123', 'hfk.no')
+        def emitter2 = sseService.subscribe('234', 'hfk.no')
 
         then:
         sseService.getSseClients().size() == 1
@@ -50,7 +50,6 @@ class SseServiceSpec extends Specification {
         def emitters = FintSseEmitters.with(5)
         emitters.add(emitter)
         def clients = ['hfk.no': emitters] as ConcurrentHashMap
-
         sseService = new SseService(maxNumberOfEmitters: 5, clients: clients)
 
         when:
@@ -59,5 +58,18 @@ class SseServiceSpec extends Specification {
         then:
         1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IllegalStateException('Test exception') }
         sseService.getSseClients().get('hfk.no').size() == 0
+    }
+
+    def "Remove all registered SSE clients"() {
+        given:
+        def clients = ['rogfk.no': FintSseEmitters.with(5)] as ConcurrentHashMap
+        sseService = new SseService(maxNumberOfEmitters: 5, clients: clients)
+
+        when:
+        sseService.removeAll()
+        def registeredClients = sseService.getSseClients()
+
+        then:
+        registeredClients.size() == 0
     }
 }

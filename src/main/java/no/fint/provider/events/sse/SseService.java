@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -34,19 +33,24 @@ public class SseService {
             fintSseEmitters = FintSseEmitters.with(maxNumberOfEmitters, this::closeEmitter);
         }
 
-        FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
-        emitter.onCompletion(() -> {
-            log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
-            removeEmitter(orgId, emitter);
-        });
-        emitter.onTimeout(() -> {
-            log.info("onTimeout called for {}, id: {}", orgId, emitter.getId());
-            removeEmitter(orgId, emitter);
-        });
+        Optional<FintSseEmitter> registeredEmitter = fintSseEmitters.get(id);
+        if (registeredEmitter.isPresent()) {
+            return registeredEmitter.get();
+        } else {
+            FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
+            emitter.onCompletion(() -> {
+                log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
+                removeEmitter(orgId, emitter);
+            });
+            emitter.onTimeout(() -> {
+                log.info("onTimeout called for {}, id: {}", orgId, emitter.getId());
+                removeEmitter(orgId, emitter);
+            });
 
-        fintSseEmitters.add(emitter);
-        clients.put(orgId, fintSseEmitters);
-        return emitter;
+            fintSseEmitters.add(emitter);
+            clients.put(orgId, fintSseEmitters);
+            return emitter;
+        }
     }
 
     private Void closeEmitter(SseEmitter emitter) {
@@ -66,6 +70,7 @@ public class SseService {
     }
 
     public void send(Event event) {
+        List<FintSseEmitter> toBeRemoved = new ArrayList<>();
         clients.get(event.getOrgId()).forEach(emitter -> {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
@@ -73,12 +78,21 @@ public class SseService {
             } catch (Exception e) {
                 log.debug("Exception when trying to send message to SseEmitter", e);
                 log.warn("Removing subscriber {}", event.getOrgId());
-                removeEmitter(event.getOrgId(), emitter);
+                toBeRemoved.add(emitter);
             }
         });
+
+        for (FintSseEmitter emitter : toBeRemoved) {
+            removeEmitter(event.getOrgId(), emitter);
+        }
     }
 
     public Map<String, FintSseEmitters> getSseClients() {
         return new HashMap<>(clients);
+    }
+
+    public void removeAll() {
+        clients.values().forEach(emitters -> emitters.forEach(FintSseEmitter::complete));
+        clients.clear();
     }
 }

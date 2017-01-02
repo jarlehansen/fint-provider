@@ -14,6 +14,7 @@ import spock.lang.Specification
 
 import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.notNullValue
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
@@ -50,6 +51,20 @@ class AdminControllerSpec extends Specification {
                 .andExpect(jsonPath('$[0].clients[0].registered').value(notNullValue()))
                 .andExpect(jsonPath('$[0].clients[1].id').value(equalTo('234')))
                 .andExpect(jsonPath('$[0].clients[1].registered').value(notNullValue()))
+    }
+
+    def "Remove all SSE clients"() {
+        given:
+        def emitters = FintSseEmitters.with(5)
+        emitters.add(new FintSseEmitter(id: '123'))
+        emitters.add(new FintSseEmitter(id: '234'))
+
+        when:
+        def response = mockMvc.perform(delete('/provider/admin/sse-clients'))
+
+        then:
+        1 * sseService.removeAll()
+        response.andExpect(status().isOk())
     }
 
     def "List current event states"() {
