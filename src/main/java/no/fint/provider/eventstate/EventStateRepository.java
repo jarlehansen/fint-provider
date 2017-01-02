@@ -24,7 +24,7 @@ public class EventStateRepository {
     private HashOperations<String, String, EventState> hashOps;
 
     @PostConstruct
-    private void init() {
+    public void init() {
         hashOps = redisTemplate.opsForHash();
     }
 
