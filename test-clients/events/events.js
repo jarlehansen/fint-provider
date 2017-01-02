@@ -1,7 +1,7 @@
 const uuid = require('uuid')
 
 module.exports = {
-  createMessage: function(orgId) {
+  createMessage: (orgId) => {
     return {
         corrId: uuid(),
         action: 'GET_ALL_EMPLOYEES',
