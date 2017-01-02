@@ -5,7 +5,7 @@ const config = {
     user: 'guest',
     password: 'guest',
     vhost: '',
-    orgId: orgId
+    orgId
 }
 
 const connectionString = `amqp://${config.user}:${config.password}@${config.host}:5672/${config.vhost}`
