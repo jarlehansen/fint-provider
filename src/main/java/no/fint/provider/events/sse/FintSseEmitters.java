@@ -43,7 +43,7 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
 
     @Override
     public Iterator<FintSseEmitter> iterator() {
-        return emitters.iterator();
+        return new ArrayDeque<>(emitters).iterator();
     }
 
     public static FintSseEmitters with(int maxSize) {
