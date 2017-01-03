@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 public class SseService {
-    private static final long DEFAULT_TIMEOUT = 60 * 60 * 1000;
+    private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE;
 
     @Value("${fint.provider.max-number-of-emitters:20}")
     private int maxNumberOfEmitters;
@@ -39,11 +39,11 @@ public class SseService {
         } else {
             FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
             emitter.onCompletion(() -> {
-                log.debug("onCompletion called for {}, id: {}", orgId, emitter.getId());
+                log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
                 removeEmitter(orgId, emitter);
             });
             emitter.onTimeout(() -> {
-                log.debug("onTimeout called for {}, id: {}", orgId, emitter.getId());
+                log.info("onTimeout called for {}, id: {}", orgId, emitter.getId());
                 removeEmitter(orgId, emitter);
             });
 
