@@ -10,11 +10,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class SseService {
-    private static final long DEFAULT_TIMEOUT = Long.MAX_VALUE;
+    private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
 
     @Value("${fint.provider.max-number-of-emitters:20}")
     private int maxNumberOfEmitters;
