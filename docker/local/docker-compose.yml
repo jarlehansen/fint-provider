@@ -20,9 +20,6 @@ services:
   image: "fint/provider"
   ports:
    - "8080:8080"
-  depends_on:
-   - "elk"
-   - "rabbit"
   links:
    - "elk"
    - "rabbit"
