@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class SseService {
-    private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
+    private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
 
     @Value("${fint.provider.max-number-of-emitters:20}")
     private int maxNumberOfEmitters;

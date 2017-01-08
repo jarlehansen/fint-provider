@@ -1,0 +1,38 @@
+version: "2"
+services:
+ elk:
+  image: "sebp/elk"
+  ports:
+   - "5601:5601"
+   - "9200:9200"
+   - "5044:5044"
+   - "12201:12201/udp"
+  volumes:
+   - "./logstash-gelf.conf:/etc/logstash/conf.d/01-logstash-gelf.conf"
+
+ rabbit:
+  image: rabbitmq:3-management
+  ports:
+   - "15672:15672"
+   - "5672:5672"
+
+ fint-provider:
+  image: "fint/provider"
+  ports:
+   - "8080:8080"
+  depends_on:
+   - "elk"
+   - "rabbit"
+  links:
+   - "elk"
+   - "rabbit"
+  logging:
+    driver: "gelf"
+    options:
+     gelf-address: "udp://localhost:12201"
+  environment:
+   fint.rabbitmq.host: "rabbit"
+   fint.rabbitmq.username: "guest"
+   fint.rabbitmq.password: "guest"
+   fint.provider.test-mode: "true"
+   fint.audit.test-mode: "true"
