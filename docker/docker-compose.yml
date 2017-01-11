@@ -1,14 +1,22 @@
-fint-provider:
- image: "fint/provider"
- restart: unless-stopped
- ports:
-  - "8101:8080"
- environment:
-  fint.rabbitmq.username: guest
-  fint.rabbitmq.password: guest
-  fint.rabbitmq.host: sr-is-docker-01
-  fint.rabbitmq.virtual-host: employee
-  fint.provider.eventstate.host: sr-is-docker-01
-  fint.audit.mongo.hostname: sr-is-docker-01
-  fint.audit.mongo.databasename: fint-audit-default
-  server.context-path: /arbeidstakere
+version: "2"
+services:
+  fint-provider:
+    image: "fint/provider"
+    restart: unless-stopped
+    ports:
+    - "8101:8080"
+    logging:
+      driver: "gelf"
+      options:
+       gelf-address: "udp://localhost:12201"
+    environment:
+      fint.rabbitmq.username: guest
+      fint.rabbitmq.password: guest
+      fint.rabbitmq.host: sr-is-docker-01
+      fint.rabbitmq.virtual-host: employee
+      fint.provider.eventstate.host: sr-is-docker-01
+      fint.audit.mongo.hostname: sr-is-docker-01
+      fint.audit.mongo.databasename: fint-audit-default
+      server.context-path: /arbeidstakere
+      TZ: Europe/Oslo
+      logging.level.root: INFO
