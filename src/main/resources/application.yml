@@ -19,4 +19,4 @@ fint:
   orgs: hfk.no, vaf.no, rogfk.no
  provider:
   eventstate:
-  ttl: 600000
+   ttl: 600000
