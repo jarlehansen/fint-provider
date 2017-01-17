@@ -17,3 +17,6 @@ logging.level.org.apache.coyote.http11.Http11Processor: WARN
 fint:
  events:
   orgs: hfk.no, vaf.no, rogfk.no
+ provider:
+  eventstate:
+  ttl: 600000
