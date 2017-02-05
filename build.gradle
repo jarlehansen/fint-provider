@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/master/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.0.0/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
