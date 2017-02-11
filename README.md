@@ -13,6 +13,8 @@
 | fint.provider.test-mode | false |
 | fint.provider.max-number-of-emitters | 20 |
 
+`fint.provider.test-mode` uses a local redis server.
+
 ## Test clients
 
 Simple test clients written in nodejs to help test various elements of the fint-provider application.  
