@@ -14,6 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @ActiveProfiles("local")
 @ContextConfiguration
-@SpringBootTest(classes = TestApplication.class)
+@SpringBootTest(classes = TestApplication.class, properties = "APPLICATION_CONFIG_NAME=test")
 public @interface LocalProfileTest {
 }
