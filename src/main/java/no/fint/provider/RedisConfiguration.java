@@ -2,6 +2,7 @@ package no.fint.provider;
 
 import no.fint.provider.eventstate.EventState;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -17,6 +18,7 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@RefreshScope
 @Configuration
 public class RedisConfiguration {
 
