@@ -51,7 +51,7 @@ dependencies {
     compileOnly('org.projectlombok:lombok')
 
     compile('no.fint:fint-audit-mongo-plugin:0.0.12')
-    compile('no.fint:fint-events:0.0.24')
+    compile('no.fint:fint-events:0.0.25')
     compile('com.kohlschutter.junixsocket:junixsocket-common:2.0.4')
     compile('com.kohlschutter.junixsocket:junixsocket-native-common:2.0.4')
 
@@ -64,12 +64,19 @@ dependencies {
 
     compile('org.springframework.boot:spring-boot-starter-amqp')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.cloud:spring-cloud-starter-config')
     runtime('org.springframework.boot:spring-boot-devtools')
 
     testCompile('cglib:cglib-nodep:3.2.4')
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.github.kstyrc:embedded-redis:0.6')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR5"
+    }
 }
 
 task wrapper(type: Wrapper) {

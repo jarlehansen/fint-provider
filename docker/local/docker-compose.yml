@@ -1,15 +1,5 @@
 version: "2"
 services:
- #elk:
- # image: "sebp/elk"
- # ports:
- #  - "5601:5601"
- #  - "9200:9200"
- #  - "5044:5044"
- #  - "12201:12201/udp"
- # volumes:
- #  - "./logstash-gelf.conf:/etc/logstash/conf.d/01-logstash-gelf.conf"
- #  - "./custompatterns:/opt/logstash/patterns/custompatterns"
 
  rabbit:
   image: rabbitmq:3-management
