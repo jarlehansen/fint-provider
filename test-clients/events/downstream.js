@@ -4,6 +4,7 @@ const rabbit = require('./rabbit')
 const events = require('./events')
 
 console.log('Usage: npm run downstream <orgId>')
+console.log(JSON.stringify(events.createMessage(rabbit.config.orgId)))
 
 amqp.connect(rabbit.connectionString).then((conn) => {
   return conn.createChannel().then((ch) => {
