@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.0.5/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.0.8/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -13,6 +13,7 @@ buildscript {
 }
 
 plugins {
+    id 'com.github.ben-manes.versions' version '0.14.0'
     id 'com.github.kt3k.coveralls' version '2.6.3'
 }
 
@@ -21,9 +22,8 @@ apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
-apply plugin: 'project-report'
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.5/version.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/version.gradle'
 jar {
     version = createVersion()
     baseName = 'fint-provider'
@@ -68,19 +68,12 @@ dependencies {
 
     compile('org.springframework.boot:spring-boot-starter-amqp')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.cloud:spring-cloud-starter-config')
     runtime('org.springframework.boot:spring-boot-devtools')
 
-    testCompile('cglib:cglib-nodep:3.2.4')
+    testCompile('cglib:cglib-nodep:3.2.5')
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('com.github.kstyrc:embedded-redis:0.6')
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR5"
-    }
 }
 
 task wrapper(type: Wrapper) {
@@ -97,4 +90,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.5/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.8/dependencyReport.gradle'
