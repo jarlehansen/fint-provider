@@ -4,8 +4,10 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
 import no.fint.provider.eventstate.EventStateService
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 class PollServiceSpec extends Specification {
     private PollService pollService
     private FintEvents fintEvents

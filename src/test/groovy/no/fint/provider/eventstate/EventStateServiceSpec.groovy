@@ -5,8 +5,10 @@ import no.fint.event.model.Status
 import no.fint.provider.testutils.LocalProfileTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.RedisTemplate
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 @LocalProfileTest
 class EventStateServiceSpec extends Specification {
 

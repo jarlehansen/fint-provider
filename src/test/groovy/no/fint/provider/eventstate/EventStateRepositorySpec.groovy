@@ -3,8 +3,10 @@ package no.fint.provider.eventstate
 import no.fint.event.model.Event
 import no.fint.provider.testutils.LocalProfileTest
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 @LocalProfileTest
 class EventStateRepositorySpec extends Specification {
 
