@@ -39,14 +39,10 @@ afterEvaluate {
 }
 
 sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
     maven {
         url "http://dl.bintray.com/fint/maven"
-    }
-    maven {
-        url "http://dl.bintray.com/jarlehansen/maven"
     }
     mavenLocal()
     jcenter()
