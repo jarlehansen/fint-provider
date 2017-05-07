@@ -13,9 +13,6 @@ public class EventState implements Serializable {
     private long timestamp;
     @Getter
     @Setter
-    private String replyTo;
-    @Getter
-    @Setter
     private Event event;
 
     public EventState() {
@@ -24,12 +21,6 @@ public class EventState implements Serializable {
 
     public EventState(Event event) {
         this.timestamp = System.currentTimeMillis();
-        this.event = event;
-    }
-
-    public EventState(String replyTo, Event event) {
-        this.timestamp = System.currentTimeMillis();
-        this.replyTo = replyTo;
         this.event = event;
     }
 }

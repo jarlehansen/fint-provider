@@ -32,14 +32,8 @@ public class ResponseService {
             fintAuditService.audit(event, true);
 
             log.info("EventState: {}", eventState.get());
-            String replyTo = eventState.get().getReplyTo();
-            if (replyTo == null) {
-                event.setStatus(Status.UPSTREAM_QUEUE);
-                fintEvents.sendUpstream(event.getOrgId(), event);
-            } else {
-                event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-                // fintEvents.reply(replyTo, event);
-            }
+            event.setStatus(Status.UPSTREAM_QUEUE);
+            fintEvents.sendUpstream(event.getOrgId(), event);
             fintAuditService.audit(event, true);
             eventStateService.clear(event);
             return true;

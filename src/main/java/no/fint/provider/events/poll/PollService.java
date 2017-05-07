@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
 
 @Slf4j
 @Service
@@ -26,11 +27,9 @@ public class PollService {
 
 
     public Optional<Event> readEvent(String orgId) {
-
-
-        Optional<Event> optionalEvent = Optional.empty(); // = events.readDownstream(orgId, Event.class);
-        if (optionalEvent.isPresent()) {
-            Event event = optionalEvent.get();
+        BlockingQueue<Event> queue = events.getDownstream(orgId);
+        Event event = queue.poll();
+        if (event != null) {
             event.setStatus(Status.DELIVERED_TO_PROVIDER);
             eventStateService.add(event);
             fintAuditService.audit(event, true);

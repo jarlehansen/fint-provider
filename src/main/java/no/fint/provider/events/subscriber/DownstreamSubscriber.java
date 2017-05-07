@@ -4,14 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
+import no.fint.events.annotations.FintEventListener;
 import no.fint.provider.events.sse.SseService;
-import no.fint.provider.eventstate.EventState;
 import no.fint.provider.eventstate.EventStateService;
-import no.fint.provider.exceptions.EventNotApprovedByProviderException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -26,41 +23,15 @@ public class DownstreamSubscriber {
     @Autowired
     private FintAuditService fintAuditService;
 
-    public void receive(String replyTo, Event event) {
-        log.info("receive() reply_to header: {}", replyTo);
+    @FintEventListener
+    public void receive(Event event) {
         if (eventStateService.exists(event)) {
-            Optional<EventState> eventState = eventStateService.getEventState(event);
-            eventState.ifPresent(es -> handleEvent(es.getEvent()));
-        } else {
-            sendInitialEvent(replyTo, event);
-        }
-    }
-
-    private void handleEvent(Event event) {
-        if (eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)) {
             sseService.send(event);
-            throw new EventNotApprovedByProviderException();
         } else {
-            log.info("Event with corrId:{} approved by adapter. Consuming message from queue", event.getCorrId());
+            event.setStatus(Status.DELIVERED_TO_PROVIDER);
+            eventStateService.add(event);
+            fintAuditService.audit(event, true);
+            sseService.send(event);
         }
     }
-
-    private void sendInitialEvent(String replyTo, Event event) {
-        event.setStatus(Status.DELIVERED_TO_PROVIDER);
-        eventStateService.add(replyTo, event);
-        fintAuditService.audit(event, true);
-        sseService.send(event);
-
-        try {
-            Thread.sleep(3000L);
-        } catch (InterruptedException ignored) {
-        }
-
-        if (eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)) {
-            throw new EventNotApprovedByProviderException();
-        } else {
-            log.info("Event with corrId:{} approved by adapter. Consuming message from queue", event.getCorrId());
-        }
-    }
-
 }

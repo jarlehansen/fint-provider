@@ -39,12 +39,8 @@ public class EventStateService {
         eventStateRepository.add(new EventState(event));
     }
 
-    public void add(String replyTo, Event event) {
-        eventStateRepository.add(new EventState(replyTo, event));
-    }
-
     public void update(Event event) {
-        eventStateRepository.get(event.getCorrId()).ifPresent(es -> eventStateRepository.add(new EventState(es.getReplyTo(), event)));
+        eventStateRepository.get(event.getCorrId()).ifPresent(es -> eventStateRepository.add(new EventState(event)));
     }
 
     public Optional<EventState> getEventState(Event event) {

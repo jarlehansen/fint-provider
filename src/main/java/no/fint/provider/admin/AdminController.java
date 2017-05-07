@@ -37,11 +37,11 @@ public class AdminController {
         log.info("Connected SSE clients: {}", clients);
 
         List<SseOrg> orgs = new ArrayList<>();
-        clients.entrySet().forEach(client -> {
+        clients.forEach((key, value) -> {
             List<SseClient> sseClients = new ArrayList<>();
-            client.getValue().forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId())));
+            value.forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId())));
 
-            orgs.add(new SseOrg(client.getKey(), sseClients));
+            orgs.add(new SseOrg(key, sseClients));
         });
         return orgs;
     }

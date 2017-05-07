@@ -28,7 +28,7 @@ public class Application {
 
     @PostConstruct
     public void init() {
-        fintEvents.registerDownstreamListener(DownstreamSubscriber.class);
+        fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgs);
     }
 
     public static void main(String[] args) {
