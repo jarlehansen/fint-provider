@@ -1,26 +1,27 @@
 package no.fint.provider.eventstate;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import no.fint.event.model.Event;
 
-import java.io.Serializable;
-
-@ToString
-public class EventState implements Serializable {
-    @Getter
+@Data
+@EqualsAndHashCode(of = "corrId")
+public class EventState {
+    private String corrId;
     private long timestamp;
-    @Getter
-    @Setter
-    private Event event;
 
-    public EventState() {
-        this.timestamp = System.currentTimeMillis();
-    }
+    private String orgId;
+    private String source;
+    private String action;
+    private String client;
 
     public EventState(Event event) {
         this.timestamp = System.currentTimeMillis();
-        this.event = event;
+        if (event != null) {
+            this.orgId = event.getOrgId();
+            this.source = event.getSource();
+            this.action = event.getAction();
+            this.client = event.getClient();
+        }
     }
 }

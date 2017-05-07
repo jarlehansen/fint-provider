@@ -1,99 +1,50 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
-import no.fint.event.model.Status
-import no.fint.provider.testutils.LocalProfileTest
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.redis.core.RedisTemplate
-import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore
-@LocalProfileTest
 class EventStateServiceSpec extends Specification {
-
-    @Autowired
     private EventStateService eventStateService
 
-    @Autowired
-    private EventStateRepository repository
-
-    @Autowired
-    private RedisTemplate redisTemplate
-
     void setup() {
-        def keys = redisTemplate.keys("*")
-        keys.forEach({
-            redisTemplate.delete(it)
-        })
+        eventStateService = new EventStateService(eventStates: [])
     }
 
-    def "Check if EventState is present"() {
+    def "Only add unique corrIds to event state set"() {
         given:
-        def event = new Event('org1', 'fk1', 'GET', 'client1')
+        def event1 = new Event()
+
+        when:
+        eventStateService.add(event1)
+        eventStateService.add(event1)
+        def eventStates = eventStateService.getEventStates()
+
+        then:
+        eventStates.size() == 1
+    }
+
+    def "Check if event state exists"() {
+        given:
+        def event = new Event()
         eventStateService.add(event)
 
         when:
-        boolean exists1 = eventStateService.exists(event)
-        boolean exists2 = eventStateService.exists(new Event('org2', 'fk2', 'GET', 'client2'))
+        def exists = eventStateService.exists(event)
 
         then:
-        exists1
-        !exists2
+        exists
     }
 
-    def "Check if EventState with status DELIVERED_TO_PROVIDER is present"() {
+    def "Remote existing event state from set"() {
         given:
-        def event = new Event('org1', 'fk1', 'GET', 'client1')
-        event.setStatus(Status.DELIVERED_TO_PROVIDER)
+        def event = new Event()
         eventStateService.add(event)
 
         when:
-        boolean correctStatus = eventStateService.exists(event, Status.DELIVERED_TO_PROVIDER)
-        boolean wrongStatus = eventStateService.exists(event, Status.DOWNSTREAM_QUEUE)
+        eventStateService.remove(event)
+        def exists = eventStateService.exists(event)
 
         then:
-        correctStatus
-        !wrongStatus
+        !exists
     }
-
-    def "Add EventState"() {
-        given:
-        def event = new Event('org', 'fk', 'GET', 'client')
-
-        when:
-        eventStateService.add(event)
-
-        then:
-        eventStateService.getMap().size() == 1
-
-    }
-
-    def "Clear EventState"() {
-        given:
-        def event = new Event('org', 'fk', 'GET', 'client')
-        eventStateService.add(event)
-
-        when:
-        eventStateService.clear(event)
-
-        then:
-        !eventStateService.exists(event)
-        eventStateService.getMap().size() == 0
-    }
-
-    def "Update EventState"() {
-        given:
-        def event = new Event('org', 'fk', 'GET', 'client')
-        eventStateService.add(event)
-
-        when:
-        eventStateService.update(new Event(corrId: event.getCorrId(), orgId: 'orgId2'))
-        def storedEvent = eventStateService.get(event.getCorrId())
-
-        then:
-        storedEvent.isPresent()
-        storedEvent.get().event.orgId == 'orgId2'
-    }
-
 }

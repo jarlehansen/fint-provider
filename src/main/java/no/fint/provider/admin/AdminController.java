@@ -5,7 +5,7 @@ import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.provider.events.sse.FintSseEmitters;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventState;
-import no.fint.provider.eventstate.EventStateRepository;
+import no.fint.provider.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -23,7 +24,7 @@ import java.util.Map;
 public class AdminController {
 
     @Autowired
-    private EventStateRepository eventStateRepository;
+    private EventStateService eventStateService;
 
     @Autowired
     private SseService sseService;
@@ -52,8 +53,8 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/eventStates", method = RequestMethod.GET)
-    public Map<String, EventState> getEventState() {
-        return eventStateRepository.getMap();
+    public Set<EventState> getEventState() {
+        return eventStateService.getEventStates();
     }
 
     @RequestMapping(value = "/audit/events", method = RequestMethod.GET)

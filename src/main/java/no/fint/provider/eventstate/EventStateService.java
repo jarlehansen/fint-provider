@@ -1,58 +1,46 @@
 package no.fint.provider.eventstate;
 
+import lombok.Getter;
 import no.fint.event.model.Event;
-import no.fint.event.model.Status;
+import no.fint.events.FintEvents;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.Optional;
+import javax.annotation.PostConstruct;
+import java.util.Set;
 
 @Service
 public class EventStateService {
 
-    @Autowired
-    private EventStateRepository eventStateRepository;
+    @Value("${fint.provider.event-state.list-name:current-corrids}")
+    private String key;
 
-    public Optional<EventState> get(String corrId) {
-        return eventStateRepository.get(corrId);
+    @Autowired
+    private FintEvents fintEvents;
+
+    @Getter
+    private Set<EventState> eventStates;
+
+    @PostConstruct
+    public void init() {
+        RedissonClient client = fintEvents.getClient();
+        eventStates = client.getSet(key);
     }
 
     public boolean exists(Event event) {
-        Optional<EventState> eventState = eventStateRepository.get(event.getCorrId());
-        return eventState.isPresent();
-    }
-
-    public boolean exists(Event event, Status status) {
-        Optional<EventState> eventState = eventStateRepository.get(event.getCorrId());
-        if (eventState.isPresent()) {
-            Event e = eventState.get().getEvent();
-            if (e != null) {
-                return (e.getStatus() == status);
-            }
-        }
-
-        return false;
+        return (eventStates.contains(new EventState(event)));
     }
 
     public void add(Event event) {
-        eventStateRepository.add(new EventState(event));
+        eventStates.add(new EventState(event));
     }
 
-    public void update(Event event) {
-        eventStateRepository.get(event.getCorrId()).ifPresent(es -> eventStateRepository.add(new EventState(event)));
-    }
-
-    public Optional<EventState> getEventState(Event event) {
-        return eventStateRepository.get(event.getCorrId());
-    }
-
-    public void clear(Event event) {
-        eventStateRepository.remove(event.getCorrId());
-    }
-
-    public Map<String, EventState> getMap() {
-        return eventStateRepository.getMap();
+    public void remove(Event event) {
+        if (exists(event)) {
+            eventStates.remove(new EventState(event));
+        }
     }
 
 }

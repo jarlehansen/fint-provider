@@ -57,12 +57,12 @@ dependencies {
 
     compile('no.fint:fint-event-model:0.0.12')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
-    compile('org.springframework.data:spring-data-redis:1.7.5.RELEASE')
     compile('com.github.fakemongo:fongo:2.0.9')
 
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')
 
+    testCompile('no.fint:fint-test-utils:0.0.2')
     testCompile('cglib:cglib-nodep:3.2.5')
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')

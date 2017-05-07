@@ -1,35 +1,32 @@
 package no.fint.provider.admin
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent
+import no.fint.event.model.Event
 import no.fint.provider.events.sse.FintSseEmitter
 import no.fint.provider.events.sse.FintSseEmitters
 import no.fint.provider.events.sse.SseService
 import no.fint.provider.eventstate.EventState
-import no.fint.provider.eventstate.EventStateRepository
+import no.fint.provider.eventstate.EventStateService
+import no.fint.test.utils.MockMvcSpecification
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import spock.lang.Specification
 
-import static org.hamcrest.CoreMatchers.equalTo
 import static org.hamcrest.CoreMatchers.notNullValue
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-class AdminControllerSpec extends Specification {
+class AdminControllerSpec extends MockMvcSpecification {
     private AdminController adminController
-    private EventStateRepository eventStateRepository
+    private EventStateService eventStateService
     private SseService sseService
     private MongoTemplate mongoTemplate
     private MockMvc mockMvc
 
     void setup() {
-        eventStateRepository = Mock(EventStateRepository)
+        eventStateService = Mock(EventStateService)
         sseService = Mock(SseService)
         mongoTemplate = Mock(MongoTemplate)
-        adminController = new AdminController(eventStateRepository: eventStateRepository, sseService: sseService, mongoTemplate: mongoTemplate)
+        adminController = new AdminController(sseService: sseService, eventStateService: eventStateService, mongoTemplate: mongoTemplate)
         mockMvc = MockMvcBuilders.standaloneSetup(adminController).build()
     }
 
@@ -72,7 +69,7 @@ class AdminControllerSpec extends Specification {
         def response = mockMvc.perform(get('/provider/admin/eventStates'))
 
         then:
-        1 * eventStateRepository.getMap() >> ['rogfk.no': new EventState()]
+        1 * eventStateService.getEventStates() >> [new EventState(new Event(corrId: '123')), new EventState(new Event(corrId: '234'))]
         response.andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
     }

@@ -3,7 +3,7 @@ package no.fint.provider.events.response
 import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
-import no.fint.provider.eventstate.EventState
+
 import no.fint.provider.eventstate.EventStateService
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -31,10 +31,9 @@ class ResponseServiceSpec extends Specification {
         def handled = responseService.handleAdapterResponse(event)
 
         then:
-        1 * eventStateService.get(corrId) >> Optional.of(new EventState(event: event))
         2 * auditService.audit(_ as Event, _ as Boolean)
         1 * fintEvents.sendUpstream(_ as String, _ as Event)
-        1 * eventStateService.clear(event)
+        1 * eventStateService.remove(event)
         handled
     }
 
@@ -47,10 +46,8 @@ class ResponseServiceSpec extends Specification {
         def handled = responseService.handleAdapterResponse(event)
 
         then:
-        1 * eventStateService.get(corrId) >> Optional.of(new EventState(event: event, replyTo: 'test123'))
         2 * auditService.audit(_ as Event, _ as Boolean)
-        1 * fintEvents.reply(_ as String, _ as Event)
-        1 * eventStateService.clear(event)
+        1 * eventStateService.remove(event)
         handled
     }
 
@@ -63,7 +60,6 @@ class ResponseServiceSpec extends Specification {
         def handled = responseService.handleAdapterResponse(event)
 
         then:
-        1 * eventStateService.get(corrId) >> Optional.empty()
         !handled
     }
 }

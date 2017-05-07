@@ -25,19 +25,6 @@ class StatusServiceSpec extends Specification {
                 fintEvents: fintEvents)
     }
 
-    def "Update event state for existing event with status PROVIDER_ACCEPTED"() {
-        given:
-        def event = new Event(status: Status.PROVIDER_ACCEPTED)
-
-        when:
-        statusService.updateEventState(event)
-
-        then:
-        1 * eventStateService.exists(event) >> true
-        1 * fintAuditService.audit(event, true)
-        1 * eventStateService.update(event)
-    }
-
     def "Handle event state for existing event with status PROVIDER_REJECTED"() {
         given:
         def event = new Event(orgId: 'rogfk.no', status: Status.PROVIDER_REJECTED)
@@ -49,7 +36,7 @@ class StatusServiceSpec extends Specification {
         1 * eventStateService.exists(event) >> true
         2 * fintAuditService.audit(_ as Event, true)
         1 * fintEvents.sendUpstream(_ as String, _ as Event)
-        1 * eventStateService.clear(_ as Event)
+        1 * eventStateService.remove(_ as Event)
     }
 
     def "Handle non-existing event state"() {
