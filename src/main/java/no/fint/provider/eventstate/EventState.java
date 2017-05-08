@@ -18,6 +18,7 @@ public class EventState {
     public EventState(Event event) {
         this.timestamp = System.currentTimeMillis();
         if (event != null) {
+            this.corrId = event.getCorrId();
             this.orgId = event.getOrgId();
             this.source = event.getSource();
             this.action = event.getAction();

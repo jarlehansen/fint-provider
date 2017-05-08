@@ -8,11 +8,8 @@ import no.fint.events.FintEvents;
 import no.fint.events.annotations.FintEventListener;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventStateService;
-import org.redisson.api.RLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -32,15 +29,8 @@ public class DownstreamSubscriber {
 
     @FintEventListener
     public void receive(Event event) {
+        sseService.send(event);
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         fintAuditService.audit(event, true);
-
-        RLock lock = fintEvents.getClient().getLock(event.getCorrId());
-        int counter = 0;
-        while (counter < 3 && eventStateService.exists(event)) {
-            counter++;
-            sseService.send(event);
-            lock.lock(2, TimeUnit.MINUTES);
-        }
     }
 }

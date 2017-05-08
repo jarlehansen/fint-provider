@@ -7,7 +7,7 @@ class EventStateServiceSpec extends Specification {
     private EventStateService eventStateService
 
     void setup() {
-        eventStateService = new EventStateService(eventStates: [])
+        eventStateService = new EventStateService(eventStates: [], timeout: 1)
     }
 
     def "Only add unique corrIds to event state set"() {
@@ -46,5 +46,25 @@ class EventStateServiceSpec extends Specification {
 
         then:
         !exists
+    }
+
+    def "Event state is not expired when the timeout is not exceeded"() {
+        given:
+        def event = new Event('rogfk.no', 'fk', 'GET', 'vfs')
+        eventStateService.add(event)
+
+        when:
+        def expired = eventStateService.expired(event)
+
+        then:
+        !expired
+    }
+
+    def "Return expired when the event corrId is not present"() {
+        when:
+        def expired = eventStateService.expired(new Event(corrId: '123'))
+
+        then:
+        expired
     }
 }

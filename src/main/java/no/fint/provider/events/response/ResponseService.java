@@ -24,7 +24,11 @@ public class ResponseService {
 
     public boolean handleAdapterResponse(Event event) {
         log.info("Event received: {}", event.getCorrId());
-        if (eventStateService.exists(event)) {
+        if (eventStateService.expired(event)) {
+            event.setStatus(Status.PROVIDER_RESPONSE_ORPHANT);
+            fintAuditService.audit(event, true);
+            return false;
+        } else {
             fintAuditService.audit(event, true);
 
             log.info("EventState: {}", event.getCorrId());
@@ -35,10 +39,6 @@ public class ResponseService {
             fintEvents.getClient().getLock(event.getCorrId()).unlock();
 
             return true;
-        } else {
-            event.setStatus(Status.PROVIDER_RESPONSE_ORPHANT);
-            fintAuditService.audit(event, true);
-            return false;
         }
     }
 }

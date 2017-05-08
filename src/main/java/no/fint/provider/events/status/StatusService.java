@@ -28,7 +28,7 @@ public class StatusService {
             fintAuditService.audit(event, true);
 
             if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
-               // eventStateService.update(event);
+                eventStateService.add(event);
             } else {
                 try {
                     event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
