@@ -31,7 +31,7 @@ public class PollService {
         Event event = queue.poll();
         if (event != null) {
             event.setStatus(Status.DELIVERED_TO_PROVIDER);
-            eventStateService.add(event);
+            eventStateService.add(event, 2);
             fintAuditService.audit(event, true);
             return Optional.of(event);
         }

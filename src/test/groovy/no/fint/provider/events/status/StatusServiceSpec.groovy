@@ -6,8 +6,10 @@ import no.fint.event.model.Status
 import no.fint.events.FintEvents
 import no.fint.provider.eventstate.EventStateService
 import no.fint.provider.exceptions.UnknownEventException
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 class StatusServiceSpec extends Specification {
     private StatusService statusService
     private EventStateService eventStateService

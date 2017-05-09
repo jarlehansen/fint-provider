@@ -32,5 +32,7 @@ public class DownstreamSubscriber {
         sseService.send(event);
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         fintAuditService.audit(event, true);
+
+        eventStateService.add(event, 2);
     }
 }

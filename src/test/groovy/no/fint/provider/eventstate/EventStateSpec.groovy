@@ -1,9 +1,10 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
+import spock.lang.Ignore
 import spock.lang.Specification
 
-
+@Ignore
 class EventStateSpec extends Specification {
 
     def "Create EventState Object"() {

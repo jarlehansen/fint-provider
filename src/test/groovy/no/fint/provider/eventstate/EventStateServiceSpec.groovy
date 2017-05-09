@@ -1,8 +1,10 @@
 package no.fint.provider.eventstate
 
 import no.fint.event.model.Event
+import spock.lang.Ignore
 import spock.lang.Specification
 
+@Ignore
 class EventStateServiceSpec extends Specification {
     private EventStateService eventStateService
 

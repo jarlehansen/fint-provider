@@ -8,21 +8,28 @@ import no.fint.event.model.Event;
 @EqualsAndHashCode(of = "corrId")
 public class EventState {
     private String corrId;
-    private long timestamp;
+    private long expires;
 
-    private String orgId;
-    private String source;
-    private String action;
-    private String client;
+    private Event event;
 
     public EventState(Event event) {
-        this.timestamp = System.currentTimeMillis();
+        this.corrId = event.getCorrId();
+        this.event = event;
+    }
+
+    public EventState(Event event, int ttl) {
+        updateTtl(ttl);
         if (event != null) {
             this.corrId = event.getCorrId();
-            this.orgId = event.getOrgId();
-            this.source = event.getSource();
-            this.action = event.getAction();
-            this.client = event.getClient();
+            this.event = event;
         }
+    }
+
+    public boolean expired() {
+        return (System.currentTimeMillis() > expires);
+    }
+
+    public void updateTtl(int ttl) {
+        expires = System.currentTimeMillis() + (ttl * 60 * 1000);
     }
 }
