@@ -35,7 +35,7 @@ public class JanitorService {
                 eventStateService.remove(event);
 
                 event.setMessage("Event expired");
-                fintAuditService.audit(event, true);
+                fintAuditService.audit(event);
                 fintEvents.sendUpstream(event.getOrgId(), event);
             }
         });

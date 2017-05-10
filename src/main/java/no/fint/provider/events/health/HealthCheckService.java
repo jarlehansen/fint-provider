@@ -26,9 +26,9 @@ public class HealthCheckService implements HealthCheck<Event> {
 
     @Override
     public Event check(Event event) {
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
         event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-        fintAuditService.audit(event, true);
+        fintAuditService.audit(event);
         return null;
     }
 }

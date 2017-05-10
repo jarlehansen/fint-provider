@@ -17,8 +17,8 @@ class EventStateServiceSpec extends Specification {
         def event1 = new Event()
 
         when:
-        eventStateService.add(event1)
-        eventStateService.add(event1)
+        eventStateService.add(event1, 1)
+        eventStateService.add(event1, 2)
         def eventStates = eventStateService.getEventStates()
 
         then:
@@ -28,19 +28,19 @@ class EventStateServiceSpec extends Specification {
     def "Check if event state exists"() {
         given:
         def event = new Event()
-        eventStateService.add(event)
+        eventStateService.add(event, 1)
 
         when:
-        def exists = eventStateService.exists(event)
+        def eventState = eventStateService.get(event)
 
         then:
-        exists
+        eventState.isPresent()
     }
 
     def "Remote existing event state from set"() {
         given:
         def event = new Event()
-        eventStateService.add(event)
+        eventStateService.add(event, 1)
 
         when:
         eventStateService.remove(event)

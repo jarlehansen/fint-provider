@@ -20,9 +20,6 @@ public class EventStateService {
     @Value("${fint.provider.event-state.list-name:current-corrids}")
     private String key;
 
-    @Value("${fint.provider.event-state.timeout-in-minutes:15}")
-    private int timeout;
-
     @Autowired
     private FintEvents fintEvents;
 
@@ -49,10 +46,5 @@ public class EventStateService {
             eventStates.remove(new EventState(event));
         }
     }
-
-    public void update(Event event, int ttl) {
-
-    }
-
 
 }

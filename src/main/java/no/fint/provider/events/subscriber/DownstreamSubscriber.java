@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
-import no.fint.events.FintEvents;
 import no.fint.events.annotations.FintEventListener;
 import no.fint.provider.events.sse.SseService;
 import no.fint.provider.eventstate.EventStateService;
@@ -14,9 +13,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class DownstreamSubscriber {
-
-    @Autowired
-    private FintEvents fintEvents;
 
     @Autowired
     private SseService sseService;
@@ -31,8 +27,7 @@ public class DownstreamSubscriber {
     public void receive(Event event) {
         sseService.send(event);
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
-        fintAuditService.audit(event, true);
-
+        fintAuditService.audit(event);
         eventStateService.add(event, 2);
     }
 }

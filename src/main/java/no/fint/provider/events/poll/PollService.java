@@ -32,7 +32,7 @@ public class PollService {
         if (event != null) {
             event.setStatus(Status.DELIVERED_TO_PROVIDER);
             eventStateService.add(event, 2);
-            fintAuditService.audit(event, true);
+            fintAuditService.audit(event);
             return Optional.of(event);
         }
 

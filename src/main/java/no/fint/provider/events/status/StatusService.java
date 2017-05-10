@@ -28,7 +28,7 @@ public class StatusService {
     public void updateEventState(Event event) {
         Optional<EventState> state = eventStateService.get(event);
         if (state.isPresent()) {
-            fintAuditService.audit(event, true);
+            fintAuditService.audit(event);
             EventState eventState = state.get();
 
             if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
@@ -36,7 +36,7 @@ public class StatusService {
             } else {
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
-                fintAuditService.audit(event, true);
+                fintAuditService.audit(event);
                 fintEvents.sendUpstream(event.getOrgId(), event);
                 eventStateService.remove(event);
             }
