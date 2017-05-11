@@ -3,8 +3,11 @@ package no.fint.provider.events.health;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
+import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
 import no.fint.events.HealthCheck;
+import no.fint.provider.events.sse.FintSseEmitter;
+import no.fint.provider.events.sse.SseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +17,16 @@ import javax.annotation.PostConstruct;
 public class HealthCheckService implements HealthCheck<Event> {
 
     @Autowired
+    private SseService sseService;
+
+    @Autowired
     private FintAuditService fintAuditService;
 
     @Autowired
     private FintEventsHealth fintEventsHealth;
+
+    @Autowired
+    private FintEvents fintEvents;
 
     @PostConstruct
     public void init() {
@@ -27,8 +36,12 @@ public class HealthCheckService implements HealthCheck<Event> {
     @Override
     public Event check(Event event) {
         fintAuditService.audit(event);
+        sseService.send(event);
         event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
         fintAuditService.audit(event);
+
+
+
         return null;
     }
 }
