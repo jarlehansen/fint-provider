@@ -1,15 +1,10 @@
 {
-  "name": "test-clients",
+  "name": "test-consumer",
   "scripts": {
-    "sse": "node sse/sse-client.js",
-    "downstream": "node events/downstream.js"
+    "start": "concurrently --kill-others './gradlew bootRun -Dspring.profiles.active=test -p ..' 'wait-on tcp:6379 && ./gradlew bootRun'"
   },
   "dependencies": {
-    "amqplib": "^0.5.1",
-    "eventsource": "^0.2.1",
-    "https": "^1.0.0",
-    "sleep": "^5.0.0",
-    "uuid": "^3.0.0",
-    "yamljs": "^0.2.8"
+    "concurrently": "^3.4.0",
+    "wait-on": "^2.0.2"
   }
 }
