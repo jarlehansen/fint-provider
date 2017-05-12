@@ -18,14 +18,17 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     jcenter()
     maven {
         url "http://dl.bintray.com/fint/maven"
     }
 }
 
-
 dependencies {
+    compile('no.fint:fint-events:0.1.11')
+    compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
+
     compile('org.springframework.boot:spring-boot-starter')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')

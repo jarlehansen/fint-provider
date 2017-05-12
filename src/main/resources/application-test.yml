@@ -1,0 +1,10 @@
+springfox:
+ title: fint-provider
+
+fint:
+ provider:
+  test-mode: true
+ audit:
+  test-mode: true
+ events:
+  test-mode: true
