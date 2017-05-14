@@ -71,20 +71,25 @@ public class SseService {
     }
 
     public void send(Event event) {
-        List<FintSseEmitter> toBeRemoved = new ArrayList<>();
-        clients.get(event.getOrgId()).forEach(emitter -> {
-            try {
-                SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
-                emitter.send(builder);
-            } catch (Exception e) {
-                log.debug("Exception when trying to send message to SseEmitter", e);
-                log.warn("Removing subscriber {}", event.getOrgId());
-                toBeRemoved.add(emitter);
-            }
-        });
+        FintSseEmitters emitters = clients.get(event.getOrgId());
+        if(emitters == null) {
+            log.info("No sse clients registered for {}", event.getOrgId());
+        } else {
+            List<FintSseEmitter> toBeRemoved = new ArrayList<>();
+            emitters.forEach(emitter -> {
+                try {
+                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
+                    emitter.send(builder);
+                } catch (Exception e) {
+                    log.debug("Exception when trying to send message to SseEmitter", e);
+                    log.warn("Removing subscriber {}", event.getOrgId());
+                    toBeRemoved.add(emitter);
+                }
+            });
 
-        for (FintSseEmitter emitter : toBeRemoved) {
-            removeEmitter(event.getOrgId(), emitter);
+            for (FintSseEmitter emitter : toBeRemoved) {
+                removeEmitter(event.getOrgId(), emitter);
+            }
         }
     }
 
