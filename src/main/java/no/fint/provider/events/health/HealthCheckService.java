@@ -8,11 +8,11 @@ import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
 import no.fint.events.HealthCheck;
 import no.fint.provider.events.sse.SseService;
+import org.redisson.api.RBlockingQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -57,7 +57,7 @@ public class HealthCheckService implements HealthCheck<Event> {
     }
 
     private Event handleReceivedEvent(Event event) throws InterruptedException {
-        BlockingQueue<Event> tempQueue = fintEvents.getTempQueue(event.getCorrId());
+        RBlockingQueue<Event> tempQueue = fintEvents.getTempQueue(event.getCorrId());
         Event response = tempQueue.poll(2, TimeUnit.MINUTES);
         if (response == null) {
             event.setStatus(Status.NO_RESPONSE_FOR_PROVIDER);

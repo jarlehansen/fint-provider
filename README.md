@@ -12,6 +12,10 @@
 | fint.provider.test-mode | false |
 | fint.provider.max-number-of-emitters | 20 |
 
-## Run consumer locally
+## Run provider locally
+
+* [provider](http://localhost:8080/swagger-ui.html)
+* [consumer](http://localhost:8090/swagger-ui.html)
+* [redis-commander](http://localhost:8081)
 
 `npm start --prefix test-clients`
