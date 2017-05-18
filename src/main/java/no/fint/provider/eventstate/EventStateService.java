@@ -43,7 +43,10 @@ public class EventStateService {
     public void remove(Event event) {
         Optional<EventState> eventState = get(event);
         if (eventState.isPresent()) {
-            eventStates.remove(new EventState(event));
+            boolean removed = eventStates.remove(eventState.get());
+            if (!removed) {
+                log.warn("Unable to remove event with corrId {} from EventStates", event.getCorrId());
+            }
         }
     }
 

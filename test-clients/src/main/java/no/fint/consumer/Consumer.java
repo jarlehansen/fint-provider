@@ -1,13 +1,15 @@
-package no.fint;
+package no.fint.consumer;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fint.dto.Value;
+import no.fint.Actions;
+import no.fint.adapter.Adapter;
+import no.fint.Constants;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
 import no.fint.events.HealthCheck;
 import no.fint.events.annotations.FintEventListener;
-import org.redisson.api.RBlockingQueue;
+import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
 @RequestMapping("/consumer")
 public class Consumer {
+
+    @Autowired
+    private Adapter adapter;
 
     @Autowired
     private FintEvents fintEvents;
@@ -32,8 +35,22 @@ public class Consumer {
 
     @PostConstruct
     public void init() {
+        createRedissonClient();
+    }
+
+    public void createRedissonClient() {
         fintEvents.registerUpstreamListener(Consumer.class, Constants.ORGID);
         healthCheck = fintEventsHealth.registerClient();
+    }
+
+    @GetMapping("/reconnect")
+    public void reconnect() {
+        fintEvents.reconnect();
+        fintEventsHealth.deregisterClient();
+        createRedissonClient();
+
+        adapter.shutdown();
+        adapter.init();
     }
 
     @GetMapping("/healthCheck")
@@ -43,20 +60,8 @@ public class Consumer {
         return healthCheck.check(health);
     }
 
-    @GetMapping("/values")
-    public List<Value> getAllValues(@RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
-                                    @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
-        Event<Value> event = new Event<>(orgId, Constants.SOURCE, Actions.GET_ALL_VALUES, client);
-        fintEvents.sendDownstream(orgId, event);
-
-        RBlockingQueue<Event<Value>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());
-        Event<Value> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
-
-        return receivedEvent.getData();
-    }
-
     @FintEventListener
-    public void receive(Event<Value> event) {
+    public void receive(Event<FintResource> event) {
         log.info("Upstream event: {}", event);
         fintEvents.getTempQueue("test-consumer-" + event.getCorrId()).offer(event);
     }

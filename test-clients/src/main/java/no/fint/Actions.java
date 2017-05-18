@@ -3,6 +3,7 @@ package no.fint;
 public enum Actions {
     ;
 
-    static final String HEALTH = "HEALTH";
-    static final String GET_ALL_VALUES = "GET_ALL_VALUES";
+    public static final String HEALTH = "HEALTH";
+    public static final String GET_ALL_PERSONS = "GET_ALL_PERSONS";
+    public static final String GET_ALL_ADDRESSES = "GET_ALL_ADDRESSES";
 }

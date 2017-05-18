@@ -4,3 +4,7 @@ server:
 fint:
  events:
   queue-endpoint-enabled: true
+
+ relations:
+  force-https: false
+  default-base-url: http://localhost:8090

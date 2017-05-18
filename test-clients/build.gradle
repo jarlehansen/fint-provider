@@ -26,8 +26,10 @@ repositories {
 }
 
 dependencies {
-    compile('no.fint:fint-events:0.1.15')
+    compile('no.fint:fint-events:0.1.16')
     compile('no.fint:fint-event-model:0.0.12')
+    compile('no.fint:fint-relation-model:0.0.22')
+    compile('no.fint:fint-relations:0.0.20')
 
     compile('org.glassfish.jersey.media:jersey-media-sse:2.25.1')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")

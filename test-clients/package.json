@@ -1,7 +1,8 @@
 {
   "name": "test-consumer",
   "scripts": {
-    "start": "concurrently --kill-others './gradlew bootRun -Dspring.profiles.active=test -p ..' 'wait-on tcp:6379 && ./gradlew bootRun' 'wait-on tcp:6379 && redis-commander'"
+    "start": "concurrently --kill-others './gradlew bootRun -Dspring.profiles.active=test -p ..' 'wait-on tcp:6379 && ./gradlew bootRun' 'wait-on tcp:6379 && redis-commander'",
+    "start-test-clients": "concurrently --kill-others 'wait-on tcp:6379 && ./gradlew bootRun' 'wait-on tcp:6379 && redis-commander'"
   },
   "dependencies": {
     "concurrently": "^3.4.0",

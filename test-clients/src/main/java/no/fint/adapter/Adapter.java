@@ -1,11 +1,16 @@
-package no.fint;
+package no.fint.adapter;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import no.fint.dto.Value;
+import no.fint.Actions;
+import no.fint.Constants;
+import no.fint.dto.Address;
+import no.fint.dto.Person;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
 import no.fint.event.model.Status;
+import no.fint.model.relation.FintResource;
+import no.fint.model.relation.Relation;
 import no.fint.sse.SseHeaderProvider;
 import no.fint.sse.SseHeaderSupportFeature;
 import org.glassfish.jersey.media.sse.EventListener;
@@ -26,6 +31,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,15 +77,41 @@ public class Adapter implements EventListener {
         if (event.getAction().equals(Actions.HEALTH)) {
             event.setData(Lists.newArrayList("Response from test adapter"));
             postResponse(event);
-        } else if (event.getAction().equals(Actions.GET_ALL_VALUES)) {
+        } else if (event.getAction().equals(Actions.GET_ALL_PERSONS)) {
             event.setStatus(Status.PROVIDER_ACCEPTED);
             postStatus(event);
-
-            Value value1 = new Value("test value 1");
-            Value value2 = new Value("test value 2");
-            event.setData(Lists.newArrayList(value1, value2));
+            event.setData(createPersonList());
+            postResponse(event);
+        } else if (event.getAction().equals(Actions.GET_ALL_ADDRESSES)) {
+            event.setStatus(Status.PROVIDER_ACCEPTED);
+            postStatus(event);
+            event.setData(createAddressList());
             postResponse(event);
         }
+    }
+
+    private List<FintResource> createPersonList() {
+        Person person1 = new Person("1", "Mari");
+        Relation relation1 = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value("1").build();
+        FintResource<Person> resource1 = FintResource.with(person1).addRelasjoner(relation1);
+
+        Person person2 = new Person("2", "Per");
+        Relation relation2 = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value("2").build();
+        FintResource<Person> resource2 = FintResource.with(person2).addRelasjoner(relation2);
+
+        return Lists.newArrayList(resource1, resource2);
+    }
+
+    private List<FintResource> createAddressList() {
+        Address address1 = new Address("1", "veien 1");
+        Relation relation1 = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value("1").build();
+        FintResource<Address> resource1 = FintResource.with(address1).addRelasjoner(relation1);
+
+        Address address2 = new Address("2", "veien 2");
+        Relation relation2 = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value("2").build();
+        FintResource<Address> resource2 = FintResource.with(address2).addRelasjoner(relation2);
+
+        return Lists.newArrayList(resource1, resource2);
     }
 
     private void postStatus(Event event) {
