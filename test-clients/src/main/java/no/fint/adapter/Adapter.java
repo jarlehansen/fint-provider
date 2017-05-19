@@ -4,13 +4,9 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
 import no.fint.Constants;
-import no.fint.dto.Address;
-import no.fint.dto.Person;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
 import no.fint.event.model.Status;
-import no.fint.model.relation.FintResource;
-import no.fint.model.relation.Relation;
 import no.fint.sse.SseHeaderProvider;
 import no.fint.sse.SseHeaderSupportFeature;
 import org.glassfish.jersey.media.sse.EventListener;
@@ -39,6 +35,9 @@ import java.util.UUID;
 @Component
 public class Adapter implements EventListener {
     private EventSource eventSource;
+
+    @Autowired
+    private Resources resources;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -77,43 +76,25 @@ public class Adapter implements EventListener {
         if (event.getAction().equals(Actions.HEALTH)) {
             event.setData(Lists.newArrayList("Response from test adapter"));
             postResponse(event);
-        } else if (event.getAction().equals(Actions.GET_ALL_PERSONS)) {
+        } else {
             event.setStatus(Status.PROVIDER_ACCEPTED);
             postStatus(event);
-            event.setData(createPersonList());
-            postResponse(event);
-        } else if (event.getAction().equals(Actions.GET_ALL_ADDRESSES)) {
-            event.setStatus(Status.PROVIDER_ACCEPTED);
-            postStatus(event);
-            event.setData(createAddressList());
-            postResponse(event);
+
+            if (event.getAction().equals(Actions.GET_ALL_PERSONS)) {
+                event.setData(resources.createPersonList());
+            } else if (event.getAction().equals(Actions.GET_ALL_ADDRESSES)) {
+                event.setData(resources.createAddressList());
+            } else if (event.getAction().equals(Actions.GET_ADDRESS)) {
+                List<String> data = event.getData();
+                event.setData(resources.createAddress(data.get(0)));
+            } else if (event.getAction().equals(Actions.GET_PERSON)) {
+                List<String> data = event.getData();
+                event.setData(resources.createPerson(data.get(0)));
+            }
         }
+        postResponse(event);
     }
-
-    private List<FintResource> createPersonList() {
-        Person person1 = new Person("1", "Mari");
-        Relation relation1 = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value("1").build();
-        FintResource<Person> resource1 = FintResource.with(person1).addRelasjoner(relation1);
-
-        Person person2 = new Person("2", "Per");
-        Relation relation2 = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value("2").build();
-        FintResource<Person> resource2 = FintResource.with(person2).addRelasjoner(relation2);
-
-        return Lists.newArrayList(resource1, resource2);
-    }
-
-    private List<FintResource> createAddressList() {
-        Address address1 = new Address("1", "veien 1");
-        Relation relation1 = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value("1").build();
-        FintResource<Address> resource1 = FintResource.with(address1).addRelasjoner(relation1);
-
-        Address address2 = new Address("2", "veien 2");
-        Relation relation2 = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value("2").build();
-        FintResource<Address> resource2 = FintResource.with(address2).addRelasjoner(relation2);
-
-        return Lists.newArrayList(resource1, resource2);
-    }
-
+    
     private void postStatus(Event event) {
         HttpHeaders headers = new HttpHeaders();
         headers.put(Constants.HEADER_ORGID, Lists.newArrayList(Constants.ORGID));
