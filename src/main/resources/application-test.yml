@@ -8,3 +8,4 @@ fint:
   test-mode: true
  events:
   test-mode: true
+  queue-endpoint-enabled: true

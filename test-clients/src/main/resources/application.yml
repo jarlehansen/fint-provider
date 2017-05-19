@@ -4,6 +4,7 @@ server:
 fint:
  events:
   queue-endpoint-enabled: true
+  orgIds: mock.no
 
  relations:
   force-https: false

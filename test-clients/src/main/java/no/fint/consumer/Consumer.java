@@ -2,13 +2,14 @@ package no.fint.consumer;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
-import no.fint.adapter.Adapter;
 import no.fint.Constants;
+import no.fint.adapter.Adapter;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
 import no.fint.events.HealthCheck;
 import no.fint.events.annotations.FintEventListener;
+import no.fint.events.queue.QueueType;
 import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,6 @@ public class Consumer {
     }
 
     public void createRedissonClient() {
-        fintEvents.registerUpstreamListener(Consumer.class, Constants.ORGID);
         healthCheck = fintEventsHealth.registerClient();
     }
 
@@ -60,7 +60,7 @@ public class Consumer {
         return healthCheck.check(health);
     }
 
-    @FintEventListener
+    @FintEventListener(type = QueueType.UPSTREAM)
     public void receive(Event<FintResource> event) {
         log.info("Upstream event: {}", event);
         fintEvents.getTempQueue("test-consumer-" + event.getCorrId()).offer(event);
