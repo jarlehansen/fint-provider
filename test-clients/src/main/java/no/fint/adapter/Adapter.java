@@ -91,10 +91,10 @@ public class Adapter implements EventListener {
                 List<String> data = event.getData();
                 event.setData(resources.createPerson(data.get(0)));
             }
+            postResponse(event);
         }
-        postResponse(event);
     }
-    
+
     private void postStatus(Event event) {
         HttpHeaders headers = new HttpHeaders();
         headers.put(Constants.HEADER_ORGID, Lists.newArrayList(Constants.ORGID));

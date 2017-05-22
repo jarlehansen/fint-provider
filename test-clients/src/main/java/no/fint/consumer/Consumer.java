@@ -7,7 +7,6 @@ import no.fint.adapter.Adapter;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
-import no.fint.events.HealthCheck;
 import no.fint.events.annotations.FintEventListener;
 import no.fint.events.queue.QueueType;
 import no.fint.model.relation.FintResource;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.PostConstruct;
 
 @Slf4j
 @RestController
@@ -32,23 +29,17 @@ public class Consumer {
 
     @Autowired
     private FintEventsHealth fintEventsHealth;
-    private HealthCheck<Event> healthCheck;
-
-    @PostConstruct
-    public void init() {
-        createRedissonClient();
-    }
-
-    public void createRedissonClient() {
-        healthCheck = fintEventsHealth.registerClient();
-    }
 
     @GetMapping("/reconnect")
     public void reconnect() {
         fintEvents.reconnect();
-        fintEventsHealth.deregisterClient();
-        createRedissonClient();
 
+        adapter.shutdown();
+        adapter.init();
+    }
+
+    @GetMapping("/reconnectSse")
+    public void reconnectSse() {
         adapter.shutdown();
         adapter.init();
     }
@@ -57,7 +48,7 @@ public class Consumer {
     public Event healthCheck(@RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
                              @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) {
         Event<String> health = new Event<>(orgId, Constants.SOURCE, Actions.HEALTH, client);
-        return healthCheck.check(health);
+        return fintEventsHealth.sendHealthCheck(orgId, health.getCorrId(), health);
     }
 
     @FintEventListener(type = QueueType.UPSTREAM)

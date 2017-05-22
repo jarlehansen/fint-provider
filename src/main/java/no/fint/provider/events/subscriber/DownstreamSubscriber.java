@@ -28,6 +28,9 @@ public class DownstreamSubscriber {
         sseService.send(event);
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         fintAuditService.audit(event);
-        eventStateService.add(event, 2);
+
+        if (!event.getAction().equals("HEALTH")) {
+            eventStateService.add(event, 2);
+        }
     }
 }

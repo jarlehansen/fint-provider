@@ -2,11 +2,15 @@ package no.fint.provider;
 
 import com.github.springfox.loader.EnableSpringfox;
 import no.fint.audit.EnableFintAudit;
+import no.fint.events.FintEvents;
 import no.fint.events.annotations.EnableFintEvents;
 import no.fint.events.controller.FintEventsController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import javax.annotation.PostConstruct;
 
 @EnableFintAudit
 @EnableFintEvents
