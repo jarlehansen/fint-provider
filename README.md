@@ -14,7 +14,7 @@
 
 ## Run provider locally
 
-* [provider - http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+* [provider - http://localhost:8080/provider/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 * [consumer - http://localhost:8090/swagger-ui.html](http://localhost:8090/swagger-ui.html)
 * [redis-commander - http://localhost:8081](http://localhost:8081)
 
