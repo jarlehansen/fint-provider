@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RequestMapping(value = "/provider/response", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/response", consumes = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class ResponseController {
 

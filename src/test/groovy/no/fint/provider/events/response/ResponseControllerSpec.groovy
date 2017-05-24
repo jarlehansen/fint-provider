@@ -26,7 +26,7 @@ class ResponseControllerSpec extends Specification {
         def jsonBody = new ObjectMapper().writeValueAsString(new Event())
 
         when:
-        def response = mockMvc.perform(post('/provider/response')
+        def response = mockMvc.perform(post('/response')
                 .header('x-org-id', 'rogfk.no')
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
@@ -41,7 +41,7 @@ class ResponseControllerSpec extends Specification {
         def jsonBody = new ObjectMapper().writeValueAsString(new Event())
 
         when:
-        def response = mockMvc.perform(post('/provider/response')
+        def response = mockMvc.perform(post('/response')
                 .header('x-org-id', 'rogfk.no')
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))

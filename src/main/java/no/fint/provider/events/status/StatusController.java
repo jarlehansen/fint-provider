@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/provider/status", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/status", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class StatusController {
 
     @Autowired

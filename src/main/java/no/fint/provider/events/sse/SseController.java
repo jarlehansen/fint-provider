@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @Slf4j
-@RequestMapping(value = "/provider/sse")
+@RequestMapping(value = "/sse")
 @RestController
 public class SseController {
 

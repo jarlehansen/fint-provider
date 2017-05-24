@@ -1,2 +1,5 @@
+server:
+ context-path: '/provider'
+
 springfox:
  version: '@version@'

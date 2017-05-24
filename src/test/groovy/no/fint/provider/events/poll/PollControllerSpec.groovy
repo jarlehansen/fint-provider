@@ -23,7 +23,7 @@ class PollControllerSpec extends Specification {
 
     def "Return content if event is available"() {
         when:
-        def response = mockMvc.perform(get('/provider/poll').header('x-org-id', 'rogfk.no'))
+        def response = mockMvc.perform(get('/poll').header('x-org-id', 'rogfk.no'))
 
         then:
         1 * pollService.readEvent('rogfk.no') >> Optional.of(new Event())
@@ -33,7 +33,7 @@ class PollControllerSpec extends Specification {
 
     def "Return no content if event is not available"() {
         when:
-        def response = mockMvc.perform(get('/provider/poll').header('x-org-id', 'rogfk.no'))
+        def response = mockMvc.perform(get('/poll').header('x-org-id', 'rogfk.no'))
 
         then:
         1 * pollService.readEvent('rogfk.no') >> Optional.empty()

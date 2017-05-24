@@ -20,7 +20,7 @@ import java.util.Set;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/provider/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminController {
 
     @Autowired

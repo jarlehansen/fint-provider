@@ -37,7 +37,7 @@ class AdminControllerSpec extends MockMvcSpecification {
         emitters.add(new FintSseEmitter(id: '234'))
 
         when:
-        def response = mockMvc.perform(get('/provider/admin/sse-clients'))
+        def response = mockMvc.perform(get('/admin/sse-clients'))
 
         then:
         1 * sseService.getSseClients() >> ['rogfk.no': emitters]
@@ -57,7 +57,7 @@ class AdminControllerSpec extends MockMvcSpecification {
         emitters.add(new FintSseEmitter(id: '234'))
 
         when:
-        def response = mockMvc.perform(delete('/provider/admin/sse-clients'))
+        def response = mockMvc.perform(delete('/admin/sse-clients'))
 
         then:
         1 * sseService.removeAll()
@@ -66,7 +66,7 @@ class AdminControllerSpec extends MockMvcSpecification {
 
     def "List current event states"() {
         when:
-        def response = mockMvc.perform(get('/provider/admin/eventStates'))
+        def response = mockMvc.perform(get('/admin/eventStates'))
 
         then:
         1 * eventStateService.getEventStates() >> [new EventState(new Event(corrId: '123')), new EventState(new Event(corrId: '234'))]
@@ -76,7 +76,7 @@ class AdminControllerSpec extends MockMvcSpecification {
 
     def "Get audited events log"() {
         when:
-        def response = mockMvc.perform(get('/provider/admin/audit/events'))
+        def response = mockMvc.perform(get('/admin/audit/events'))
 
         then:
         1 * mongoTemplate.findAll(MongoAuditEvent) >> []

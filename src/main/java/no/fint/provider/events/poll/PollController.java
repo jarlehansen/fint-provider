@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/provider/poll", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/poll", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PollController {
 
     @Autowired
