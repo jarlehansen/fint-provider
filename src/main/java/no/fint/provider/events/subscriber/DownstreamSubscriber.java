@@ -30,7 +30,7 @@ public class DownstreamSubscriber {
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         fintAuditService.audit(event);
 
-        if (!event.getAction().equals("HEALTH")) {
+        if (!event.isHealthCheck()) {
             eventStateService.add(event, 2);
         }
     }
