@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class SseService {
     private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
 
-    @Value("${fint.provider.max-number-of-emitters:20}")
+    @Value("${fint.provider.max-number-of-emitters:50}")
     private int maxNumberOfEmitters;
 
     private ConcurrentHashMap<String, FintSseEmitters> clients = new ConcurrentHashMap<>();
@@ -38,6 +38,7 @@ public class SseService {
         if (registeredEmitter.isPresent()) {
             return registeredEmitter.get();
         } else {
+            log.info("id: {}, {} connected", id, orgId);
             FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
             emitter.onCompletion(() -> {
                 log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
@@ -65,6 +66,7 @@ public class SseService {
         if (orgId != null && emitter != null) {
             FintSseEmitters fintSseEmitters = clients.get(orgId);
             if (fintSseEmitters != null) {
+                emitter.complete();
                 fintSseEmitters.remove(emitter);
             }
         }
@@ -72,7 +74,7 @@ public class SseService {
 
     public void send(Event event) {
         FintSseEmitters emitters = clients.get(event.getOrgId());
-        if(emitters == null) {
+        if (emitters == null) {
             log.info("No sse clients registered for {}", event.getOrgId());
         } else {
             List<FintSseEmitter> toBeRemoved = new ArrayList<>();
@@ -81,7 +83,7 @@ public class SseService {
                     SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
                     emitter.send(builder);
                 } catch (Exception e) {
-                    log.debug("Exception when trying to send message to SseEmitter", e);
+                    log.warn("Exception when trying to send message to SseEmitter", e);
                     log.warn("Removing subscriber {}", event.getOrgId());
                     toBeRemoved.add(emitter);
                 }

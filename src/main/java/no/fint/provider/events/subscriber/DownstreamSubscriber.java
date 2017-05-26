@@ -25,6 +25,7 @@ public class DownstreamSubscriber {
 
     @FintEventListener
     public void receive(Event event) {
+        log.info("Event received: {}", event.getAction());
         sseService.send(event);
         event.setStatus(Status.DELIVERED_TO_PROVIDER);
         fintAuditService.audit(event);

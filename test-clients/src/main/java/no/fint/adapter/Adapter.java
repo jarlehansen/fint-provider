@@ -1,5 +1,6 @@
 package no.fint.adapter;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
@@ -7,34 +8,27 @@ import no.fint.Constants;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
 import no.fint.event.model.Status;
-import no.fint.sse.SseHeaderProvider;
-import no.fint.sse.SseHeaderSupportFeature;
+import no.fint.sse.FintSse;
 import org.glassfish.jersey.media.sse.EventListener;
-import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.InboundEvent;
-import org.glassfish.jersey.media.sse.SseFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 @Component
 public class Adapter implements EventListener {
-    private EventSource eventSource;
+    private FintSse fintSse;
 
     @Autowired
     private Resources resources;
@@ -44,27 +38,22 @@ public class Adapter implements EventListener {
 
     @PostConstruct
     public void init() {
-        eventSource = EventSource.target(getWebTarget()).build();
-        eventSource.register(this);
-        eventSource.open();
+        String sseUrl = String.format("http://localhost:8080/provider/sse/%s", UUID.randomUUID().toString());
+        fintSse = new FintSse(sseUrl);
+        fintSse.connect(this, ImmutableMap.of(Constants.HEADER_ORGID, Constants.ORGID));
+    }
+
+    @Scheduled(fixedRate = 5000L)
+    public void checkSseConnection() {
+        boolean connected = fintSse.verifyConnection();
+        if (!connected) {
+            log.info("Reconnecting SSE client");
+        }
     }
 
     @PreDestroy
     public void shutdown() {
-        eventSource.close();
-    }
-
-    private WebTarget getWebTarget() {
-        Map<String, String> map = new HashMap<>();
-        map.put(Constants.HEADER_ORGID, Constants.ORGID);
-        SseHeaderProvider provider = () -> map;
-        Client client = ClientBuilder.newBuilder()
-                .register(SseFeature.class)
-                .register(new SseHeaderSupportFeature(provider))
-                .build();
-
-        String sseUrl = String.format("http://localhost:8080/provider/sse/%s", UUID.randomUUID().toString());
-        return client.target(sseUrl);
+        fintSse.close();
     }
 
     @Override

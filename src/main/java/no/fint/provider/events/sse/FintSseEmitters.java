@@ -1,25 +1,24 @@
 package no.fint.provider.events.sse;
 
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
 
 public class FintSseEmitters implements Iterable<FintSseEmitter> {
-
     private final int maxSize;
-    private final Deque<FintSseEmitter> emitters;
+    private final ConcurrentLinkedDeque<FintSseEmitter> emitters;
     private Function<FintSseEmitter, Void> removeCallback;
 
     public FintSseEmitters(int maxSize, Function<FintSseEmitter, Void> removeCallback) {
         this.maxSize = maxSize;
-        emitters = new ArrayDeque<>(maxSize);
+        this.emitters = new ConcurrentLinkedDeque<>();
         this.removeCallback = removeCallback;
     }
 
     public void add(FintSseEmitter emitter) {
-        if (emitters.size() == maxSize) {
+        if (emitters.size() >= maxSize) {
             if (removeCallback != null) {
                 removeCallback.apply(emitter);
             }

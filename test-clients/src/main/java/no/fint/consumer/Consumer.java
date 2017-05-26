@@ -3,7 +3,6 @@ package no.fint.consumer;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
 import no.fint.Constants;
-import no.fint.adapter.Adapter;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
@@ -22,9 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class Consumer {
 
     @Autowired
-    private Adapter adapter;
-
-    @Autowired
     private FintEvents fintEvents;
 
     @Autowired
@@ -33,15 +29,6 @@ public class Consumer {
     @GetMapping("/reconnect")
     public void reconnect() {
         fintEvents.reconnect();
-
-        adapter.shutdown();
-        adapter.init();
-    }
-
-    @GetMapping("/reconnectSse")
-    public void reconnectSse() {
-        adapter.shutdown();
-        adapter.init();
     }
 
     @GetMapping("/healthCheck")

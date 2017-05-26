@@ -7,8 +7,10 @@ import no.fint.relations.annotations.EnableFintRelations;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
+@EnableScheduling
 @EnableFintRelations
 @EnableFintEvents
 @EnableSpringfox(@Info(title = "test-clients", version = "0.0.1-SNAPSHOT"))
