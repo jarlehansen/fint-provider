@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(value = "/address", produces = {"application/hal+json"})
 public class AddressConsumer {
 
+    private TypeReference<List<FintResource<Address>>> addressTypeReference = new TypeReference<List<FintResource<Address>>>() {
+    };
+
     @Autowired
     private FintEvents fintEvents;
 
@@ -36,8 +39,7 @@ public class AddressConsumer {
 
         RBlockingQueue<Event<FintResource>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());
         Event<FintResource> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
-        List<FintResource<Address>> fintResources = EventUtil.convertEventData(receivedEvent, new TypeReference<List<FintResource<Address>>>() {
-        });
+        List<FintResource<Address>> fintResources = EventUtil.convertEventData(receivedEvent, addressTypeReference);
 
         return ResponseEntity.ok(fintResources);
     }
@@ -45,7 +47,7 @@ public class AddressConsumer {
     @FintRelations
     @GetMapping("/{id}")
     public ResponseEntity getAddress(@PathVariable String id,
-                                    @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
+                                     @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
                                      @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
         Event<String> event = new Event<>(orgId, Constants.SOURCE, Actions.GET_ADDRESS, client);
         event.setData(Lists.newArrayList(id));
@@ -53,8 +55,7 @@ public class AddressConsumer {
 
         RBlockingQueue<Event<FintResource>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());
         Event<FintResource> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
-        List<FintResource<Address>> fintResources = EventUtil.convertEventData(receivedEvent, new TypeReference<List<FintResource<Address>>>() {
-        });
+        List<FintResource<Address>> fintResources = EventUtil.convertEventData(receivedEvent, addressTypeReference);
 
         return ResponseEntity.ok(fintResources.get(0));
     }

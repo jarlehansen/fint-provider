@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(value = "/person", produces = {"application/hal+json"})
 public class PersonConsumer {
 
+    private final TypeReference<List<FintResource<Person>>> personTypeReference = new TypeReference<List<FintResource<Person>>>() {
+    };
+
     @Autowired
     private FintEvents fintEvents;
 
@@ -37,8 +40,7 @@ public class PersonConsumer {
         RBlockingQueue<Event<FintResource>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());
         Event<FintResource> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
 
-        List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, new TypeReference<List<FintResource<Person>>>() {
-        });
+        List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, personTypeReference);
 
         return ResponseEntity.ok(fintResources);
     }
@@ -55,8 +57,7 @@ public class PersonConsumer {
         RBlockingQueue<Event<FintResource>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());
         Event<FintResource> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
 
-        List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, new TypeReference<List<FintResource<Person>>>() {
-        });
+        List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, personTypeReference);
 
         return ResponseEntity.ok(fintResources.get(0));
     }
