@@ -8,6 +8,7 @@ import no.fint.Constants;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
 import no.fint.event.model.Status;
+import no.fint.model.relation.FintResource;
 import no.fint.sse.FintSse;
 import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.InboundEvent;
@@ -63,24 +64,27 @@ public class Adapter implements EventListener {
         log.info(event.toString());
 
         if (event.getAction().equals(Actions.HEALTH)) {
-            event.setData(Lists.newArrayList("Response from test adapter"));
-            postResponse(event);
+            Event<String> healthCheckEvent = new Event<>(event);
+            healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
+            healthCheckEvent.setData(Lists.newArrayList("Response from test adapter"));
+            postResponse(healthCheckEvent);
         } else {
-            event.setStatus(Status.PROVIDER_ACCEPTED);
-            postStatus(event);
+            Event<FintResource> responseEvent = new Event<>(event);
+            responseEvent.setStatus(Status.PROVIDER_ACCEPTED);
+            postStatus(responseEvent);
 
             if (event.getAction().equals(Actions.GET_ALL_PERSONS)) {
-                event.setData(resources.createPersonList());
+                responseEvent.setData(resources.createPersonList());
             } else if (event.getAction().equals(Actions.GET_ALL_ADDRESSES)) {
-                event.setData(resources.createAddressList());
+                responseEvent.setData(resources.createAddressList());
             } else if (event.getAction().equals(Actions.GET_ADDRESS)) {
                 List<String> data = event.getData();
-                event.setData(resources.createAddress(data.get(0)));
+                responseEvent.setData(resources.createAddress(data.get(0)));
             } else if (event.getAction().equals(Actions.GET_PERSON)) {
                 List<String> data = event.getData();
-                event.setData(resources.createPerson(data.get(0)));
+                responseEvent.setData(resources.createPerson(data.get(0)));
             }
-            postResponse(event);
+            postResponse(responseEvent);
         }
     }
 
