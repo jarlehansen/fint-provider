@@ -1,7 +1,6 @@
 package no.fint.consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.collect.Lists;
 import no.fint.Actions;
 import no.fint.Constants;
 import no.fint.dto.Address;
@@ -50,7 +49,7 @@ public class AddressConsumer {
                                      @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
                                      @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
         Event<String> event = new Event<>(orgId, Constants.SOURCE, Actions.GET_ADDRESS, client);
-        event.setData(Lists.newArrayList(id));
+        event.setQuery(id);
         fintEvents.sendDownstream(orgId, event);
 
         RBlockingQueue<Event<FintResource>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());

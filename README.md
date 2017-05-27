@@ -10,7 +10,7 @@
 | fint.provider.eventstate.host | localhost |
 | fint.provider.eventstate.port | 6379 |
 | fint.provider.test-mode | false |
-| fint.provider.max-number-of-emitters | 20 |
+| fint.provider.max-number-of-emitters | 50 |
 
 ## Run provider locally
 

@@ -7,6 +7,7 @@ import no.fint.Actions;
 import no.fint.Constants;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
+import no.fint.event.model.Health;
 import no.fint.event.model.Status;
 import no.fint.model.relation.FintResource;
 import no.fint.sse.FintSse;
@@ -23,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -64,9 +64,9 @@ public class Adapter implements EventListener {
         log.info(event.toString());
 
         if (event.getAction().equals(Actions.HEALTH)) {
-            Event<String> healthCheckEvent = new Event<>(event);
+            Event<Health> healthCheckEvent = new Event<>(event);
             healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-            healthCheckEvent.setData(Lists.newArrayList("Response from test adapter"));
+            healthCheckEvent.addData(new Health("Response from test adapter"));
             postResponse(healthCheckEvent);
         } else {
             Event<FintResource> responseEvent = new Event<>(event);
@@ -78,11 +78,9 @@ public class Adapter implements EventListener {
             } else if (event.getAction().equals(Actions.GET_ALL_ADDRESSES)) {
                 responseEvent.setData(resources.createAddressList());
             } else if (event.getAction().equals(Actions.GET_ADDRESS)) {
-                List<String> data = event.getData();
-                responseEvent.setData(resources.createAddress(data.get(0)));
+                responseEvent.setData(resources.createAddress(event.getQuery()));
             } else if (event.getAction().equals(Actions.GET_PERSON)) {
-                List<String> data = event.getData();
-                responseEvent.setData(resources.createPerson(data.get(0)));
+                responseEvent.setData(resources.createPerson(event.getQuery()));
             }
             postResponse(responseEvent);
         }

@@ -1,7 +1,6 @@
 package no.fint.consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.collect.Lists;
 import no.fint.Actions;
 import no.fint.Constants;
 import no.fint.dto.Person;
@@ -51,12 +50,11 @@ public class PersonConsumer {
                                     @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
                                     @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
         Event<String> event = new Event<>(orgId, Constants.SOURCE, Actions.GET_PERSON, client);
-        event.setData(Lists.newArrayList(id));
+        event.setQuery(id);
         fintEvents.sendDownstream(orgId, event);
 
         RBlockingQueue<Event<FintResource>> tempQueue = fintEvents.getTempQueue("test-consumer-" + event.getCorrId());
         Event<FintResource> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
-
         List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, personTypeReference);
 
         return ResponseEntity.ok(fintResources.get(0));
