@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello CORS</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var swaggerUrl = 'http://localhost:8080/provider/v2/api-docs'
+            var springfoxUrl = 'http://localhost:8080/provider/springfox-loader/api-docs'
+
+            $.ajax({
+                url: swaggerUrl
+            }).then(function(data, status, jqxhr) {
+                $('.swagger-status').append(' (' + swaggerUrl + ') status: ' + status);
+            });
+
+            $.ajax({
+                url: springfoxUrl
+            }).then(function(data, status, jqxhr) {
+                $('.springfox-status').append(' (' + springfoxUrl + ') status: ' + status);
+            });
+        });
+    </script>
+</head>
+
+<body>
+<div>
+    <p class="swagger-status">Swagger </p>
+    <p class="springfox-status">Springfox </p>
+</div>
+</body>
+</html>

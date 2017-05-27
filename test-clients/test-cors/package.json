@@ -1,0 +1,9 @@
+{
+  "name": "test-cors",
+  "scripts": {
+    "start": "node test-cors.js"
+  },
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
