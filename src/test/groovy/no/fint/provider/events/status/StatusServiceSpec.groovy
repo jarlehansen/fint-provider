@@ -4,8 +4,8 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.event.model.Status
 import no.fint.events.FintEvents
-import no.fint.provider.eventstate.EventStateService
-import no.fint.provider.exceptions.UnknownEventException
+import no.fint.provider.events.eventstate.EventStateService
+import no.fint.provider.events.exceptions.UnknownEventException
 import spock.lang.Ignore
 import spock.lang.Specification
 

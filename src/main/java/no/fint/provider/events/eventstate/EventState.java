@@ -1,4 +1,4 @@
-package no.fint.provider.eventstate;
+package no.fint.provider.events.eventstate;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

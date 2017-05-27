@@ -2,7 +2,7 @@ package no.fint.provider.events.subscriber
 
 import no.fint.audit.FintAuditService
 import no.fint.provider.events.sse.SseService
-import no.fint.provider.eventstate.EventStateService
+import no.fint.provider.events.eventstate.EventStateService
 import spock.lang.Ignore
 import spock.lang.Specification
 

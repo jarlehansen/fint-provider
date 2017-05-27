@@ -5,7 +5,7 @@ import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
-import no.fint.provider.eventstate.EventStateService;
+import no.fint.provider.events.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

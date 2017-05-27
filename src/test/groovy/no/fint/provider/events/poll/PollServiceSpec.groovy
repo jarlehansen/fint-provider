@@ -3,7 +3,7 @@ package no.fint.provider.events.poll
 import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
-import no.fint.provider.eventstate.EventStateService
+import no.fint.provider.events.eventstate.EventStateService
 import spock.lang.Ignore
 import spock.lang.Specification
 

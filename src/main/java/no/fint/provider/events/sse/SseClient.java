@@ -1,4 +1,4 @@
-package no.fint.provider.admin;
+package no.fint.provider.events.sse;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

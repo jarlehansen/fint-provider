@@ -2,7 +2,7 @@ package no.fint.provider.events.status;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
-import no.fint.provider.exceptions.UnknownEventException;
+import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

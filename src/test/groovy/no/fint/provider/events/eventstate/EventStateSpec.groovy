@@ -1,4 +1,4 @@
-package no.fint.provider.eventstate
+package no.fint.provider.events.eventstate
 
 import no.fint.event.model.Event
 import spock.lang.Ignore

@@ -1,4 +1,4 @@
-package no.fint.provider;
+package no.fint.provider.events;
 
 import com.github.springfox.loader.EnableSpringfox;
 import no.fint.audit.EnableFintAudit;

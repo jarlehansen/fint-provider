@@ -7,7 +7,7 @@ import no.fint.event.model.Health;
 import no.fint.event.model.Status;
 import no.fint.events.annotations.FintEventListener;
 import no.fint.provider.events.sse.SseService;
-import no.fint.provider.eventstate.EventStateService;
+import no.fint.provider.events.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package no.fint.provider.exceptions;
+package no.fint.provider.events.exceptions;
 
 public class UnknownEventException extends RuntimeException {
 }
