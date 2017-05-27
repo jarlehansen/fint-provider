@@ -24,14 +24,14 @@ public class SseController {
     private FintEvents fintEvents;
 
     @Synchronized
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @GetMapping("/{id}")
     public SseEmitter subscribe(@RequestHeader("x-org-id") String orgId, @PathVariable String id) {
         SseEmitter emitter = sseService.subscribe(id, orgId);
         fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);
         return emitter;
     }
 
-    @RequestMapping(value = "/sse-clients", method = RequestMethod.GET)
+    @GetMapping("/sse-clients")
     public List<SseOrg> getSseClients() {
         Map<String, FintSseEmitters> clients = sseService.getSseClients();
         log.info("Connected SSE clients: {}", clients);
@@ -46,7 +46,7 @@ public class SseController {
         return orgs;
     }
 
-    @RequestMapping(value = "/sse-clients", method = RequestMethod.DELETE)
+    @DeleteMapping("/sse-clients")
     public void removeSseClients() {
         sseService.removeAll();
     }

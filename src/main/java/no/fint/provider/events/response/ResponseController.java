@@ -16,7 +16,7 @@ public class ResponseController {
     @Autowired
     private ResponseService responseService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public ResponseEntity response(@RequestHeader("x-org-id") String orgId, @RequestBody Event event) {
         event.setOrgId(orgId);
         boolean responseHandled = responseService.handleAdapterResponse(event);

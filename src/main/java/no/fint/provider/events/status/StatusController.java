@@ -18,7 +18,7 @@ public class StatusController {
     @Autowired
     private StatusService statusService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     public void status(@RequestHeader("x-org-id") String orgId, @RequestBody Event event) {
         event.setOrgId(orgId);
         statusService.updateEventState(event);

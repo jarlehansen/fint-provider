@@ -24,10 +24,6 @@ public class PollController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity poll(@RequestHeader("x-org-id") String orgId) {
         Optional<Event> event = pollService.readEvent(orgId);
-        if (event.isPresent()) {
-            return ResponseEntity.ok(event.get());
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+        return event.<ResponseEntity>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }
 }

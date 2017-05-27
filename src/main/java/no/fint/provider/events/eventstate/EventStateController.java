@@ -5,8 +5,8 @@ import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,12 +24,12 @@ public class EventStateController {
     private MongoTemplate mongoTemplate;
 
 
-    @RequestMapping(value = "/eventStates", method = RequestMethod.GET)
+    @GetMapping("/eventStates")
     public Set<EventState> getEventState() {
         return eventStateService.getEventStates();
     }
 
-    @RequestMapping(value = "/audit/events", method = RequestMethod.GET)
+    @GetMapping("/audit/events")
     public List<MongoAuditEvent> getAllEvents() {
         return mongoTemplate.findAll(MongoAuditEvent.class);
     }
