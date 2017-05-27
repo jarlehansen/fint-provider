@@ -19,8 +19,8 @@ public class EventState {
         this.event = event;
     }
 
-    public EventState(Event event, int ttl) {
-        updateTtl(ttl);
+    public EventState(Event event, int timeToLiveMintues) {
+        updateTtl(timeToLiveMintues);
         if (event != null) {
             this.corrId = event.getCorrId();
             this.event = event;
@@ -31,7 +31,7 @@ public class EventState {
         return (System.currentTimeMillis() > expires);
     }
 
-    public void updateTtl(int ttl) {
-        expires = System.currentTimeMillis() + (ttl * 60 * 1000);
+    public void updateTtl(int timeToLiveMinutes) {
+        expires = System.currentTimeMillis() + (timeToLiveMinutes * 60 * 1000);
     }
 }
