@@ -3,6 +3,7 @@ package no.fint.provider.events.poll;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
+import no.fint.event.model.Health;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.eventstate.EventStateService;
@@ -25,17 +26,24 @@ public class PollService {
     @Autowired
     private FintAuditService fintAuditService;
 
-
     public Optional<Event> readEvent(String orgId) {
         BlockingQueue<Event> queue = events.getDownstream(orgId);
         Event event = queue.poll();
-        if (event != null) {
+        if (event == null) {
+            return Optional.empty();
+        } else {
+            log.info("Event received: {}", event.getAction());
+            if (event.isHealthCheck()) {
+                event.addObject(new Health("Received in provider"));
+            }
+
             event.setStatus(Status.DELIVERED_TO_PROVIDER);
-            eventStateService.add(event, 2);
             fintAuditService.audit(event);
+            if (!event.isHealthCheck()) {
+                eventStateService.add(event, 2);
+            }
+
             return Optional.of(event);
         }
-
-        return Optional.empty();
     }
 }

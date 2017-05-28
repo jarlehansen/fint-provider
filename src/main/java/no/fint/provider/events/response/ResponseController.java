@@ -2,6 +2,7 @@ package no.fint.provider.events.response;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,13 +18,13 @@ public class ResponseController {
     private ResponseService responseService;
 
     @PostMapping
-    public ResponseEntity response(@RequestHeader("x-org-id") String orgId, @RequestBody Event event) {
+    public void response(@RequestHeader("x-org-id") String orgId, @RequestBody Event event) {
         event.setOrgId(orgId);
-        boolean responseHandled = responseService.handleAdapterResponse(event);
-        if (responseHandled) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.GONE).build();
-        }
+        responseService.handleAdapterResponse(event);
+    }
+
+    @ExceptionHandler(UnknownEventException.class)
+    public ResponseEntity handleUnknownEventException() {
+        return ResponseEntity.status(HttpStatus.GONE).body("Unknown Event object from adapter");
     }
 }

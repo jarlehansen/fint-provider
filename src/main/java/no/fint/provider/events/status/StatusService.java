@@ -7,6 +7,7 @@ import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.eventstate.EventState;
 import no.fint.provider.events.eventstate.EventStateService;
+import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ public class StatusService {
             }
         } else {
             log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. action:{} status:{}", event.getCorrId(), event.getAction(), event.getStatus());
+            throw new UnknownEventException();
         }
     }
 

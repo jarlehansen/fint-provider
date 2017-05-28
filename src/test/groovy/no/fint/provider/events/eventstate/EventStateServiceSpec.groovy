@@ -1,72 +1,50 @@
 package no.fint.provider.events.eventstate
 
 import no.fint.event.model.Event
-import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore
 class EventStateServiceSpec extends Specification {
     private EventStateService eventStateService
 
     void setup() {
-        eventStateService = new EventStateService(eventStates: [], timeout: 1)
+        eventStateService = new EventStateService(eventStates: [])
     }
 
-    def "Only add unique corrIds to event state set"() {
+    def "Add and get new EventState"() {
         given:
-        def event1 = new Event()
+        def event = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
 
         when:
-        eventStateService.add(event1, 1)
-        eventStateService.add(event1, 2)
-        def eventStates = eventStateService.getEventStates()
-
-        then:
-        eventStates.size() == 1
-    }
-
-    def "Check if event state exists"() {
-        given:
-        def event = new Event()
-        eventStateService.add(event, 1)
-
-        when:
+        eventStateService.add(event, 2)
         def eventState = eventStateService.get(event)
 
         then:
         eventState.isPresent()
+        eventState.get().event == event
     }
 
-    def "Remote existing event state from set"() {
+    def "Remove existing EventState"() {
         given:
-        def event = new Event()
-        eventStateService.add(event, 1)
+        def event = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
+        eventStateService.add(event, 2)
 
         when:
         eventStateService.remove(event)
-        def exists = eventStateService.exists(event)
+        def eventState = eventStateService.get(event)
 
         then:
-        !exists
+        !eventState.isPresent()
     }
 
-    def "Event state is not expired when the timeout is not exceeded"() {
+    def "Trying to remove EventState that does not exist"() {
         given:
-        def event = new Event('rogfk.no', 'fk', 'GET', 'vfs')
-        eventStateService.add(event)
+        def event = new Event()
 
         when:
-        def expired = eventStateService.expired(event)
+        eventStateService.remove(event)
+        def eventState = eventStateService.get(event)
 
         then:
-        !expired
-    }
-
-    def "Return expired when the event corrId is not present"() {
-        when:
-        def expired = eventStateService.expired(new Event(corrId: '123'))
-
-        then:
-        expired
+        !eventState.isPresent()
     }
 }

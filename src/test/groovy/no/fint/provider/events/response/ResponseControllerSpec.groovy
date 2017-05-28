@@ -2,6 +2,7 @@ package no.fint.provider.events.response
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
+import no.fint.provider.events.exceptions.UnknownEventException
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -32,7 +33,7 @@ class ResponseControllerSpec extends Specification {
                 .content(jsonBody))
 
         then:
-        1 * responseService.handleAdapterResponse(_ as Event) >> true
+        1 * responseService.handleAdapterResponse(_ as Event)
         response.andExpect(status().isOk())
     }
 
@@ -47,7 +48,7 @@ class ResponseControllerSpec extends Specification {
                 .content(jsonBody))
 
         then:
-        1 * responseService.handleAdapterResponse(_ as Event) >> false
+        1 * responseService.handleAdapterResponse(_ as Event) >> { throw new UnknownEventException() }
         response.andExpect(status().isGone())
 
     }

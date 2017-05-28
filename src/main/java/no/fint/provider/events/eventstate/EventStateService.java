@@ -32,8 +32,8 @@ public class EventStateService {
         eventStates = client.getSet(key);
     }
 
-    public void add(Event event, int ttl) {
-        eventStates.add(new EventState(event, ttl));
+    public void add(Event event, int timeToLiveInMinutes) {
+        eventStates.add(new EventState(event, timeToLiveInMinutes));
     }
 
     public Optional<EventState> get(Event event) {

@@ -7,6 +7,7 @@ import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.eventstate.EventState;
 import no.fint.provider.events.eventstate.EventStateService;
+import no.fint.provider.events.exceptions.UnknownEventException;
 import org.redisson.api.RBlockingQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,14 +27,13 @@ public class ResponseService {
     @Autowired
     private FintEvents fintEvents;
 
-    public boolean handleAdapterResponse(Event event) {
+    public void handleAdapterResponse(Event event) {
         log.info("Event received: {}", event.getCorrId());
         if (event.isHealthCheck()) {
             RBlockingQueue<Event> healthCheckQueue = fintEvents.getTempQueue(event.getCorrId());
             event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             fintAuditService.audit(event);
             healthCheckQueue.offer(event);
-            return true;
         } else {
             Optional<EventState> state = eventStateService.get(event);
             if (state.isPresent()) {
@@ -42,12 +42,10 @@ public class ResponseService {
                 fintEvents.sendUpstream(event.getOrgId(), event);
                 fintAuditService.audit(event);
                 eventStateService.remove(event);
-                return true;
             } else {
                 log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. action:{} status:{}", event.getCorrId(), event.getAction(), event.getStatus());
+                throw new UnknownEventException();
             }
         }
-
-        return false;
     }
 }
