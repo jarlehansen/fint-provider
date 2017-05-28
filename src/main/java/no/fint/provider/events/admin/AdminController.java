@@ -6,12 +6,10 @@ import no.fint.events.FintEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -32,5 +30,23 @@ public class AdminController {
     @DeleteMapping("/tempQueues")
     public boolean deleteTempQueues() {
         return fintEvents.deleteTempQueues();
+    }
+
+    @DeleteMapping("/clear/all")
+    public void clearAll() {
+        Set<String> queues = fintEvents.getQueues();
+        for (String queue : queues) {
+            fintEvents.getQueue(queue).clear();
+        }
+    }
+
+    @DeleteMapping("/clear/downstream")
+    public void clearDownstream(@RequestHeader("x-org-id") String orgId) {
+        fintEvents.getDownstream(orgId).clear();
+    }
+
+    @DeleteMapping("/clear/upstream")
+    public void clearUpstream(@RequestHeader("x-org-id") String orgId) {
+        fintEvents.getUpstream(orgId).clear();
     }
 }

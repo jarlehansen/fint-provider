@@ -28,7 +28,7 @@ public class ResponseService {
     private FintEvents fintEvents;
 
     public void handleAdapterResponse(Event event) {
-        log.info("Event received: {}", event.getCorrId());
+        log.info("Event received: {}, action: {}", event.getCorrId(), event.getAction());
         if (event.isHealthCheck()) {
             RBlockingQueue<Event> healthCheckQueue = fintEvents.getTempQueue(event.getCorrId());
             event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
