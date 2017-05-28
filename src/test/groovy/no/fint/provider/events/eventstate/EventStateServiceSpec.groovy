@@ -1,13 +1,29 @@
 package no.fint.provider.events.eventstate
 
 import no.fint.event.model.Event
+import no.fint.events.FintEvents
+import org.redisson.api.RedissonClient
 import spock.lang.Specification
 
 class EventStateServiceSpec extends Specification {
     private EventStateService eventStateService
+    private FintEvents fintEvents
 
     void setup() {
-        eventStateService = new EventStateService(eventStates: [])
+        fintEvents = Mock(FintEvents)
+        eventStateService = new EventStateService(eventStates: [], fintEvents: fintEvents, key: 'current-corrids')
+    }
+
+    def "Init EventStateService"() {
+        given:
+        RedissonClient client = Mock(RedissonClient)
+
+        when:
+        eventStateService.init()
+
+        then:
+        1 * fintEvents.getClient() >> client
+        1 * client.getSet('current-corrids')
     }
 
     def "Add and get new EventState"() {
@@ -21,6 +37,7 @@ class EventStateServiceSpec extends Specification {
         then:
         eventState.isPresent()
         eventState.get().event == event
+        eventStateService.getEventStates().size() == 1
     }
 
     def "Remove existing EventState"() {

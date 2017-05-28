@@ -44,6 +44,17 @@ class SseServiceSpec extends Specification {
         noExceptionThrown()
     }
 
+    def "Do not send event when orgId does not have registered emitters"() {
+        given:
+        sseService = new SseService(maxNumberOfEmitters: 5, clients: [:])
+
+        when:
+        sseService.send(new Event(orgId: 'hfk.no'))
+
+        then:
+        noExceptionThrown()
+    }
+
     def "Remove registered emitter on exception when trying to send message"() {
         given:
         def emitter = Mock(FintSseEmitter)
@@ -71,5 +82,20 @@ class SseServiceSpec extends Specification {
 
         then:
         registeredClients.size() == 0
+    }
+
+    def "Run complete method for all registered emitters when shutting down"() {
+        given:
+        def emitter = Mock(FintSseEmitter)
+        def emitters = FintSseEmitters.with(5)
+        emitters.add(emitter)
+        def clients = ['hfk.no': emitters] as ConcurrentHashMap
+        sseService = new SseService(maxNumberOfEmitters: 5, clients: clients)
+
+        when:
+        sseService.shutdown()
+
+        then:
+        1 * emitter.complete()
     }
 }
