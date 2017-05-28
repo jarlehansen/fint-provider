@@ -4,10 +4,10 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
 import no.fint.provider.events.eventstate.EventStateService
-import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore
+import java.util.concurrent.ArrayBlockingQueue
+
 class PollServiceSpec extends Specification {
     private PollService pollService
     private FintEvents fintEvents
@@ -26,18 +26,21 @@ class PollServiceSpec extends Specification {
         def event = pollService.readEvent('hfk.no')
 
         then:
-        1 * fintEvents.readDownstream('hfk.no', Event) >> Optional.empty()
+        1 * fintEvents.getDownstream('hfk.no') >> new ArrayBlockingQueue<>(1)
         !event.isPresent()
     }
 
     def "Return Event object if message is on queue"() {
+        given:
+        def queue = new ArrayBlockingQueue(1)
+        queue.put(new Event('hfk.no', 'test', 'test', 'test'))
+
         when:
         def event = pollService.readEvent('hfk.no')
 
         then:
-        1 * fintEvents.readDownstream('hfk.no', Event) >> Optional.of(new Event('hfk.no', 'test', 'test', 'test'))
-        1 * eventStateService.add(_ as Event)
-        1 * fintAuditService.audit(_ as Event, _ as Boolean)
+        1 * fintEvents.getDownstream('hfk.no') >> queue
+        1 * eventStateService.add(_ as Event, _ as Integer)
         event.isPresent()
     }
 }

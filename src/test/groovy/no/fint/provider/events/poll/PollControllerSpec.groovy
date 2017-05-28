@@ -1,16 +1,11 @@
 package no.fint.provider.events.poll
 
 import no.fint.event.model.Event
+import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import spock.lang.Specification
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
-class PollControllerSpec extends Specification {
+class PollControllerSpec extends MockMvcSpecification {
     private PollController pollController
     private PollService pollService
     private MockMvc mockMvc
@@ -18,7 +13,7 @@ class PollControllerSpec extends Specification {
     void setup() {
         pollService = Mock(PollService)
         pollController = new PollController(pollService: pollService)
-        mockMvc = MockMvcBuilders.standaloneSetup(pollController).build()
+        mockMvc = standaloneSetup(pollController)
     }
 
     def "Return content if event is available"() {
