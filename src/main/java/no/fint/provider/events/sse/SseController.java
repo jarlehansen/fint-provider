@@ -31,8 +31,8 @@ public class SseController {
         return emitter;
     }
 
-    @GetMapping("/sse-clients")
-    public List<SseOrg> getSseClients() {
+    @GetMapping("/clients")
+    public List<SseOrg> getClients() {
         Map<String, FintSseEmitters> clients = sseService.getSseClients();
         log.info("Connected SSE clients: {}", clients);
 
@@ -46,7 +46,7 @@ public class SseController {
         return orgs;
     }
 
-    @DeleteMapping("/sse-clients")
+    @DeleteMapping("/clients")
     public void removeSseClients() {
         sseService.removeAll();
     }
