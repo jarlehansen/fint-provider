@@ -16,7 +16,12 @@ class DownstreamSubscriberSpec extends Specification {
         sseService = Mock(SseService)
         eventStateService = Mock(EventStateService)
 
-        downstreamSubscriber = new DownstreamSubscriber(sseService: sseService, eventStateService: eventStateService, fintAuditService: Mock(FintAuditService))
+        downstreamSubscriber = new DownstreamSubscriber(
+                sseService: sseService,
+                eventStateService: eventStateService,
+                fintAuditService: Mock(FintAuditService),
+                statusTtl: 2
+        )
     }
 
     def "Receive health check"() {
