@@ -5,12 +5,11 @@
 
 ## Configuration
 
-| Key | Default value |
-|-----|---------------|
-| fint.provider.eventstate.host | localhost |
-| fint.provider.eventstate.port | 6379 |
-| fint.provider.test-mode | false |
-| fint.provider.max-number-of-emitters | 50 |
+| Key | Default value | Description |
+|-----|---------------|-------------|
+| fint.provider.ttl-status | 2 | How long the provider will wait for an initial status from the adapter (that the event was received and understood) |
+| fint.provider.ttl-response | 15 | How long the provider will wait for a response with the data from the adapter |
+| fint.provider.max-number-of-emitters | 50 | The max number of emitters one orgId can have |
 
 ## Run provider locally
 

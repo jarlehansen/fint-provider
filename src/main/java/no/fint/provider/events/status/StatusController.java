@@ -2,6 +2,7 @@ package no.fint.provider.events.status;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import no.fint.provider.events.Constants;
 import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class StatusController {
     private StatusService statusService;
 
     @PostMapping
-    public void status(@RequestHeader("x-org-id") String orgId, @RequestBody Event event) {
+    public void status(@RequestHeader(Constants.HEADER_ORGID) String orgId, @RequestBody Event event) {
         event.setOrgId(orgId);
         statusService.updateEventState(event);
     }

@@ -9,6 +9,7 @@ import no.fint.provider.events.eventstate.EventState;
 import no.fint.provider.events.eventstate.EventStateService;
 import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +17,9 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class StatusService {
+
+    @Value("${fint.provider.ttl-response:15}")
+    private int responseTtl;
 
     @Autowired
     private EventStateService eventStateService;
@@ -33,7 +37,7 @@ public class StatusService {
             EventState eventState = state.get();
 
             if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
-                eventState.updateTtl(15);
+                eventState.updateTtl(responseTtl);
             } else {
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));

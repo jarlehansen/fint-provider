@@ -2,6 +2,7 @@ package no.fint.provider.events.response;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import no.fint.provider.events.Constants;
 import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class ResponseController {
     private ResponseService responseService;
 
     @PostMapping
-    public void response(@RequestHeader("x-org-id") String orgId, @RequestBody Event event) {
+    public void response(@RequestHeader(Constants.HEADER_ORGID) String orgId, @RequestBody Event event) {
         event.setOrgId(orgId);
         responseService.handleAdapterResponse(event);
     }

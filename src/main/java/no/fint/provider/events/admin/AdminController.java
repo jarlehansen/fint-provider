@@ -3,6 +3,7 @@ package no.fint.provider.events.admin;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
@@ -41,12 +42,12 @@ public class AdminController {
     }
 
     @DeleteMapping("/clear/downstream")
-    public void clearDownstream(@RequestHeader("x-org-id") String orgId) {
+    public void clearDownstream(@RequestHeader(Constants.HEADER_ORGID) String orgId) {
         fintEvents.getDownstream(orgId).clear();
     }
 
     @DeleteMapping("/clear/upstream")
-    public void clearUpstream(@RequestHeader("x-org-id") String orgId) {
+    public void clearUpstream(@RequestHeader(Constants.HEADER_ORGID) String orgId) {
         fintEvents.getUpstream(orgId).clear();
     }
 }

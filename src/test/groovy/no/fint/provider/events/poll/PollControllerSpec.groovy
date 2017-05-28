@@ -1,6 +1,7 @@
 package no.fint.provider.events.poll
 
 import no.fint.event.model.Event
+import no.fint.provider.events.Constants
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -18,7 +19,7 @@ class PollControllerSpec extends MockMvcSpecification {
 
     def "Return content if event is available"() {
         when:
-        def response = mockMvc.perform(get('/poll').header('x-org-id', 'rogfk.no'))
+        def response = mockMvc.perform(get('/poll').header(Constants.HEADER_ORGID, 'rogfk.no'))
 
         then:
         1 * pollService.readEvent('rogfk.no') >> Optional.of(new Event())
@@ -28,7 +29,7 @@ class PollControllerSpec extends MockMvcSpecification {
 
     def "Return no content if event is not available"() {
         when:
-        def response = mockMvc.perform(get('/poll').header('x-org-id', 'rogfk.no'))
+        def response = mockMvc.perform(get('/poll').header(Constants.HEADER_ORGID, 'rogfk.no'))
 
         then:
         1 * pollService.readEvent('rogfk.no') >> Optional.empty()
