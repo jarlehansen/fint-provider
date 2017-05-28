@@ -5,11 +5,12 @@
 
 ## Configuration
 
-| Key | Default value | Description |
+| Key | Description | Default value |
 |-----|---------------|-------------|
-| fint.provider.ttl-status | 2 | How long (in minutes) the provider will wait for an initial status from the adapter (that the event was received and understood) |
-| fint.provider.ttl-response | 15 | How long (in minutes) the provider will wait for a response with the data from the adapter |
-| fint.provider.max-number-of-emitters | 50 | The max number of emitters one orgId can have |
+| fint.provider.ttl-status | How long (in minutes) the provider will wait for an initial status from the adapter (that the event was received and understood) | 2 |
+| fint.provider.ttl-response |  How long (in minutes) the provider will wait for a response with the data from the adapter | 15 |
+| fint.provider.max-number-of-emitters | The max number of emitters one orgId can have | 50 |
+| fint.provider.event-state.list-name | The name of the list used to store event states stored in redisson | current-corrids |
 
 ## Run provider locally
 
