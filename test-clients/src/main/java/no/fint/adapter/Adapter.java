@@ -14,6 +14,7 @@ import no.fint.sse.FintSse;
 import org.glassfish.jersey.media.sse.EventListener;
 import org.glassfish.jersey.media.sse.InboundEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,7 @@ import javax.annotation.PreDestroy;
 import java.util.UUID;
 
 @Slf4j
+@ConditionalOnProperty(name = "adapter-enabled", havingValue = "true", matchIfMissing = true)
 @Component
 public class Adapter implements EventListener {
     private FintSse fintSse;
@@ -39,6 +41,7 @@ public class Adapter implements EventListener {
 
     @PostConstruct
     public void init() {
+        log.info("Starting adapter");
         String sseUrl = String.format("http://localhost:8080/provider/sse/%s", UUID.randomUUID().toString());
         fintSse = new FintSse(sseUrl);
         fintSse.connect(this, ImmutableMap.of(Constants.HEADER_ORGID, Constants.ORGID));
@@ -66,7 +69,7 @@ public class Adapter implements EventListener {
         if (event.getAction().equals(Actions.HEALTH)) {
             Event<Health> healthCheckEvent = new Event<>(event);
             healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-            healthCheckEvent.addData(new Health("Response from test adapter"));
+            healthCheckEvent.addData(new Health("test-adapter", "Response from test adapter"));
             postResponse(healthCheckEvent);
         } else {
             Event<FintResource> responseEvent = new Event<>(event);

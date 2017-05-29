@@ -34,7 +34,7 @@ public class PollService {
         } else {
             log.info("Event received: {}", event.getAction());
             if (event.isHealthCheck()) {
-                event.addObject(new Health("Received in provider"));
+                event.addObject(new Health("provider", "Received in provider"));
             }
 
             event.setStatus(Status.DELIVERED_TO_PROVIDER);

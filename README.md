@@ -22,3 +22,6 @@
 
 Start only test-clients (useful to debug fint-provider)  
 `npm run start-test-clients --prefix test-clients`
+
+Start fint-provider + test-consumer (useful to test adapter)  
+`npm run start-test-consumer --prefix test-clients`

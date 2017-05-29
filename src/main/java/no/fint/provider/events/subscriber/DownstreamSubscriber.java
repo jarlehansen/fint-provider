@@ -6,8 +6,8 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Health;
 import no.fint.event.model.Status;
 import no.fint.events.annotations.FintEventListener;
-import no.fint.provider.events.sse.SseService;
 import no.fint.provider.events.eventstate.EventStateService;
+import no.fint.provider.events.sse.SseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class DownstreamSubscriber {
     public void receive(Event event) {
         log.info("Event received: {}", event.getAction());
         if (event.isHealthCheck()) {
-            event.addObject(new Health("Received in provider"));
+            event.addObject(new Health("provider", "Received in provider"));
         }
 
         sseService.send(event);
