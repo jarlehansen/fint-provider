@@ -1,6 +1,5 @@
 server:
  context-path: '/provider'
- port: 8181
 fint:
  version: '@version@'
 springfox:
