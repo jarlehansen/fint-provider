@@ -7,8 +7,9 @@ import no.fint.Actions;
 import no.fint.Constants;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
-import no.fint.event.model.Health;
 import no.fint.event.model.Status;
+import no.fint.event.model.health.Health;
+import no.fint.event.model.health.HealthStatus;
 import no.fint.model.relation.FintResource;
 import no.fint.sse.FintSse;
 import org.glassfish.jersey.media.sse.EventListener;
@@ -69,7 +70,7 @@ public class Adapter implements EventListener {
         if (event.getAction().equals(Actions.HEALTH)) {
             Event<Health> healthCheckEvent = new Event<>(event);
             healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-            healthCheckEvent.addData(new Health("test-adapter", "Response from test adapter"));
+            healthCheckEvent.addData(new Health("test-adapter", HealthStatus.APPLICATION_HEALTHY));
             postResponse(healthCheckEvent);
         } else {
             Event<FintResource> responseEvent = new Event<>(event);
