@@ -1,5 +1,8 @@
 package no.fint.provider.events.sse;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.events.FintEvents;
@@ -14,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Api(tags = {"sse"}, description = "These endpoint is for handling SSE clients.")
 @RequestMapping(value = "/sse")
 @RestController
 public class SseController {
@@ -24,14 +28,17 @@ public class SseController {
     @Autowired
     private FintEvents fintEvents;
 
+    @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @Synchronized
     @GetMapping("/{id}")
-    public SseEmitter subscribe(@RequestHeader(Constants.HEADER_ORGID) String orgId, @PathVariable String id) {
+    public SseEmitter subscribe(@ApiParam(value = Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId,
+                                @ApiParam(value = "Global unique id for the client. Typically a UUID.") @PathVariable String id) {
         SseEmitter emitter = sseService.subscribe(id, orgId);
         fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);
         return emitter;
     }
 
+    @ApiOperation(value = "", notes = "Returns all registered SSE clients.")
     @GetMapping("/clients")
     public List<SseOrg> getClients() {
         Map<String, FintSseEmitters> clients = sseService.getSseClients();
@@ -47,6 +54,7 @@ public class SseController {
         return orgs;
     }
 
+    @ApiOperation(value = "", notes = "Remove all registered SSE clients.")
     @DeleteMapping("/clients")
     public void removeSseClients() {
         sseService.removeAll();

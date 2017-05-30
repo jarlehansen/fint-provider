@@ -1,5 +1,8 @@
 package no.fint.provider.events.response;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.Constants;
@@ -11,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
+@Api(tags = {"response"}, description = "This endpoint is used by the adapter to post back the response.")
 @RequestMapping(value = "/response", consumes = MediaType.APPLICATION_JSON_VALUE)
 @RestController
 public class ResponseController {
@@ -18,8 +22,10 @@ public class ResponseController {
     @Autowired
     private ResponseService responseService;
 
+    @ApiOperation(value = "", notes = "Receives event object with response data.")
     @PostMapping
-    public void response(@RequestHeader(Constants.HEADER_ORGID) String orgId, @RequestBody Event event) {
+    public void response(@ApiParam(value = Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId,
+                         @ApiParam(value = Constants.SWAGGER_EVENT) @RequestBody Event event) {
         event.setOrgId(orgId);
         responseService.handleAdapterResponse(event);
     }

@@ -1,6 +1,7 @@
 server:
  context-path: '/provider'
-
-springfox:
+ port: 8181
+fint:
  version: '@version@'
+springfox:
  endpoints: true
