@@ -1,5 +1,6 @@
 fint:
  provider:
+  swagger-https: false
   test-mode: true
  audit:
   test-mode: true

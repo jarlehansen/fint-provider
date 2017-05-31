@@ -11,6 +11,7 @@
 | fint.provider.ttl-response |  How long (in minutes) the provider will wait for a response with the data from the adapter | 15 |
 | fint.provider.max-number-of-emitters | The max number of emitters one orgId can have | 50 |
 | fint.provider.event-state.list-name | The name of the list used to store event states stored in redisson | current-corrids |
+| fint.provider.swagger-https | Force https in the swagger api-docs request | true (disabled in the test profile) |
 
 ## Run provider locally
 
