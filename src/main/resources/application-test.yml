@@ -1,9 +1,11 @@
 fint:
  provider:
-  swagger-https: false
   test-mode: true
  audit:
   test-mode: true
  events:
   test-mode: true
   queue-endpoint-enabled: true
+
+ springfox:
+  swagger-https: false
