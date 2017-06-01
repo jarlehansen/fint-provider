@@ -24,7 +24,7 @@ public class JanitorService {
     @Autowired
     private FintAuditService fintAuditService;
 
-    @Scheduled(initialDelay = 20000L, fixedRate = 5000L)
+    @Scheduled(initialDelay = 20000L, fixedDelay = 5000L)
     public void cleanUpEventStates() {
         log.debug("Running janitor service");
         List<EventState> eventStates = Lists.newArrayList(eventStateService.getEventStates());

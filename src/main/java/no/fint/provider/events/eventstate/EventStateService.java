@@ -4,9 +4,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
+import no.fint.events.event.RedissonReconnectedEvent;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -26,6 +28,7 @@ public class EventStateService {
     @Getter
     private Set<EventState> eventStates;
 
+    @EventListener(RedissonReconnectedEvent.class)
     @PostConstruct
     public void init() {
         RedissonClient client = fintEvents.getClient();
