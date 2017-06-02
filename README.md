@@ -19,7 +19,11 @@
 * [consumer - http://localhost:8090/swagger-ui.html](http://localhost:8090/swagger-ui.html)
 * [redis-commander - http://localhost:8081](http://localhost:8081)
 
+Start fint-provider + test-consumer and adapter (embedded redis)  
 `npm start --prefix test-clients`
+
+Start fint-provider + test-consumer and adapter (docker redis image)  
+`npm run start-docker --prefix test-clients`
 
 Start only test-clients (useful to debug fint-provider)  
 `npm run start-test-clients --prefix test-clients`
