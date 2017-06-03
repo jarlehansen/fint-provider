@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.11/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.12/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -9,6 +9,10 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
+}
+
+plugins {
+    id 'com.github.ben-manes.versions' version '0.15.0'
 }
 
 apply plugin: 'java'
@@ -26,8 +30,8 @@ repositories {
 }
 
 dependencies {
-    compile('no.fint:fint-events:0.1.30')
-    compile('no.fint:fint-event-model:0.0.21')
+    compile('no.fint:fint-events:0.1.32')
+    compile('no.fint:fint-event-model:0.0.23')
     compile('no.fint:fint-relation-model:0.0.22')
     compile('no.fint:fint-relations:0.0.20')
     compile('no.fint:fint-sse:0.0.1')
