@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class SseService {
-    private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
+    private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
 
     @Value("${fint.provider.max-number-of-emitters:50}")
     private int maxNumberOfEmitters;
@@ -80,7 +80,7 @@ public class SseService {
             List<FintSseEmitter> toBeRemoved = new ArrayList<>();
             emitters.forEach(emitter -> {
                 try {
-                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event);
+                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event).reconnectTime(5000L);
                     emitter.send(builder);
                 } catch (Exception e) {
                     log.warn("Exception when trying to send message to SseEmitter", e);

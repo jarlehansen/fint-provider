@@ -31,8 +31,8 @@ public class SseController {
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @Synchronized
     @GetMapping("/{id}")
-    public SseEmitter subscribe(@ApiParam(value = Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId,
-                                @ApiParam(value = "Global unique id for the client. Typically a UUID.") @PathVariable String id) {
+    public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId,
+                                @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
         SseEmitter emitter = sseService.subscribe(id, orgId);
         fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);
         return emitter;
@@ -42,8 +42,6 @@ public class SseController {
     @GetMapping("/clients")
     public List<SseOrg> getClients() {
         Map<String, FintSseEmitters> clients = sseService.getSseClients();
-        log.info("Connected SSE clients: {}", clients);
-
         List<SseOrg> orgs = new ArrayList<>();
         clients.forEach((key, value) -> {
             List<SseClient> sseClients = new ArrayList<>();

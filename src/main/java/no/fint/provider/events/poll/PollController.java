@@ -26,7 +26,7 @@ public class PollController {
     private PollService pollService;
 
     @GetMapping
-    public ResponseEntity poll(@ApiParam(value = Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId) {
+    public ResponseEntity poll(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId) {
         Optional<Event> event = pollService.readEvent(orgId);
         return event.<ResponseEntity>map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
     }

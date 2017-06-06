@@ -4,10 +4,13 @@ import no.fint.audit.plugin.mongo.MongoAuditEvent
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
 import no.fint.provider.events.Constants
+import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
 import org.redisson.api.RBlockingQueue
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 class AdminControllerSpec extends MockMvcSpecification {
     private AdminController controller
@@ -80,5 +83,36 @@ class AdminControllerSpec extends MockMvcSpecification {
         1 * fintEvents.getUpstream('rogfk.no') >> queue
         1 * queue.clear()
         response.andExpect(status().isOk())
+    }
+
+    def "POST new orgId"() {
+        when:
+        def response = mockMvc.perform(post('/admin/orgIds/123'))
+
+        then:
+        1 * fintEvents.registerDownstreamListener(DownstreamSubscriber, '123')
+        response.andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, equalTo('http://localhost/admin/orgIds/123')))
+    }
+
+    def "GET registered orgId"() {
+        given:
+        controller.setOrgIds(['123': 123456L])
+
+        when:
+        def response = mockMvc.perform(get('/admin/orgIds/123'))
+
+        then:
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath('$.orgId').value(equalTo('123')))
+                .andExpect(jsonPath('$.registered').value(equalTo(123456)))
+    }
+
+    def "GET non existing orgId, return not found"() {
+        when:
+        def response = mockMvc.perform(get('/admin/orgIds/123'))
+
+        then:
+        response.andExpect(status().isNotFound())
     }
 }
