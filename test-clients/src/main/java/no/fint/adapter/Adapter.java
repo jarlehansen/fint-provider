@@ -92,15 +92,19 @@ public class Adapter implements EventListener {
 
     private void postStatus(Event event) {
         HttpHeaders headers = new HttpHeaders();
-        headers.put(Constants.HEADER_ORGID, Lists.newArrayList(Constants.ORGID));
+        headers.put(Constants.HEADER_ORGID, Lists.newArrayList(event.getOrgId()));
         ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/status", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
         log.info("Provider POST response: {}", response.getStatusCode());
     }
 
     private void postResponse(Event event) {
         HttpHeaders headers = new HttpHeaders();
-        headers.put(Constants.HEADER_ORGID, Lists.newArrayList(Constants.ORGID));
+        headers.put(Constants.HEADER_ORGID, Lists.newArrayList(event.getOrgId()));
         ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/response", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
         log.info("Provider POST response: {}", response.getStatusCode());
+    }
+
+    public void registerOrgId(String orgId) {
+        fintSse.connect(this, ImmutableMap.of(Constants.HEADER_ORGID, orgId));
     }
 }

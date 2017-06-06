@@ -16,12 +16,14 @@ class AdminControllerSpec extends MockMvcSpecification {
     private AdminController controller
     private MongoTemplate mongoTemplate
     private FintEvents fintEvents
+    private AdminService adminService
     private MockMvc mockMvc
 
     void setup() {
+        adminService = Mock(AdminService)
         mongoTemplate = Mock(MongoTemplate)
         fintEvents = Mock(FintEvents)
-        controller = new AdminController(mongoTemplate: mongoTemplate, fintEvents: fintEvents)
+        controller = new AdminController(mongoTemplate: mongoTemplate, fintEvents: fintEvents, adminService: adminService)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -96,24 +98,35 @@ class AdminControllerSpec extends MockMvcSpecification {
     }
 
     def "POST new orgId, return bad request if orgId is already registered"() {
-        given:
-        controller.setOrgIds(['123': 123456L])
-
         when:
         def response = mockMvc.perform(post('/admin/orgIds/123'))
 
         then:
+        1 * adminService.isRegistered('123') >> true
         response.andExpect(status().isBadRequest())
     }
 
-    def "GET registered orgId"() {
-        given:
-        controller.setOrgIds(['123': 123456L])
+    def "GET all registered orgIds"() {
+        when:
+        def response = mockMvc.perform(get('/admin/orgIds'))
 
+        then:
+        1 * adminService.getOrgIds() >> ['123': 123456L, '234': 234567L]
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath('$', hasSize(2)))
+                .andExpect(jsonPath('$[0].orgId').value(equalTo('123')))
+                .andExpect(jsonPath('$[0].registered').value(equalTo(123456)))
+                .andExpect(jsonPath('$[1].orgId').value(equalTo('234')))
+                .andExpect(jsonPath('$[1].registered').value(equalTo(234567)))
+    }
+
+    def "GET registered orgId"() {
         when:
         def response = mockMvc.perform(get('/admin/orgIds/123'))
 
         then:
+        1 * adminService.isRegistered('123') >> true
+        1 * adminService.getTimestamp('123') >> 123456L
         response.andExpect(status().isOk())
                 .andExpect(jsonPath('$.orgId').value(equalTo('123')))
                 .andExpect(jsonPath('$.registered').value(equalTo(123456)))

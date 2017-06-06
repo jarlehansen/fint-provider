@@ -3,8 +3,6 @@ package no.fint.provider.events.admin;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
-import lombok.AccessLevel;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
 import no.fint.events.FintEvents;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -22,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -34,10 +31,10 @@ public class AdminController {
     private FintEvents fintEvents;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private AdminService adminService;
 
-    @Setter(AccessLevel.PACKAGE)
-    private Map<String, Long> orgIds = new ConcurrentHashMap<>();
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @GetMapping("/audit/events")
     public List<MongoAuditEvent> getAllEvents() {
@@ -67,26 +64,33 @@ public class AdminController {
         fintEvents.getUpstream(orgId).clear();
     }
 
+    @GetMapping("/orgIds")
+    public List<Map> getOrganizations() {
+        return adminService.getOrgIds().entrySet().stream().map(entry -> ImmutableMap.of(
+                "orgId", entry.getKey(),
+                "registered", entry.getValue()
+        )).collect(Collectors.toList());
+    }
+
     @GetMapping("/orgIds/{orgId}")
     public ResponseEntity getOrganization(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
-        Long registered = orgIds.get(orgId);
-        if (StringUtils.isEmpty(registered)) {
-            return ResponseEntity.notFound().build();
-        } else {
+        if (adminService.isRegistered(orgId)) {
             return ResponseEntity.ok(ImmutableMap.of(
                     "orgId", orgId,
-                    "registered", registered
+                    "registered", adminService.getTimestamp(orgId)
             ));
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @PostMapping("/orgIds/{orgId}")
     public ResponseEntity registerOrgId(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
-        if (orgIds.containsKey(orgId)) {
+        if (adminService.isRegistered(orgId)) {
             return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
         } else {
             fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);
-            orgIds.put(orgId, System.currentTimeMillis());
+            adminService.register(orgId);
 
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
             return ResponseEntity.created(location).build();
