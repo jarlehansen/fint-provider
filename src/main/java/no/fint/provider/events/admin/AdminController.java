@@ -82,9 +82,7 @@ public class AdminController {
 
     @PostMapping("/orgIds/{orgId}")
     public ResponseEntity registerOrgId(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
-        if (StringUtils.isEmpty(orgId)) {
-            return ResponseEntity.badRequest().body("OrgId must be included");
-        } else if (orgIds.containsKey(orgId)) {
+        if (orgIds.containsKey(orgId)) {
             return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
         } else {
             fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);
