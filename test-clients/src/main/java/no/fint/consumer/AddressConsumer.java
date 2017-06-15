@@ -6,6 +6,7 @@ import no.fint.Constants;
 import no.fint.dto.Address;
 import no.fint.event.model.Event;
 import no.fint.event.model.EventUtil;
+import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
 import no.fint.model.relation.FintResource;
 import no.fint.relations.annotations.FintRelations;
@@ -31,8 +32,8 @@ public class AddressConsumer {
 
     @FintRelations
     @GetMapping
-    public ResponseEntity getAllAddresses(@RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
-                                          @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
+    public ResponseEntity getAllAddresses(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.ORGID) String orgId,
+                                          @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
         Event<FintResource> event = new Event<>(orgId, Constants.SOURCE, Actions.GET_ALL_ADDRESSES, client);
         fintEvents.sendDownstream(orgId, event);
 
@@ -46,8 +47,8 @@ public class AddressConsumer {
     @FintRelations
     @GetMapping("/{id}")
     public ResponseEntity getAddress(@PathVariable String id,
-                                     @RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
-                                     @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
+                                     @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.ORGID) String orgId,
+                                     @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
         Event<String> event = new Event<>(orgId, Constants.SOURCE, Actions.GET_ADDRESS, client);
         event.setQuery(id);
         fintEvents.sendDownstream(orgId, event);

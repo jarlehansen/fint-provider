@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.12/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -30,11 +30,11 @@ repositories {
 }
 
 dependencies {
-    compile('no.fint:fint-events:0.1.32')
-    compile('no.fint:fint-event-model:0.0.25')
+    compile('no.fint:fint-events:0.1.33')
+    compile('no.fint:fint-event-model:0.0.26')
     compile('no.fint:fint-relation-model:0.0.22')
     compile('no.fint:fint-relations:0.0.20')
-    compile('no.fint:fint-sse:0.0.1')
+    compile('no.fint:fint-sse:0.0.6')
 
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
     compile('org.springframework.boot:spring-boot-starter')

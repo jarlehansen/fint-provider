@@ -6,14 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
 import no.fint.Constants;
 import no.fint.event.model.Event;
-import no.fint.event.model.EventUtil;
+import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
 import no.fint.model.relation.FintResource;
+import no.fint.sse.AbstractEventListener;
 import no.fint.sse.FintSse;
-import org.glassfish.jersey.media.sse.EventListener;
-import org.glassfish.jersey.media.sse.InboundEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
@@ -26,12 +25,11 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.UUID;
 
 @Slf4j
 @ConditionalOnProperty(name = "adapter-enabled", havingValue = "true", matchIfMissing = true)
 @Component
-public class Adapter implements EventListener {
+public class Adapter extends AbstractEventListener {
     private FintSse fintSse;
 
     @Autowired
@@ -43,9 +41,8 @@ public class Adapter implements EventListener {
     @PostConstruct
     public void init() {
         log.info("Starting adapter");
-        String sseUrl = String.format("http://localhost:8080/provider/sse/%s", UUID.randomUUID().toString());
-        fintSse = new FintSse(sseUrl);
-        fintSse.connect(this, ImmutableMap.of(Constants.HEADER_ORGID, Constants.ORGID));
+        fintSse = new FintSse("http://localhost:8080/provider/sse/%s");
+        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, Constants.ORGID));
     }
 
     @Scheduled(fixedRate = 5000L)
@@ -62,12 +59,10 @@ public class Adapter implements EventListener {
     }
 
     @Override
-    public void onEvent(InboundEvent inboundEvent) {
-        String jsonEvent = inboundEvent.readData(String.class);
-        Event event = EventUtil.toEvent(jsonEvent);
+    public void onEvent(Event event) {
         log.info(event.toString());
 
-        if (event.getAction().equals(Actions.HEALTH)) {
+        if (event.isHealthCheck()) {
             Event<Health> healthCheckEvent = new Event<>(event);
             healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             healthCheckEvent.addData(new Health("test-adapter", HealthStatus.APPLICATION_HEALTHY));
@@ -92,19 +87,19 @@ public class Adapter implements EventListener {
 
     private void postStatus(Event event) {
         HttpHeaders headers = new HttpHeaders();
-        headers.put(Constants.HEADER_ORGID, Lists.newArrayList(event.getOrgId()));
+        headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
         ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/status", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
         log.info("Provider POST response: {}", response.getStatusCode());
     }
 
     private void postResponse(Event event) {
         HttpHeaders headers = new HttpHeaders();
-        headers.put(Constants.HEADER_ORGID, Lists.newArrayList(event.getOrgId()));
+        headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
         ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/response", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
         log.info("Provider POST response: {}", response.getStatusCode());
     }
 
     public void registerOrgId(String orgId) {
-        fintSse.connect(this, ImmutableMap.of(Constants.HEADER_ORGID, orgId));
+        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, orgId));
     }
 }

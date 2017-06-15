@@ -6,6 +6,7 @@ import no.fint.Constants;
 import no.fint.adapter.Adapter;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
+import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
 import no.fint.events.FintEventsHealth;
 import no.fint.events.annotations.FintEventListener;
@@ -34,14 +35,14 @@ public class Consumer {
     }
 
     @GetMapping("/healthCheck")
-    public Event healthCheck(@RequestHeader(value = Constants.HEADER_ORGID, defaultValue = Constants.ORGID) String orgId,
-                             @RequestHeader(value = Constants.HEADER_CLIENT, defaultValue = Constants.CLIENT) String client) {
-        Event<String> health = new Event<>(orgId, Constants.SOURCE, Actions.HEALTH, client);
+    public Event healthCheck(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.ORGID) String orgId,
+                             @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.CLIENT) String client) {
+        Event<String> health = new Event<>(orgId, Constants.SOURCE, DefaultActions.HEALTH, client);
         return fintEventsHealth.sendHealthCheck(orgId, health.getCorrId(), health);
     }
 
     @PostMapping("/orgIds/{orgId}")
-    public void registerOrgId(@RequestHeader(value = Constants.HEADER_ORGID) String orgId) {
+    public void registerOrgId(@RequestHeader(value = HeaderConstants.ORG_ID) String orgId) {
         Event event = new Event(orgId, Constants.SOURCE, DefaultActions.REGISTER_ORG_ID.name(), Constants.CLIENT);
         fintEvents.sendDownstream("system", event);
         adapter.registerOrgId(orgId);
