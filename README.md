@@ -19,7 +19,7 @@
 * [consumer - http://localhost:8090/swagger-ui.html](http://localhost:8090/swagger-ui.html)
 * [redis-commander - http://localhost:8081](http://localhost:8081)
 
-Start fint-provider + test-consumer and adapter
+Start fint-provider + test-consumer and adapter  
 `npm start --prefix test-clients`
 
 Start only test-clients (useful to debug fint-provider)  
