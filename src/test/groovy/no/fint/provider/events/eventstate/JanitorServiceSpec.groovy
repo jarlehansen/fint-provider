@@ -2,20 +2,17 @@ package no.fint.provider.events.eventstate
 
 import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
-import no.fint.events.FintEvents
 import spock.lang.Specification
 
 class JanitorServiceSpec extends Specification {
     private EventStateService eventStateService
     private FintAuditService fintAuditService
-    private FintEvents fintEvents
     private JanitorService janitorService
 
     void setup() {
         eventStateService = Mock(EventStateService)
         fintAuditService = Mock(FintAuditService)
-        fintEvents = Mock(FintEvents)
-        janitorService = new JanitorService(eventStateService: eventStateService, fintAuditService: fintAuditService, fintEvents: fintEvents)
+        janitorService = new JanitorService(eventStateService: eventStateService, fintAuditService: fintAuditService)
     }
 
     def "Remove expired event states"() {
@@ -32,6 +29,5 @@ class JanitorServiceSpec extends Specification {
         then:
         1 * eventStateService.getEventStates() >> [expiredEventState, notExpiredEventState]
         1 * eventStateService.remove(_ as Event)
-        1 * fintEvents.sendUpstream('rogfk.no', event)
     }
 }
