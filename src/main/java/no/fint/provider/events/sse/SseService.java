@@ -80,7 +80,7 @@ public class SseService {
             List<FintSseEmitter> toBeRemoved = new ArrayList<>();
             emitters.forEach(emitter -> {
                 try {
-                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name("event").data(event).reconnectTime(5000L);
+                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
                     emitter.send(builder);
                 } catch (Exception e) {
                     log.warn("Exception when trying to send message to SseEmitter", e);
