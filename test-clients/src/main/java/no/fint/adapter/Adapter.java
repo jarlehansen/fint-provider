@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
 import no.fint.Constants;
+import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
@@ -42,7 +43,7 @@ public class Adapter extends AbstractEventListener {
     public void init() {
         log.info("Starting adapter");
         fintSse = new FintSse("http://localhost:8080/provider/sse/%s");
-        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, Constants.ORGID));
+        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, Constants.ORGID), DefaultActions.HEALTH);
     }
 
     @Scheduled(fixedRate = 5000L)

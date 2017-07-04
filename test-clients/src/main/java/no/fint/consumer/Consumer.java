@@ -1,7 +1,6 @@
 package no.fint.consumer;
 
 import lombok.extern.slf4j.Slf4j;
-import no.fint.Actions;
 import no.fint.Constants;
 import no.fint.adapter.Adapter;
 import no.fint.event.model.DefaultActions;
@@ -26,7 +25,7 @@ public class Consumer {
     @Autowired
     private FintEventsHealth fintEventsHealth;
 
-    @Autowired
+    @Autowired(required = false)
     private Adapter adapter;
 
     @GetMapping("/reconnect")
@@ -45,7 +44,9 @@ public class Consumer {
     public void registerOrgId(@RequestHeader(value = HeaderConstants.ORG_ID) String orgId) {
         Event event = new Event(orgId, Constants.SOURCE, DefaultActions.REGISTER_ORG_ID.name(), Constants.CLIENT);
         fintEvents.sendDownstream("system", event);
-        adapter.registerOrgId(orgId);
+        if (adapter != null) {
+            adapter.registerOrgId(orgId);
+        }
     }
 
     @FintEventListener(type = QueueType.UPSTREAM)

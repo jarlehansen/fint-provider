@@ -1,7 +1,13 @@
 server:
  port: 8090
 
+security:
+ basic:
+  enabled: false
+
 fint:
+ oauth:
+  enabled: false
  events:
   queue-endpoint-enabled: true
   orgIds: mock.no
