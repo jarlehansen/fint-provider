@@ -6,5 +6,4 @@ classes/
 out
 .DS_Store
 test-clients/node_modules
-test-clients/test-cors/node_modules
 *.iml
