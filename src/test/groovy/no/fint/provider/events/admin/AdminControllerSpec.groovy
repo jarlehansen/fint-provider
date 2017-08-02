@@ -2,8 +2,8 @@ package no.fint.provider.events.admin
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent
 import no.fint.event.model.Event
+import no.fint.event.model.HeaderConstants
 import no.fint.events.FintEvents
-import no.fint.provider.events.Constants
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
 import org.redisson.api.RBlockingQueue
@@ -66,7 +66,7 @@ class AdminControllerSpec extends MockMvcSpecification {
         def queue = Mock(RBlockingQueue)
 
         when:
-        def response = mockMvc.perform(delete('/admin/clear/downstream').header(Constants.HEADER_ORGID, 'rogfk.no'))
+        def response = mockMvc.perform(delete('/admin/clear/downstream').header(HeaderConstants.ORG_ID, 'rogfk.no'))
 
         then:
         1 * fintEvents.getDownstream('rogfk.no') >> queue
@@ -79,7 +79,7 @@ class AdminControllerSpec extends MockMvcSpecification {
         def queue = Mock(RBlockingQueue)
 
         when:
-        def response = mockMvc.perform(delete('/admin/clear/upstream').header(Constants.HEADER_ORGID, 'rogfk.no'))
+        def response = mockMvc.perform(delete('/admin/clear/upstream').header(HeaderConstants.ORG_ID, 'rogfk.no'))
 
         then:
         1 * fintEvents.getUpstream('rogfk.no') >> queue

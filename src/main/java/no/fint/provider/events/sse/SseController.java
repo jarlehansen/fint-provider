@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.Constants;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
@@ -31,7 +32,7 @@ public class SseController {
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @Synchronized
     @GetMapping("/{id}")
-    public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId,
+    public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                                 @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
         SseEmitter emitter = sseService.subscribe(id, orgId);
         fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);

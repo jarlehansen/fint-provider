@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import no.fint.event.model.HeaderConstants;
 import no.fint.provider.events.Constants;
 import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class StatusController {
 
     @ApiOperation(value = "", notes = "Post back the event with the status flag telling if the response can be handled or not.")
     @PostMapping
-    public void status(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(Constants.HEADER_ORGID) String orgId,
+    public void status(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                        @ApiParam(Constants.SWAGGER_EVENT) @RequestBody Event event) {
         event.setOrgId(orgId);
         statusService.updateEventState(event);

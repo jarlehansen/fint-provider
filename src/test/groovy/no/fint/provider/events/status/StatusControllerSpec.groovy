@@ -2,7 +2,7 @@ package no.fint.provider.events.status
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
-import no.fint.provider.events.Constants
+import no.fint.event.model.HeaderConstants
 import no.fint.provider.events.exceptions.UnknownEventException
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.http.MediaType
@@ -30,7 +30,7 @@ class StatusControllerSpec extends MockMvcSpecification {
         when:
         def response = mockMvc.perform(
                 post('/status')
-                        .header(Constants.HEADER_ORGID, 'rogfk.no')
+                        .header(HeaderConstants.ORG_ID, 'rogfk.no')
                         .content(eventJson)
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
 
@@ -43,7 +43,7 @@ class StatusControllerSpec extends MockMvcSpecification {
         when:
         def response = mockMvc.perform(
                 post('/status')
-                        .header(Constants.HEADER_ORGID, 'rogfk.no')
+                        .header(HeaderConstants.ORG_ID, 'rogfk.no')
                         .content(eventJson)
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
 
@@ -56,7 +56,7 @@ class StatusControllerSpec extends MockMvcSpecification {
         when:
         def response = mockMvc.perform(
                 post('/status')
-                        .header(Constants.HEADER_ORGID, 'rogfk.no')
+                        .header(HeaderConstants.ORG_ID, 'rogfk.no')
                         .content(eventJson)
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
 

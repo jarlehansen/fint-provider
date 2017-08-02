@@ -2,7 +2,7 @@ package no.fint.provider.events.response
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import no.fint.event.model.Event
-import no.fint.provider.events.Constants
+import no.fint.event.model.HeaderConstants
 import no.fint.provider.events.exceptions.UnknownEventException
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -29,7 +29,7 @@ class ResponseControllerSpec extends Specification {
 
         when:
         def response = mockMvc.perform(post('/response')
-                .header(Constants.HEADER_ORGID, 'rogfk.no')
+                .header(HeaderConstants.ORG_ID, 'rogfk.no')
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
 
@@ -44,7 +44,7 @@ class ResponseControllerSpec extends Specification {
 
         when:
         def response = mockMvc.perform(post('/response')
-                .header(Constants.HEADER_ORGID, 'rogfk.no')
+                .header(HeaderConstants.ORG_ID, 'rogfk.no')
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
 

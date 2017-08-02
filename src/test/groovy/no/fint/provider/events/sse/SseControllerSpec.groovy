@@ -1,7 +1,7 @@
 package no.fint.provider.events.sse
 
+import no.fint.event.model.HeaderConstants
 import no.fint.events.FintEvents
-import no.fint.provider.events.Constants
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.test.web.servlet.MockMvc
@@ -21,7 +21,7 @@ class SseControllerSpec extends MockMvcSpecification {
 
     def "Subscribe to sse client"() {
         when:
-        def response = mockMvc.perform(get('/sse/123').header(Constants.HEADER_ORGID, 'rogfk.no'))
+        def response = mockMvc.perform(get('/sse/123').header(HeaderConstants.ORG_ID, 'rogfk.no'))
 
         then:
         1 * sseService.subscribe('123', 'rogfk.no')
