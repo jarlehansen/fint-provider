@@ -11,3 +11,6 @@ fint:
 spring:
  redis:
   port: 16379
+
+logging.level.no.fint.provider.events.status.StatusController: DEBUG
+logging.level.no.fint.provider.events.response.ResponseController: DEBUG

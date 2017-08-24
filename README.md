@@ -27,3 +27,12 @@ Start only test-clients (useful to debug fint-provider)
 
 Start fint-provider + test-consumer (useful to test adapter)  
 `npm run start-test-consumer --prefix test-clients`
+
+## Log payload
+
+To log the event payload add the configuration to `application.properties` or as an environment variable.
+
+```
+logging.level.no.fint.provider.events.status.StatusController: DEBUG
+logging.level.no.fint.provider.events.response.ResponseController: DEBUG
+```
