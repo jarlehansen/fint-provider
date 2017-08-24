@@ -30,7 +30,7 @@ class StatusServiceSpec extends Specification {
 
     def "Update ttl for event with status PROVIDER_ACCEPTED"() {
         given:
-        def event = new Event(orgId: 'rogfk.no', status: Status.PROVIDER_ACCEPTED)
+        def event = new Event(orgId: 'rogfk.no', status: Status.ADAPTER_ACCEPTED)
         def eventState = new EventState()
         def originalExpires = eventState.expires
 
@@ -44,7 +44,7 @@ class StatusServiceSpec extends Specification {
 
     def "Update ttl for event with status PROVIDER_REJECTED"() {
         given:
-        def event = new Event(orgId: 'rogfk.no', status: Status.PROVIDER_REJECTED)
+        def event = new Event(orgId: 'rogfk.no', status: Status.ADAPTER_REJECTED)
 
         when:
         statusService.updateEventState(event)
