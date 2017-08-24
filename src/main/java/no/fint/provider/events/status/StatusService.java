@@ -36,7 +36,7 @@ public class StatusService {
             fintAuditService.audit(event);
             EventState eventState = state.get();
 
-            if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
+            if (event.getStatus() == Status.ADAPTER_ACCEPTED) {
                 eventState.updateTtl(providerProps.getResponseTtl());
             } else {
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
