@@ -36,7 +36,7 @@ public class DownstreamSubscriber {
         }
 
         sseService.send(event);
-        event.setStatus(Status.DELIVERED_TO_PROVIDER);
+        event.setStatus(Status.DELIVERED_TO_ADAPTER);
         fintAuditService.audit(event);
 
         if (!event.isHealthCheck()) {
