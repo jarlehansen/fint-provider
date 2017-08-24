@@ -27,6 +27,7 @@ public class ResponseController {
     @PostMapping
     public void response(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                          @ApiParam(Constants.SWAGGER_EVENT) @RequestBody Event event) {
+        log.debug("Response event received: {}", event);
         event.setOrgId(orgId);
         responseService.handleAdapterResponse(event);
     }

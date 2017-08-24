@@ -28,6 +28,7 @@ public class StatusController {
     @PostMapping
     public void status(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                        @ApiParam(Constants.SWAGGER_EVENT) @RequestBody Event event) {
+        log.debug("Status event received: {}", event);
         event.setOrgId(orgId);
         statusService.updateEventState(event);
     }

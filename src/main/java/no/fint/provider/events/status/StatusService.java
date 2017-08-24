@@ -5,11 +5,11 @@ import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.eventstate.EventState;
 import no.fint.provider.events.eventstate.EventStateService;
 import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,9 +17,6 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class StatusService {
-
-    @Value("${fint.provider.ttl-response:15}")
-    private int responseTtl;
 
     @Autowired
     private EventStateService eventStateService;
@@ -30,6 +27,9 @@ public class StatusService {
     @Autowired
     private FintEvents fintEvents;
 
+    @Autowired
+    private ProviderProps providerProps;
+
     public void updateEventState(Event event) {
         Optional<EventState> state = eventStateService.get(event);
         if (state.isPresent()) {
@@ -37,7 +37,7 @@ public class StatusService {
             EventState eventState = state.get();
 
             if (event.getStatus() == Status.PROVIDER_ACCEPTED) {
-                eventState.updateTtl(responseTtl);
+                eventState.updateTtl(providerProps.getResponseTtl());
             } else {
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));

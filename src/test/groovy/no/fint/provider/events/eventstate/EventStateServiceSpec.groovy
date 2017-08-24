@@ -2,6 +2,7 @@ package no.fint.provider.events.eventstate
 
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
+import no.fint.provider.events.ProviderProps
 import org.redisson.api.RedissonClient
 import spock.lang.Specification
 
@@ -11,7 +12,10 @@ class EventStateServiceSpec extends Specification {
 
     void setup() {
         fintEvents = Mock(FintEvents)
-        eventStateService = new EventStateService(eventStates: [], fintEvents: fintEvents, key: 'current-corrids')
+        def props = Mock(ProviderProps) {
+            getKey() >> 'current-corrids'
+        }
+        eventStateService = new EventStateService(eventStates: [], fintEvents: fintEvents, providerProps: props)
     }
 
     def "Init EventStateService"() {

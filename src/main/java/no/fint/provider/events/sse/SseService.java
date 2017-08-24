@@ -3,7 +3,8 @@ package no.fint.provider.events.sse;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
-import org.springframework.beans.factory.annotation.Value;
+import no.fint.provider.events.ProviderProps;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -17,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 public class SseService {
     private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
 
-    @Value("${fint.provider.max-number-of-emitters:50}")
-    private int maxNumberOfEmitters;
+    @Autowired
+    private ProviderProps providerProps;
 
     private ConcurrentHashMap<String, FintSseEmitters> clients = new ConcurrentHashMap<>();
 
@@ -31,7 +32,7 @@ public class SseService {
     public SseEmitter subscribe(String id, String orgId) {
         FintSseEmitters fintSseEmitters = clients.get(orgId);
         if (fintSseEmitters == null) {
-            fintSseEmitters = FintSseEmitters.with(maxNumberOfEmitters, this::closeEmitter);
+            fintSseEmitters = FintSseEmitters.with(providerProps.getMaxNumberOfEmitters(), this::closeEmitter);
         }
 
         Optional<FintSseEmitter> registeredEmitter = fintSseEmitters.get(id);

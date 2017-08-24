@@ -4,6 +4,7 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.Event
 import no.fint.event.model.Status
 import no.fint.events.FintEvents
+import no.fint.provider.events.ProviderProps
 import no.fint.provider.events.eventstate.EventState
 import no.fint.provider.events.eventstate.EventStateService
 import no.fint.provider.events.exceptions.UnknownEventException
@@ -13,15 +14,18 @@ class StatusServiceSpec extends Specification {
     private StatusService statusService
     private EventStateService eventStateService
     private FintEvents fintEvents
+    private ProviderProps props
 
     void setup() {
         eventStateService = Mock(EventStateService)
         fintEvents = Mock(FintEvents)
+        props = Mock(ProviderProps)
 
         statusService = new StatusService(
                 eventStateService: eventStateService,
                 fintAuditService: Mock(FintAuditService),
-                fintEvents: fintEvents)
+                fintEvents: fintEvents,
+                providerProps: props)
     }
 
     def "Update ttl for event with status PROVIDER_ACCEPTED"() {

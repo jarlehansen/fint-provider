@@ -6,18 +6,15 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.events.annotations.FintEventListener;
+import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.eventstate.EventStateService;
 import no.fint.provider.events.sse.SseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class DownstreamSubscriber {
-
-    @Value("${fint.provider.ttl-status:2}")
-    private int statusTtl;
 
     @Autowired
     private SseService sseService;
@@ -27,6 +24,9 @@ public class DownstreamSubscriber {
 
     @Autowired
     private FintAuditService fintAuditService;
+
+    @Autowired
+    private ProviderProps providerProps;
 
     @FintEventListener
     public void receive(Event event) {
@@ -40,7 +40,7 @@ public class DownstreamSubscriber {
         fintAuditService.audit(event);
 
         if (!event.isHealthCheck()) {
-            eventStateService.add(event, statusTtl);
+            eventStateService.add(event, providerProps.getStatusTtl());
         }
     }
 }

@@ -3,6 +3,7 @@ package no.fint.provider.events.subscriber
 import no.fint.audit.FintAuditService
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
+import no.fint.provider.events.ProviderProps
 import no.fint.provider.events.eventstate.EventStateService
 import no.fint.provider.events.sse.SseService
 import spock.lang.Specification
@@ -15,12 +16,15 @@ class DownstreamSubscriberSpec extends Specification {
     void setup() {
         sseService = Mock(SseService)
         eventStateService = Mock(EventStateService)
+        def props = Mock(ProviderProps) {
+            getStatusTtl() >> 2
+        }
 
         downstreamSubscriber = new DownstreamSubscriber(
                 sseService: sseService,
                 eventStateService: eventStateService,
                 fintAuditService: Mock(FintAuditService),
-                statusTtl: 2
+                providerProps: props
         )
     }
 
