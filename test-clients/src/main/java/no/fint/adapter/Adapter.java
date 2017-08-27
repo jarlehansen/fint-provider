@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.Actions;
 import no.fint.Constants;
-import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
@@ -43,7 +42,7 @@ public class Adapter extends AbstractEventListener {
     public void init() {
         log.info("Starting adapter");
         fintSse = new FintSse("http://localhost:8080/provider/sse/%s");
-        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, Constants.ORGID), DefaultActions.HEALTH);
+        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, Constants.ORGID));
     }
 
     @Scheduled(fixedRate = 5000L)
@@ -70,7 +69,7 @@ public class Adapter extends AbstractEventListener {
             postResponse(healthCheckEvent);
         } else {
             Event<FintResource> responseEvent = new Event<>(event);
-            responseEvent.setStatus(Status.PROVIDER_ACCEPTED);
+            responseEvent.setStatus(Status.ADAPTER_ACCEPTED);
             postStatus(responseEvent);
 
             if (event.getAction().equals(Actions.GET_ALL_PERSONS)) {

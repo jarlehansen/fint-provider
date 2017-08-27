@@ -15,11 +15,11 @@ public class Resources {
     List<FintResource> createPersonList() {
         Person person1 = new Person("1", "Mari");
         Relation relation1 = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value("1").build();
-        FintResource<Person> resource1 = FintResource.with(person1).addRelasjoner(relation1);
+        FintResource<Person> resource1 = FintResource.with(person1).addRelations(relation1);
 
         Person person2 = new Person("2", "Per");
         Relation relation2 = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value("2").build();
-        FintResource<Person> resource2 = FintResource.with(person2).addRelasjoner(relation2);
+        FintResource<Person> resource2 = FintResource.with(person2).addRelations(relation2);
 
         return Lists.newArrayList(resource1, resource2);
     }
@@ -27,7 +27,7 @@ public class Resources {
     List<FintResource> createPerson(String id) {
         Person person = new Person(id, "Mari");
         Relation relation = new Relation.Builder().with(Person.Relasjonsnavn.ADDRESS).forType(Person.class).field("address").value(id).build();
-        FintResource<Person> resource = FintResource.with(person).addRelasjoner(relation);
+        FintResource<Person> resource = FintResource.with(person).addRelations(relation);
 
         return Lists.newArrayList(resource);
     }
@@ -35,11 +35,11 @@ public class Resources {
     List<FintResource> createAddressList() {
         Address address1 = new Address("1", "veien 1");
         Relation relation1 = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value("1").build();
-        FintResource<Address> resource1 = FintResource.with(address1).addRelasjoner(relation1);
+        FintResource<Address> resource1 = FintResource.with(address1).addRelations(relation1);
 
         Address address2 = new Address("2", "veien 2");
         Relation relation2 = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value("2").build();
-        FintResource<Address> resource2 = FintResource.with(address2).addRelasjoner(relation2);
+        FintResource<Address> resource2 = FintResource.with(address2).addRelations(relation2);
 
         return Lists.newArrayList(resource1, resource2);
     }
@@ -47,7 +47,7 @@ public class Resources {
     List<FintResource> createAddress(String id) {
         Address address = new Address(id, "veien " + id);
         Relation relation = new Relation.Builder().with(Address.Relasjonsnavn.PERSON).forType(Address.class).field("person").value(id).build();
-        FintResource<Address> resource = FintResource.with(address).addRelasjoner(relation);
+        FintResource<Address> resource = FintResource.with(address).addRelations(relation);
 
         return Lists.newArrayList(resource);
     }

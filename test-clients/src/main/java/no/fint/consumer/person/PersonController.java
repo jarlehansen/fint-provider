@@ -1,4 +1,4 @@
-package no.fint.consumer;
+package no.fint.consumer.person;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import no.fint.Actions;
@@ -9,8 +9,7 @@ import no.fint.event.model.EventUtil;
 import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
 import no.fint.model.relation.FintResource;
-import no.fint.relations.annotations.FintRelations;
-import no.fint.relations.annotations.FintSelf;
+import no.fint.relations.FintRelationsMediaType;
 import org.redisson.api.RBlockingQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@FintSelf(type = Person.class, property = "id")
 @RestController
-@RequestMapping(value = "/person", produces = {"application/hal+json"})
-public class PersonConsumer {
+@RequestMapping(value = "/person", produces = FintRelationsMediaType.APPLICATION_HAL_JSON_VALUE)
+public class PersonController {
 
     private final TypeReference<List<FintResource<Person>>> personTypeReference = new TypeReference<List<FintResource<Person>>>() {
     };
@@ -30,7 +28,9 @@ public class PersonConsumer {
     @Autowired
     private FintEvents fintEvents;
 
-    @FintRelations
+    @Autowired
+    private PersonAssembler assembler;
+
     @GetMapping
     public ResponseEntity getAllPersons(@RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.ORGID) String orgId,
                                         @RequestHeader(value = HeaderConstants.CLIENT, defaultValue = Constants.CLIENT) String client) throws InterruptedException {
@@ -42,10 +42,9 @@ public class PersonConsumer {
 
         List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, personTypeReference);
 
-        return ResponseEntity.ok(fintResources);
+        return assembler.resources(fintResources);
     }
 
-    @FintRelations
     @GetMapping("/{id}")
     public ResponseEntity getPerson(@PathVariable String id,
                                     @RequestHeader(value = HeaderConstants.ORG_ID, defaultValue = Constants.ORGID) String orgId,
@@ -58,7 +57,7 @@ public class PersonConsumer {
         Event<FintResource> receivedEvent = tempQueue.poll(30, TimeUnit.SECONDS);
         List<FintResource<Person>> fintResources = EventUtil.convertEventData(receivedEvent, personTypeReference);
 
-        return ResponseEntity.ok(fintResources.get(0));
+        return assembler.resource(fintResources.get(0));
     }
 
 }

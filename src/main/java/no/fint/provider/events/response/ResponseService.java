@@ -31,8 +31,7 @@ public class ResponseService {
         log.info("Event received: {}, action: {}", event.getCorrId(), event.getAction());
         if (event.isHealthCheck()) {
             RBlockingQueue<Event> healthCheckQueue = fintEvents.getTempQueue(event.getCorrId());
-            event.setStatus(Status.TEMP_UPSTREAM_QUEUE);
-            fintAuditService.audit(event);
+            fintAuditService.audit(event, Status.TEMP_UPSTREAM_QUEUE);
             healthCheckQueue.offer(event);
         } else {
             Optional<EventState> state = eventStateService.get(event);

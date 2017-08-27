@@ -14,6 +14,8 @@ import no.fint.model.relation.FintResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+
 @Slf4j
 @RestController
 @RequestMapping("/consumer")
@@ -27,6 +29,11 @@ public class Consumer {
 
     @Autowired(required = false)
     private Adapter adapter;
+
+    @PostConstruct
+    public void init() {
+        fintEvents.registerUpstreamListener(this.getClass(), "mock.no");
+    }
 
     @GetMapping("/reconnect")
     public void reconnect() {

@@ -5,7 +5,9 @@ import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
+import no.fint.event.model.health.HealthStatus;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.Constants;
 import no.fint.provider.events.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,11 +36,10 @@ public class PollService {
         } else {
             log.info("Event received: {}", event.getAction());
             if (event.isHealthCheck()) {
-                event.addObject(new Health("provider", "Received in provider"));
+                event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
             }
 
-            event.setStatus(Status.DELIVERED_TO_ADAPTER);
-            fintAuditService.audit(event);
+            fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER);
             if (!event.isHealthCheck()) {
                 eventStateService.add(event, 2);
             }

@@ -50,7 +50,7 @@ repositories {
 
 
 dependencies {
-    compile('no.fint:fint-audit-mongo-plugin:1.0.0')
+    compile('no.fint:fint-audit-mongo-plugin:1.1.0')
     compile('no.fint:fint-events:1.0.0')
     compile('no.fint:fint-event-model:2.0.0')
     compile('no.fint:fint-springfox-extension:0.0.1')
