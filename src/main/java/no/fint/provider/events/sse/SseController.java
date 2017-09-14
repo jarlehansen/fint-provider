@@ -59,5 +59,9 @@ public class SseController {
         sseService.removeAll();
     }
 
+    @ApiOperation(value = "", notes = "Adapter starts the oauth process")
+    @GetMapping("/auth-init")
+    public void authorize() {
+    }
 
 }

@@ -53,4 +53,12 @@ class SseControllerSpec extends MockMvcSpecification {
         1 * sseService.removeAll()
         response.andExpect(status().isOk())
     }
+
+    def "Auth init"() {
+        when:
+        def response = mockMvc.perform(get('/sse/auth-init'))
+
+        then:
+        response.andExpect(status().isOk())
+    }
 }
