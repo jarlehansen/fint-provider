@@ -4,14 +4,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class FintSseEmitter extends SseEmitter {
     private String id;
     private String registered;
+    private final AtomicInteger pendingEvents = new AtomicInteger();
 
     public FintSseEmitter() {
         setRegisteredDate();
@@ -27,4 +30,13 @@ public class FintSseEmitter extends SseEmitter {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
         registered = formatter.format(new Date());
     }
+
+	@Override
+	public void send(SseEventBuilder builder) throws IOException {
+		pendingEvents.incrementAndGet();
+		super.send(builder);
+		pendingEvents.decrementAndGet();
+	}
+    
+    
 }

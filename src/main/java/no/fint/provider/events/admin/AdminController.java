@@ -11,12 +11,18 @@ import no.fint.provider.events.Constants;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +46,14 @@ public class AdminController {
     @GetMapping("/audit/events")
     public List<MongoAuditEvent> getAllEvents() {
         return mongoTemplate.findAll(MongoAuditEvent.class);
+    }
+    
+    @GetMapping("/audit/events/since/{when}")
+    public List<MongoAuditEvent> queryEventsSince(@PathVariable String when) {
+    	Duration duration = Duration.parse(when);
+    	Criteria c = Criteria.where("timestamp").gt(ZonedDateTime.now().minus(duration).toInstant().toEpochMilli());
+    	Query q = new Query(c);
+    	return mongoTemplate.find(q, MongoAuditEvent.class);
     }
 
     @DeleteMapping("/tempQueues")

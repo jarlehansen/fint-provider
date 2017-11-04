@@ -32,7 +32,7 @@ public class DownstreamSubscriber {
 
     @FintEventListener
     public void receive(Event event) {
-        log.info("Event received: {}", event.getAction());
+        log.info("Event received: {} for {}", event.getAction(), event.getOrgId());
         if (event.isHealthCheck()) {
             event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
         }

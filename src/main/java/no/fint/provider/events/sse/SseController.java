@@ -46,7 +46,7 @@ public class SseController {
         List<SseOrg> orgs = new ArrayList<>();
         clients.forEach((key, value) -> {
             List<SseClient> sseClients = new ArrayList<>();
-            value.forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId())));
+            value.forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId(), emitter.getPendingEvents().get())));
 
             orgs.add(new SseOrg(key, sseClients));
         });
