@@ -28,7 +28,7 @@ public class ResponseService {
     private FintEvents fintEvents;
 
     public void handleAdapterResponse(Event event) {
-        log.info("Event received: {}, action: {}", event.getCorrId(), event.getAction());
+        log.info("Event received: {}, action: {}, orgId: {}", event.getCorrId(), event.getAction(), event.getOrgId());
         if (event.isHealthCheck()) {
             RBlockingQueue<Event> healthCheckQueue = fintEvents.getTempQueue(event.getCorrId());
             fintAuditService.audit(event, Status.TEMP_UPSTREAM_QUEUE);
@@ -42,7 +42,7 @@ public class ResponseService {
                 fintAuditService.audit(event);
                 eventStateService.remove(event);
             } else {
-                log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. action:{} status:{}", event.getCorrId(), event.getAction(), event.getStatus());
+                log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);
                 throw new UnknownEventException();
             }
         }

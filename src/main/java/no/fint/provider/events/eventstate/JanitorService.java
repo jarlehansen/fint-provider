@@ -27,7 +27,8 @@ public class JanitorService {
         eventStates.forEach(eventState -> {
             if (eventState.expired()) {
                 Event event = eventState.getEvent();
-                log.info("EventState with corrId {} is expired, removing from list", eventState.getCorrId());
+                log.info("EventState with corrId {} for orgId {} is expired, removing from list", eventState.getCorrId(), eventState.getEvent().getOrgId());
+                log.debug("Event details: {}", eventState);
                 eventStateService.remove(event);
 
                 event.setMessage("Event expired");

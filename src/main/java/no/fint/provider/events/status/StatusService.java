@@ -46,7 +46,7 @@ public class StatusService {
                 eventStateService.remove(event);
             }
         } else {
-            log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. action:{} status:{}", event.getCorrId(), event.getAction(), event.getStatus());
+            log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);
             throw new UnknownEventException();
         }
     }

@@ -20,4 +20,6 @@ public class ProviderProps {
     @Value("${fint.provider.event-state.list-name:current-corrids}")
     private String key;
 
+    @Value("${fint.provider.sse-timeout-minutes:60}")
+    private int sseTimeoutMinutes;
 }

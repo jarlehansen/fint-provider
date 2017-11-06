@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class SseService {
-    private static final long DEFAULT_TIMEOUT = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
-
     @Autowired
     private ProviderProps providerProps;
 
@@ -40,7 +38,7 @@ public class SseService {
             return registeredEmitter.get();
         } else {
             log.info("id: {}, {} connected", id, orgId);
-            FintSseEmitter emitter = new FintSseEmitter(id, DEFAULT_TIMEOUT);
+            FintSseEmitter emitter = new FintSseEmitter(id, TimeUnit.MINUTES.toMillis(providerProps.getSseTimeoutMinutes()));
             emitter.onCompletion(() -> {
                 log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
                 removeEmitter(orgId, emitter);
@@ -84,8 +82,9 @@ public class SseService {
                     SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
                     emitter.send(builder);
                 } catch (Exception e) {
-                    log.warn("Exception when trying to send message to SseEmitter", e);
+                    log.warn("Exception when trying to send message to SseEmitter", e.getMessage());
                     log.warn("Removing subscriber {}", event.getOrgId());
+                    log.debug("Details: {}", event, e);
                     toBeRemoved.add(emitter);
                 }
             });
