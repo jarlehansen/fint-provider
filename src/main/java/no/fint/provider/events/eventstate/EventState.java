@@ -5,10 +5,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import no.fint.event.model.Event;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = "corrId")
-public class EventState {
+public class EventState implements Serializable {
     private String corrId;
     private long expires;
 
