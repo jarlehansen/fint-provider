@@ -58,8 +58,8 @@ repositories {
 
 dependencies {
     compile('no.fint:fint-audit-mongo-plugin:1.1.1')
-    compile('no.fint:fint-events-hazelcast:0.0.0-20171122-144019')
-    compile('no.fint:fint-event-model:2.0.0')
+    compile('no.fint:fint-events-hazelcast:0.0.0-20171122-153218')
+    compile('no.fint:fint-event-model:2.0.1')
     compile('no.fint:fint-springfox-extension:0.0.1')
 
     compile('org.projectlombok:lombok')
