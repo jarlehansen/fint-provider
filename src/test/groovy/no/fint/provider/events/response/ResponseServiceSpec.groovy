@@ -28,7 +28,7 @@ class ResponseServiceSpec extends Specification {
         responseService.handleAdapterResponse(event)
 
         then:
-        1 * fintEvents.sendHealthCheck(event)
+        1 * fintEvents.sendUpstream(event)
     }
 
     def "Handle adapter response for event registered in EventState"() {

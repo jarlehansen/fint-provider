@@ -9,16 +9,14 @@ import spock.lang.Specification
 
 class EventStateServiceSpec extends Specification {
     private EventStateService eventStateService
-    private FintEvents fintEvents
     private HazelcastInstance hazelcastInstance
 
     void setup() {
-        fintEvents = Mock(FintEvents)
         def props = Mock(ProviderProps) {
             getKey() >> 'current-corrids'
         }
         hazelcastInstance = Mock(HazelcastInstance)
-        eventStateService = new EventStateService(eventStates: [], fintEvents: fintEvents, providerProps: props, hazelcastInstance: hazelcastInstance)
+        eventStateService = new EventStateService(eventStates: [], providerProps: props, hazelcastInstance: hazelcastInstance)
     }
 
     def "Init EventStateService"() {

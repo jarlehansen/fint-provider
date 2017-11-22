@@ -29,7 +29,8 @@ public class ResponseService {
     public void handleAdapterResponse(Event event) {
         log.info("Event received: {}, action: {}, orgId: {}", event.getCorrId(), event.getAction(), event.getOrgId());
         if (event.isHealthCheck()) {
-            fintEvents.sendHealthCheck(event);
+            event.setStatus(Status.UPSTREAM_QUEUE);
+            fintEvents.sendUpstream(event);
         } else {
             Optional<EventState> state = eventStateService.get(event);
             if (state.isPresent()) {

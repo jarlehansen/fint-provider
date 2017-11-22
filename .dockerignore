@@ -1,0 +1,9 @@
+npm-debug.log
+.idea
+.gradle
+build/
+classes/
+out
+.DS_Store
+test-clients/node_modules
+*.iml
