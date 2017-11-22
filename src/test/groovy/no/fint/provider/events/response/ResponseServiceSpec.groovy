@@ -7,7 +7,6 @@ import no.fint.events.FintEvents
 import no.fint.provider.events.eventstate.EventState
 import no.fint.provider.events.eventstate.EventStateService
 import no.fint.provider.events.exceptions.UnknownEventException
-import org.redisson.api.RBlockingQueue
 import spock.lang.Specification
 
 class ResponseServiceSpec extends Specification {
@@ -24,14 +23,12 @@ class ResponseServiceSpec extends Specification {
     def "Handle adapter response for health check event"() {
         given:
         def event = new Event('rogfk.no', 'test', DefaultActions.HEALTH.name(), 'test')
-        def queue = Mock(RBlockingQueue)
 
         when:
         responseService.handleAdapterResponse(event)
 
         then:
-        1 * fintEvents.getTempQueue(event.getCorrId()) >> queue
-        1 * queue.offer(event)
+        1 * fintEvents.sendHealthCheck(event)
     }
 
     def "Handle adapter response for event registered in EventState"() {
@@ -43,7 +40,7 @@ class ResponseServiceSpec extends Specification {
 
         then:
         1 * eventStateService.get(event) >> Optional.of(new EventState())
-        1 * fintEvents.sendUpstream(event.getOrgId(), event)
+        1 * fintEvents.sendUpstream(event)
         1 * eventStateService.remove(event)
     }
 

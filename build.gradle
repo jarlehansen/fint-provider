@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.0.14/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.1.0/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -30,7 +30,7 @@ if (versionFile.exists()) {
     version = '0.0.0-SNAPSHOT'
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/version.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.1.0/version.gradle'
 jar {
 //    version = createVersion()
     baseName = 'fint-provider'
@@ -58,7 +58,7 @@ repositories {
 
 dependencies {
     compile('no.fint:fint-audit-mongo-plugin:1.1.1')
-    compile('no.fint:fint-events:1.0.1')
+    compile('no.fint:fint-events-hazelcast:0.0.0-20171122-144019')
     compile('no.fint:fint-event-model:2.0.0')
     compile('no.fint:fint-springfox-extension:0.0.1')
 
@@ -73,7 +73,7 @@ dependencies {
     runtime('org.springframework.boot:spring-boot-starter-actuator')
 
     testCompile('no.fint:fint-test-utils:0.0.4')
-    testCompile('cglib:cglib-nodep:3.2.5')
+    testCompile("cglib:cglib-nodep:${cglibVersion}")
     testCompile("org.spockframework:spock-spring:${spockSpringVersion}")
     testCompile("org.spockframework:spock-core:${spockSpringVersion}")
     testCompile('org.springframework.boot:spring-boot-starter-test')
@@ -93,4 +93,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.1.0/dependencyReport.gradle'

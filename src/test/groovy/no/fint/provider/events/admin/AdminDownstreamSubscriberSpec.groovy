@@ -18,7 +18,7 @@ class AdminDownstreamSubscriberSpec extends Specification {
         def event = new Event('rogfk.no', 'test', DefaultActions.REGISTER_ORG_ID.name(), 'test')
 
         when:
-        subscriber.receive(event)
+        subscriber.accept(event)
 
         then:
         1 * adminService.register('rogfk.no')
@@ -29,7 +29,7 @@ class AdminDownstreamSubscriberSpec extends Specification {
         def event = new Event('rogfk.no', 'test', 'unknown', 'test')
 
         when:
-        subscriber.receive(event)
+        subscriber.accept(event)
 
         then:
         0 * adminService.register('rogfk.no')

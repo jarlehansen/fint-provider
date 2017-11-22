@@ -1,33 +1,32 @@
 package no.fint.provider.events.eventstate
 
+import com.hazelcast.core.HazelcastInstance
+import com.hazelcast.core.ISet
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
 import no.fint.provider.events.ProviderProps
-import org.redisson.api.RedissonClient
 import spock.lang.Specification
 
 class EventStateServiceSpec extends Specification {
     private EventStateService eventStateService
     private FintEvents fintEvents
+    private HazelcastInstance hazelcastInstance
 
     void setup() {
         fintEvents = Mock(FintEvents)
         def props = Mock(ProviderProps) {
             getKey() >> 'current-corrids'
         }
-        eventStateService = new EventStateService(eventStates: [], fintEvents: fintEvents, providerProps: props)
+        hazelcastInstance = Mock(HazelcastInstance)
+        eventStateService = new EventStateService(eventStates: [], fintEvents: fintEvents, providerProps: props, hazelcastInstance: hazelcastInstance)
     }
 
     def "Init EventStateService"() {
-        given:
-        RedissonClient client = Mock(RedissonClient)
-
         when:
         eventStateService.init()
 
         then:
-        1 * fintEvents.getClient() >> client
-        1 * client.getSet('current-corrids')
+        1 * hazelcastInstance.getSet('current-corrids') >> Mock(ISet)
     }
 
     def "Add and get new EventState"() {

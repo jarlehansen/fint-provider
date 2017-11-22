@@ -33,7 +33,7 @@ class DownstreamSubscriberSpec extends Specification {
         def event = new Event('rogfk.no', 'test', DefaultActions.HEALTH.name(), 'test')
 
         when:
-        downstreamSubscriber.receive(event)
+        downstreamSubscriber.accept(event)
 
         then:
         1 * sseService.send(event)
@@ -45,7 +45,7 @@ class DownstreamSubscriberSpec extends Specification {
         def event = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
 
         when:
-        downstreamSubscriber.receive(event)
+        downstreamSubscriber.accept(event)
 
         then:
         1 * sseService.send(event)

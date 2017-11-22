@@ -29,13 +29,16 @@ public class SseController {
     @Autowired
     private FintEvents fintEvents;
 
+    @Autowired
+    private DownstreamSubscriber downstreamSubscriber;
+
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @Synchronized
     @GetMapping("/{id}")
     public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                                 @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
         SseEmitter emitter = sseService.subscribe(id, orgId);
-        fintEvents.registerDownstreamListener(DownstreamSubscriber.class, orgId);
+        fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
         return emitter;
     }
 

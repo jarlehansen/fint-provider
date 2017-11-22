@@ -1,11 +1,11 @@
 package no.fint.provider.events.eventstate;
 
+import com.hazelcast.core.HazelcastInstance;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.ProviderProps;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,8 @@ import java.util.Set;
 @Service
 public class EventStateService {
 
+    @Autowired
+    private HazelcastInstance hazelcastInstance;
 
     @Autowired
     private FintEvents fintEvents;
@@ -29,8 +31,7 @@ public class EventStateService {
 
     @PostConstruct
     public void init() {
-        RedissonClient client = fintEvents.getClient();
-        eventStates = client.getSet(providerProps.getKey());
+        eventStates = hazelcastInstance.getSet(providerProps.getKey());
     }
 
     public void add(Event event, int timeToLiveInMinutes) {

@@ -2,8 +2,8 @@ package no.fint.provider.events.admin;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import no.fint.events.FintEventListener;
 import no.fint.events.FintEvents;
-import no.fint.events.annotations.FintEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 
 @Slf4j
 @Component
-public class AdminDownstreamSubscriber {
+public class AdminDownstreamSubscriber implements FintEventListener {
 
     @Autowired
     private FintEvents fintEvents;
@@ -21,11 +21,11 @@ public class AdminDownstreamSubscriber {
 
     @PostConstruct
     public void init() {
-        fintEvents.registerDownstreamListener(AdminDownstreamSubscriber.class, "system");
+        fintEvents.registerDownstreamListener("system", this);
     }
 
-    @FintEventListener
-    public void receive(Event event) {
+    @Override
+    public void accept(Event event) {
         if (event.isRegisterOrgId()) {
             adminService.register(event.getOrgId());
         } else {

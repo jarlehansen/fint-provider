@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.MockMvc
 
 class SseControllerSpec extends MockMvcSpecification {
     private SseController controller
+    private DownstreamSubscriber downstreamSubscriber
     private SseService sseService
     private FintEvents fintEvents
     private MockMvc mockMvc
@@ -15,7 +16,8 @@ class SseControllerSpec extends MockMvcSpecification {
     void setup() {
         sseService = Mock(SseService)
         fintEvents = Mock(FintEvents)
-        controller = new SseController(sseService: sseService, fintEvents: fintEvents)
+        downstreamSubscriber = Mock(DownstreamSubscriber)
+        controller = new SseController(sseService: sseService, fintEvents: fintEvents, downstreamSubscriber: downstreamSubscriber)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -25,7 +27,7 @@ class SseControllerSpec extends MockMvcSpecification {
 
         then:
         1 * sseService.subscribe('123', 'rogfk.no')
-        1 * fintEvents.registerDownstreamListener(DownstreamSubscriber, 'rogfk.no')
+        1 * fintEvents.registerDownstreamListener('rogfk.no', downstreamSubscriber)
         response.andExpect(status().isOk())
     }
 

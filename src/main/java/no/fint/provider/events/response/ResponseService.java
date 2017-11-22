@@ -8,7 +8,6 @@ import no.fint.events.FintEvents;
 import no.fint.provider.events.eventstate.EventState;
 import no.fint.provider.events.eventstate.EventStateService;
 import no.fint.provider.events.exceptions.UnknownEventException;
-import org.redisson.api.RBlockingQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +29,13 @@ public class ResponseService {
     public void handleAdapterResponse(Event event) {
         log.info("Event received: {}, action: {}, orgId: {}", event.getCorrId(), event.getAction(), event.getOrgId());
         if (event.isHealthCheck()) {
-            RBlockingQueue<Event> healthCheckQueue = fintEvents.getTempQueue(event.getCorrId());
-            fintAuditService.audit(event, Status.TEMP_UPSTREAM_QUEUE);
-            healthCheckQueue.offer(event);
+            fintEvents.sendHealthCheck(event);
         } else {
             Optional<EventState> state = eventStateService.get(event);
             if (state.isPresent()) {
                 fintAuditService.audit(event);
                 event.setStatus(Status.UPSTREAM_QUEUE);
-                fintEvents.sendUpstream(event.getOrgId(), event);
+                fintEvents.sendUpstream(event);
                 fintAuditService.audit(event);
                 eventStateService.remove(event);
             } else {

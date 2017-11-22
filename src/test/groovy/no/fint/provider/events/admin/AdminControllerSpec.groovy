@@ -2,17 +2,16 @@ package no.fint.provider.events.admin
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent
 import no.fint.event.model.Event
-import no.fint.event.model.HeaderConstants
 import no.fint.events.FintEvents
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
-import org.redisson.api.RBlockingQueue
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 class AdminControllerSpec extends MockMvcSpecification {
+    private DownstreamSubscriber downstreamSubscriber
     private AdminController controller
     private MongoTemplate mongoTemplate
     private FintEvents fintEvents
@@ -20,10 +19,11 @@ class AdminControllerSpec extends MockMvcSpecification {
     private MockMvc mockMvc
 
     void setup() {
+        downstreamSubscriber = Mock(DownstreamSubscriber)
         adminService = Mock(AdminService)
         mongoTemplate = Mock(MongoTemplate)
         fintEvents = Mock(FintEvents)
-        controller = new AdminController(mongoTemplate: mongoTemplate, fintEvents: fintEvents, adminService: adminService)
+        controller = new AdminController(mongoTemplate: mongoTemplate, fintEvents: fintEvents, adminService: adminService, downstreamSubscriber: downstreamSubscriber)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -37,62 +37,12 @@ class AdminControllerSpec extends MockMvcSpecification {
                 .andExpect(jsonPath('$[0].orgId').value(equalTo('rogfk.no')))
     }
 
-    def "DELETE temporary queues"() {
-        when:
-        def response = mockMvc.perform(delete('/admin/tempQueues'))
-
-        then:
-        1 * fintEvents.deleteTempQueues() >> true
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath('$').value(equalTo(true)))
-    }
-
-    def "DELETE the content of all queues"() {
-        given:
-        def queue = Mock(RBlockingQueue)
-
-        when:
-        def response = mockMvc.perform(delete('/admin/clear/all'))
-
-        then:
-        1 * fintEvents.getQueues() >> ['my-queue']
-        1 * fintEvents.getQueue('my-queue') >> queue
-        1 * queue.clear()
-        response.andExpect(status().isOk())
-    }
-
-    def "DELETE content of downstream queue for orgId"() {
-        given:
-        def queue = Mock(RBlockingQueue)
-
-        when:
-        def response = mockMvc.perform(delete('/admin/clear/downstream').header(HeaderConstants.ORG_ID, 'rogfk.no'))
-
-        then:
-        1 * fintEvents.getDownstream('rogfk.no') >> queue
-        1 * queue.clear()
-        response.andExpect(status().isOk())
-    }
-
-    def "DELETE content of upstream queue for orgId"() {
-        given:
-        def queue = Mock(RBlockingQueue)
-
-        when:
-        def response = mockMvc.perform(delete('/admin/clear/upstream').header(HeaderConstants.ORG_ID, 'rogfk.no'))
-
-        then:
-        1 * fintEvents.getUpstream('rogfk.no') >> queue
-        1 * queue.clear()
-        response.andExpect(status().isOk())
-    }
-
     def "POST new orgId"() {
         when:
         def response = mockMvc.perform(post('/admin/orgIds/123'))
 
         then:
-        1 * fintEvents.registerDownstreamListener(DownstreamSubscriber, '123')
+        1 * fintEvents.registerDownstreamListener('123', downstreamSubscriber)
         response.andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, equalTo('http://localhost/admin/orgIds/123')))
     }

@@ -42,7 +42,7 @@ public class StatusService {
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                 fintAuditService.audit(event);
-                fintEvents.sendUpstream(event.getOrgId(), event);
+                fintEvents.sendUpstream(event);
                 eventStateService.remove(event);
             }
         } else {

@@ -51,7 +51,7 @@ class StatusServiceSpec extends Specification {
 
         then:
         1 * eventStateService.get(event) >> Optional.of(new EventState())
-        1 * fintEvents.sendUpstream(event.getOrgId(), event)
+        1 * fintEvents.sendUpstream(event)
         1 * eventStateService.remove(event)
     }
 

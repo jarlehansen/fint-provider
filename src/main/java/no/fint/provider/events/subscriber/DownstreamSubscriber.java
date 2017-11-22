@@ -6,7 +6,7 @@ import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
-import no.fint.events.annotations.FintEventListener;
+import no.fint.events.FintEventListener;
 import no.fint.provider.events.Constants;
 import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.eventstate.EventStateService;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class DownstreamSubscriber {
+public class DownstreamSubscriber implements FintEventListener {
 
     @Autowired
     private SseService sseService;
@@ -30,8 +30,8 @@ public class DownstreamSubscriber {
     @Autowired
     private ProviderProps providerProps;
 
-    @FintEventListener
-    public void receive(Event event) {
+    @Override
+    public void accept(Event event) {
         log.info("Event received: {} for {}", event.getAction(), event.getOrgId());
         if (event.isHealthCheck()) {
             event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
