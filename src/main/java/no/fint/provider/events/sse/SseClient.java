@@ -8,5 +8,5 @@ import lombok.Data;
 public class SseClient {
     private String registered;
     private String id;
-    private int pending;
+    private int events;
 }

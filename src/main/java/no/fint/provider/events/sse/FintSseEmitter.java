@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FintSseEmitter extends SseEmitter {
     private String id;
     private String registered;
-    private final AtomicInteger pendingEvents = new AtomicInteger();
+    private final AtomicInteger eventCounter = new AtomicInteger();
 
     public FintSseEmitter() {
         setRegisteredDate();
@@ -33,9 +33,8 @@ public class FintSseEmitter extends SseEmitter {
 
 	@Override
 	public void send(SseEventBuilder builder) throws IOException {
-		pendingEvents.incrementAndGet();
+		eventCounter.incrementAndGet();
 		super.send(builder);
-		pendingEvents.decrementAndGet();
 	}
     
     
