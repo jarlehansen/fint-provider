@@ -1,4 +1,6 @@
 fint:
+ hazelcast:
+  members: localhost
  provider:
   test-mode: true
  audit:

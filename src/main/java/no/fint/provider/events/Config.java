@@ -1,9 +1,6 @@
 package no.fint.provider.events;
 
-import com.hazelcast.config.JoinConfig;
-import com.hazelcast.config.MulticastConfig;
-import com.hazelcast.config.NetworkConfig;
-import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.config.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +15,8 @@ public class Config {
 
     @Bean
     public com.hazelcast.config.Config hazelcastConfig() {
-        return new com.hazelcast.config.Config().setNetworkConfig(new NetworkConfig().setJoin(new JoinConfig().setTcpIpConfig(new TcpIpConfig().setMembers(Arrays.asList(members.split(","))).setEnabled(true)).setMulticastConfig(new MulticastConfig().setEnabled(false))));
+        com.hazelcast.config.Config cfg = new ClasspathXmlConfig("fint-hazelcast.xml");
+        return cfg.setNetworkConfig(new NetworkConfig().setJoin(new JoinConfig().setTcpIpConfig(new TcpIpConfig().setMembers(Arrays.asList(members.split(","))).setEnabled(true)).setMulticastConfig(new MulticastConfig().setEnabled(false))));
     }
 
 }
