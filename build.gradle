@@ -23,10 +23,6 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'maven'
 apply plugin: 'jacoco'
 
-jar {
-    baseName = 'fint-provider'
-}
-
 import org.apache.tools.ant.filters.ReplaceTokens
 afterEvaluate {
     configure(processResources) {
@@ -70,9 +66,40 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
+task copyExternalDependencies(type: Copy) {
+    from configurations.compile
+    into "$buildDir/deps/external"
+    exclude '**/fint-*.jar'
+}
+
+task copyFintDependencies(type: Copy) {
+    from configurations.compile
+    into "$buildDir/deps/fint"
+    include '**/fint-*.jar'
+}
+
+build.dependsOn(copyExternalDependencies)
+build.dependsOn(copyFintDependencies)
+
+jar {
+    baseName = 'fint-provider'
+    manifest {
+        attributes(
+                "Manifest-Version": "1.0",
+                "Main-Class": "no.fint.provider.events.Application",
+                "Specification-Version": "${version}",
+                "Implementation-Version": "${version}",
+                "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+        )
+    }
+}
+
+
 task wrapper(type: Wrapper) {
     gradleVersion = gradleVersion
 }
+
+bootRepackage.enabled = false
 
 bootRun {
     systemProperties System.properties
