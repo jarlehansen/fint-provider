@@ -27,7 +27,7 @@ public class ResponseService {
     private FintEvents fintEvents;
 
     public void handleAdapterResponse(Event event) {
-        log.info("Event received: {}, action: {}, orgId: {}", event.getCorrId(), event.getAction(), event.getOrgId());
+        log.info("Event received: {}", event);
         if (event.isHealthCheck()) {
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintEvents.sendUpstream(event);
