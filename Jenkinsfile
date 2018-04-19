@@ -3,7 +3,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'env'
                 sh "docker build -t ${GIT_COMMIT} ."
             }
         }
