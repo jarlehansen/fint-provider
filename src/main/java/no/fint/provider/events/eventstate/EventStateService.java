@@ -34,11 +34,14 @@ public class EventStateService {
     }
 
     public void add(Event event, int timeToLiveInMinutes) {
+        log.trace("Add {}, ttl={}", event, timeToLiveInMinutes);
         eventStates.add(new EventState(event, timeToLiveInMinutes));
     }
 
     public Optional<EventState> get(Event event) {
-        return eventStates.stream().filter(eventState -> eventState.getCorrId().equals(event.getCorrId())).findAny();
+        Optional<EventState> result = eventStates.stream().filter(eventState -> eventState.getCorrId().equals(event.getCorrId())).findAny();
+        log.trace("Get {}: {}", event.getCorrId(), result);
+        return result;
     }
 
     public void remove(Event event) {
