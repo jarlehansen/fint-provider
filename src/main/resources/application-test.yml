@@ -11,3 +11,10 @@ fint:
 
  springfox:
   swagger-https: false
+
+server:
+ port: 8081
+
+logging:
+ level:
+  no.fint.provider.events.response: TRACE

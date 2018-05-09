@@ -31,6 +31,7 @@ public class StatusService {
     private ProviderProps providerProps;
 
     public void updateEventState(Event event) {
+        log.info("Status: {}", event);
         Optional<EventState> state = eventStateService.get(event);
         if (state.isPresent()) {
             fintAuditService.audit(event);
