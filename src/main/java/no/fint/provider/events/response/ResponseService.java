@@ -34,10 +34,10 @@ public class ResponseService {
         } else {
             Optional<EventState> state = eventStateService.get(event);
             if (state.isPresent()) {
-                fintAuditService.audit(event);
+                fintAuditService.audit(event, Status.ADAPTER_RESPONSE);
                 event.setStatus(Status.UPSTREAM_QUEUE);
                 fintEvents.sendUpstream(event);
-                fintAuditService.audit(event);
+                fintAuditService.audit(event, Status.UPSTREAM_QUEUE);
                 eventStateService.remove(event);
             } else {
                 log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);
