@@ -28,21 +28,18 @@ class StatusServiceSpec extends Specification {
                 providerProps: props)
     }
 
-    def "Update ttl for event with status PROVIDER_ACCEPTED"() {
+    def "Update ttl for event with status ADAPTER_ACCEPTED"() {
         given:
         def event = new Event(orgId: 'rogfk.no', status: Status.ADAPTER_ACCEPTED)
-        def eventState = new EventState()
-        def originalExpires = eventState.expires
 
         when:
         statusService.updateEventState(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.of(eventState)
-        eventState.expires > originalExpires
+        1 * eventStateService.remove(event) >> Optional.of(new EventState(event, 15))
     }
 
-    def "Update ttl for event with status PROVIDER_REJECTED"() {
+    def "Update ttl for event with status ADAPTER_REJECTED"() {
         given:
         def event = new Event(orgId: 'rogfk.no', status: Status.ADAPTER_REJECTED)
 
@@ -50,9 +47,8 @@ class StatusServiceSpec extends Specification {
         statusService.updateEventState(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.of(new EventState())
+        1 * eventStateService.remove(event) >> Optional.of(new EventState(event, -1))
         1 * fintEvents.sendUpstream(event)
-        1 * eventStateService.remove(event)
     }
 
     def "Handle non-existing event state"() {
@@ -60,7 +56,7 @@ class StatusServiceSpec extends Specification {
         statusService.updateEventState(new Event())
 
         then:
-        1 * eventStateService.get(_ as Event) >> Optional.empty()
+        1 * eventStateService.remove(_ as Event) >> Optional.empty()
         thrown(UnknownEventException)
     }
 }
