@@ -27,5 +27,6 @@ class JanitorServiceSpec extends Specification {
         then:
         1 * eventStateService.getEventStates() >> [expiredEventState, notExpiredEventState]
         1 * eventStateService.remove(_ as Event)
+        1 * fintAuditService.audit(_ as Event)
     }
 }
