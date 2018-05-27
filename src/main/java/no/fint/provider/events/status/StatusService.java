@@ -31,19 +31,17 @@ public class StatusService {
     private ProviderProps providerProps;
 
     public void updateEventState(Event event) {
-        log.info("Status: {}", event);
-        Optional<EventState> state = eventStateService.get(event);
+        Optional<EventState> state = eventStateService.remove(event);
         if (state.isPresent()) {
             fintAuditService.audit(event);
             EventState eventState = state.get();
 
             if (event.getStatus() == Status.ADAPTER_ACCEPTED) {
-                eventState.updateTtl(providerProps.getResponseTtl());
+                eventStateService.add(event, providerProps.getResponseTtl());
             } else {
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                 fintEvents.sendUpstream(event);
-                eventStateService.remove(event);
             }
         } else {
             log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);

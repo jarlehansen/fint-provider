@@ -21,10 +21,8 @@ class JanitorServiceSpec extends Specification {
     def "Remove expired event states"() {
         given:
         def event = new Event(orgId: 'rogfk.no')
-        def expiredTimestamp = System.currentTimeMillis() - 10
-        def notExpiredTimestamp = System.currentTimeMillis() + 5000
-        def expiredEventState = new EventState(corrId: '123', event: event, expires: expiredTimestamp)
-        def notExpiredEventState = new EventState(corrId: '234', event: event, expires: notExpiredTimestamp)
+        def expiredEventState = new EventState(event, -10)
+        def notExpiredEventState = new EventState(event, 5000)
 
         when:
         janitorService.cleanUpEventStates()
@@ -32,6 +30,7 @@ class JanitorServiceSpec extends Specification {
         then:
         1 * eventStateService.getEventStates() >> [expiredEventState, notExpiredEventState]
         1 * eventStateService.remove(_ as Event)
+        1 * fintAuditService.audit(_ as Event)
         1 * fintEvents.sendUpstream(_ as Event)
     }
 }
