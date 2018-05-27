@@ -15,34 +15,35 @@ class StatusServiceSpec extends Specification {
     private EventStateService eventStateService
     private FintEvents fintEvents
     private ProviderProps props
+    private FintAuditService fintAuditService
 
     void setup() {
         eventStateService = Mock(EventStateService)
         fintEvents = Mock(FintEvents)
         props = Mock(ProviderProps)
+        fintAuditService = Mock(FintAuditService)
 
         statusService = new StatusService(
                 eventStateService: eventStateService,
-                fintAuditService: Mock(FintAuditService),
+                fintAuditService: fintAuditService,
                 fintEvents: fintEvents,
                 providerProps: props)
     }
 
-    def "Update ttl for event with status PROVIDER_ACCEPTED"() {
+    def "Update ttl for event with status ADAPTER_ACCEPTED"() {
         given:
         def event = new Event(orgId: 'rogfk.no', status: Status.ADAPTER_ACCEPTED)
-        def eventState = new EventState()
-        def originalExpires = eventState.expires
 
         when:
         statusService.updateEventState(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.of(eventState)
-        eventState.expires > originalExpires
+        1 * eventStateService.remove(event) >> Optional.of(new EventState(event, 15))
+        1 * eventStateService.add(event, props.responseTtl)
+        1 * fintAuditService.audit(event)
     }
 
-    def "Update ttl for event with status PROVIDER_REJECTED"() {
+    def "Update ttl for event with status ADAPTER_REJECTED"() {
         given:
         def event = new Event(orgId: 'rogfk.no', status: Status.ADAPTER_REJECTED)
 
@@ -50,9 +51,10 @@ class StatusServiceSpec extends Specification {
         statusService.updateEventState(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.of(new EventState())
+        1 * eventStateService.remove(event) >> Optional.of(new EventState(event, 10))
         1 * fintEvents.sendUpstream(event)
-        1 * eventStateService.remove(event)
+        1 * fintAuditService.audit(event)
+        0 * eventStateService.add(_)
     }
 
     def "Handle non-existing event state"() {
@@ -60,7 +62,7 @@ class StatusServiceSpec extends Specification {
         statusService.updateEventState(new Event())
 
         then:
-        1 * eventStateService.get(_ as Event) >> Optional.empty()
+        1 * eventStateService.remove(_ as Event) >> Optional.empty()
         thrown(UnknownEventException)
     }
 }

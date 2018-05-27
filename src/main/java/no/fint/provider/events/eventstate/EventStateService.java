@@ -1,19 +1,16 @@
 package no.fint.provider.events.eventstate;
 
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.hazelcast.core.HazelcastInstance;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -41,7 +38,7 @@ public class EventStateService {
         return eventStates.stream().filter(eventState -> eventState.getCorrId().equals(event.getCorrId())).findAny();
     }
 
-    public void remove(Event event) {
+    public Optional<EventState> remove(Event event) {
         Optional<EventState> eventState = get(event);
         if (eventState.isPresent()) {
             boolean removed = eventStates.remove(eventState.get());
@@ -49,6 +46,7 @@ public class EventStateService {
                 log.warn("Unable to remove event with corrId {} from EventStates", event.getCorrId());
             }
         }
+        return eventState;
     }
 
 }

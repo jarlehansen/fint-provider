@@ -39,7 +39,7 @@ class ResponseServiceSpec extends Specification {
         responseService.handleAdapterResponse(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.of(new EventState())
+        1 * eventStateService.get(event) >> Optional.of(new EventState(event, 10))
         1 * fintEvents.sendUpstream(event)
         1 * eventStateService.remove(event)
     }
