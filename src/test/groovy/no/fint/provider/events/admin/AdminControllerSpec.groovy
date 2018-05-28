@@ -6,6 +6,7 @@ import no.fint.events.FintEvents
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.HttpHeaders
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -33,6 +34,16 @@ class AdminControllerSpec extends MockMvcSpecification {
 
         then:
         1 * mongoTemplate.findAll(MongoAuditEvent) >> [new MongoAuditEvent(new Event(orgId: 'rogfk.no'), true)]
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath('$[0].orgId').value(equalTo('rogfk.no')))
+    }
+
+    def "GET audit events since some timestamp"() {
+        when:
+        def response = mockMvc.perform(get('/admin/audit/events/since/PT1H'))
+
+        then:
+        1 * mongoTemplate.find(_ as Query, MongoAuditEvent) >> [new MongoAuditEvent(new Event(orgId: 'rogfk.no'), true)]
         response.andExpect(status().isOk())
                 .andExpect(jsonPath('$[0].orgId').value(equalTo('rogfk.no')))
     }
