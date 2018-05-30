@@ -3,6 +3,7 @@ package no.fint.provider.events.status;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
+import no.fint.event.model.ResponseStatus;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.ProviderProps;
@@ -31,6 +32,7 @@ public class StatusService {
     private ProviderProps providerProps;
 
     public void updateEventState(Event event) {
+        log.trace("Event received: {}", event);
         Optional<EventState> state = eventStateService.remove(event);
         if (state.isPresent()) {
             fintAuditService.audit(event);
@@ -39,6 +41,9 @@ public class StatusService {
             if (event.getStatus() == Status.ADAPTER_ACCEPTED) {
                 eventStateService.add(event, providerProps.getResponseTtl());
             } else {
+                if (event.getResponseStatus() == null) {
+                    event.setResponseStatus(ResponseStatus.REJECTED);
+                }
                 log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                 fintEvents.sendUpstream(event);
