@@ -32,7 +32,7 @@ public class DownstreamSubscriber implements FintEventListener {
 
     @Override
     public void accept(Event event) {
-        log.info("Event received: {}", event);
+        log.debug("Event received: {}", event);
         if (event.isHealthCheck()) {
             event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
         }
