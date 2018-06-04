@@ -1,7 +1,6 @@
 package no.fint.provider.events.eventstate;
 
 import com.hazelcast.core.HazelcastInstance;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
@@ -9,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,34 +24,36 @@ public class EventStateService {
     @Autowired
     private ProviderProps providerProps;
 
-    @Getter
-    private Set<EventState> eventStates;
+    private Map<String,EventState> eventStates;
 
     @PostConstruct
     public void init() {
-        eventStates = hazelcastInstance.getSet(providerProps.getKey());
+        eventStates = hazelcastInstance.getMap(providerProps.getKey());
     }
 
     public void add(Event event, int timeToLiveInMinutes) {
         log.trace("Add {}, ttl={}", event, timeToLiveInMinutes);
-        eventStates.add(new EventState(event, timeToLiveInMinutes));
+        eventStates.put(event.getCorrId(), new EventState(event, timeToLiveInMinutes));
     }
 
     public Optional<EventState> get(Event event) {
-        Optional<EventState> result = eventStates.stream().filter(eventState -> eventState.getCorrId().equals(event.getCorrId())).findAny();
-        log.trace("Get {}: {}", event.getCorrId(), result);
+        Optional<EventState> result = Optional.ofNullable(eventStates.get(event.getCorrId()));
         return result;
     }
 
     public Optional<EventState> remove(Event event) {
-        Optional<EventState> eventState = get(event);
-        if (eventState.isPresent()) {
-            boolean removed = eventStates.remove(eventState.get());
-            if (!removed) {
-                log.warn("Unable to remove event with corrId {} from EventStates", event.getCorrId());
-            }
-        }
+        Optional<EventState> eventState = Optional.ofNullable(eventStates.remove(event.getCorrId()));
         return eventState;
     }
 
+    public List<Event> getExpiredEvents() {
+        List<EventState> expired = eventStates.values().stream().filter(EventState::expired).collect(Collectors.toList());
+        List<String> keys = expired.stream().map(EventState::getCorrId).collect(Collectors.toList());
+        eventStates.keySet().removeAll(keys);
+        return expired.stream().map(EventState::getEvent).collect(Collectors.toList());
+    }
+
+    public Collection<EventState> getEventStates() {
+        return eventStates.values();
+    }
 }

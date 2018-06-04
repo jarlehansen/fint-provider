@@ -20,16 +20,12 @@ class JanitorServiceSpec extends Specification {
 
     def "Remove expired event states"() {
         given:
-        def event = new Event(orgId: 'rogfk.no')
-        def expiredEventState = new EventState(event, -10)
-        def notExpiredEventState = new EventState(event, 5000)
-
         when:
         janitorService.cleanUpEventStates()
 
         then:
-        1 * eventStateService.getEventStates() >> [expiredEventState, notExpiredEventState]
-        1 * eventStateService.remove(_ as Event)
+        1 * eventStateService.getExpiredEvents() >> [new Event(orgId: 'otherfk.no')]
+        0 * eventStateService.remove(_ as Event)
         1 * fintAuditService.audit(_ as Event)
         1 * fintEvents.sendUpstream(_ as Event)
     }

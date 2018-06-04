@@ -1,9 +1,8 @@
 package no.fint.provider.events.eventstate
 
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.core.ISet
+import com.hazelcast.core.IMap
 import no.fint.event.model.Event
-import no.fint.events.FintEvents
 import no.fint.provider.events.ProviderProps
 import spock.lang.Specification
 
@@ -16,7 +15,7 @@ class EventStateServiceSpec extends Specification {
             getKey() >> 'current-corrids'
         }
         hazelcastInstance = Mock(HazelcastInstance)
-        eventStateService = new EventStateService(eventStates: [], providerProps: props, hazelcastInstance: hazelcastInstance)
+        eventStateService = new EventStateService(eventStates: [:], providerProps: props, hazelcastInstance: hazelcastInstance)
     }
 
     def "Init EventStateService"() {
@@ -24,7 +23,7 @@ class EventStateServiceSpec extends Specification {
         eventStateService.init()
 
         then:
-        1 * hazelcastInstance.getSet('current-corrids') >> Mock(ISet)
+        1 * hazelcastInstance.getMap('current-corrids') >> Mock(IMap)
     }
 
     def "Add and get new EventState"() {
