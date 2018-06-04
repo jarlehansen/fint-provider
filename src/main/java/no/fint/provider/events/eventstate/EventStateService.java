@@ -48,8 +48,7 @@ public class EventStateService {
 
     public List<Event> getExpiredEvents() {
         List<EventState> expired = eventStates.values().stream().filter(EventState::expired).collect(Collectors.toList());
-        List<String> keys = expired.stream().map(EventState::getCorrId).collect(Collectors.toList());
-        eventStates.keySet().removeAll(keys);
+        expired.stream().map(EventState::getCorrId).forEach(eventStates::remove);
         return expired.stream().map(EventState::getEvent).collect(Collectors.toList());
     }
 
