@@ -18,3 +18,4 @@ server:
 logging:
  level:
   no.fint.provider.events.response: TRACE
+  no.fint.provider.events.status: TRACE

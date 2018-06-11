@@ -44,7 +44,7 @@ public class StatusService {
                 if (event.getResponseStatus() == null) {
                     event.setResponseStatus(ResponseStatus.REJECTED);
                 }
-                log.info("Adapter did not acknowledge the event (status: {}), sending event upstream.", event.getStatus().name());
+                log.debug("{} adapter did not acknowledge the event (status: {}), sending event upstream.", event.getOrgId(), event.getStatus().name());
                 event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
                 fintEvents.sendUpstream(event);
             }
