@@ -2,6 +2,7 @@ package no.fint.provider.events.sse
 
 import no.fint.event.model.Event
 import no.fint.provider.events.ProviderProps
+import no.fint.util.CurrentThreadExecutor
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
 
@@ -15,7 +16,7 @@ class SseServiceSpec extends Specification {
         props = Mock(ProviderProps) {
             getMaxNumberOfEmitters() >> 5
         }
-        sseService = new SseService(providerProps: props)
+        sseService = new SseService(providerProps: props, executorService: new CurrentThreadExecutor())
     }
 
     def "Return SseEmitter when subscribing with new orgId"() {
@@ -51,7 +52,7 @@ class SseServiceSpec extends Specification {
 
     def "Do not send event when orgId does not have registered emitters"() {
         given:
-        sseService = new SseService(providerProps: props, clients: [:])
+        sseService = new SseService(providerProps: props, clients: [:], executorService: new CurrentThreadExecutor())
 
         when:
         sseService.send(new Event(orgId: 'hfk.no'))
@@ -66,7 +67,7 @@ class SseServiceSpec extends Specification {
         def emitters = FintSseEmitters.with(5)
         emitters.add(emitter)
         def clients = ['hfk.no': emitters] as ConcurrentHashMap
-        sseService = new SseService(providerProps: props, clients: clients)
+        sseService = new SseService(providerProps: props, clients: clients, executorService: new CurrentThreadExecutor())
 
         when:
         sseService.send(new Event(orgId: 'hfk.no'))
@@ -95,7 +96,7 @@ class SseServiceSpec extends Specification {
         def emitters = FintSseEmitters.with(5)
         emitters.add(emitter)
         def clients = ['hfk.no': emitters] as ConcurrentHashMap
-        sseService = new SseService(providerProps: props, clients: clients)
+        sseService = new SseService(providerProps: props, clients: clients, executorService: new CurrentThreadExecutor())
 
         when:
         sseService.shutdown()
