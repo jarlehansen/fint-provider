@@ -30,7 +30,7 @@ public class SseService {
     @Value("${fint.provider.sse.threads:10}")
     private int threads;
 
-    ExecutorService executorService;
+    private ExecutorService executorService;
 
     @PostConstruct
     public void setup() {
