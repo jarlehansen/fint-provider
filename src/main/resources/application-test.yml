@@ -11,3 +11,6 @@ fint:
 
  springfox:
   swagger-https: false
+
+server:
+ port: 8081
