@@ -11,6 +11,7 @@ import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -27,7 +28,10 @@ public class ResponseService {
     private FintEvents fintEvents;
 
     public void handleAdapterResponse(Event event) {
-        log.trace("Event received: {}", event);
+        log.debug("{}: Response for {} from {} status {} with {} elements.",
+                event.getCorrId(), event.getAction(), event.getOrgId(), event.getStatus(),
+                Optional.ofNullable(event.getData()).map(List::size).orElse(0));
+        log.trace("{}: Event data: {}", event.getCorrId(), event.getData());
         if (event.isHealthCheck()) {
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintEvents.sendUpstream(event);

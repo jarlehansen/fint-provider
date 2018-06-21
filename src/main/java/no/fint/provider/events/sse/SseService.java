@@ -96,7 +96,7 @@ public class SseService {
             emitters.forEach(
                     emitter -> executorService.execute(() -> {
                                 try {
-                                    log.info("Sending event {} to {}", event.getCorrId(), emitter);
+                                    log.debug("Sending event {} to {}", event.getCorrId(), emitter);
                                     SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
                                     emitter.send(builder);
                                 } catch (Exception e) {
