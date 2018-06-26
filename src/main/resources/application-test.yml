@@ -3,6 +3,9 @@ fint:
   members: localhost
  provider:
   test-mode: true
+  sse:
+   maxPoolSize: 10
+   queueCapacity: 0
  audit:
   test-mode: true
  events:
