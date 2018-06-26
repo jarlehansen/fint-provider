@@ -5,18 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -27,19 +21,8 @@ public class SseService {
 
     private ConcurrentHashMap<String, FintSseEmitters> clients = new ConcurrentHashMap<>();
 
-    @Value("${fint.provider.sse.threads:10}")
-    private int threads;
-
-    private ExecutorService executorService;
-
-    @PostConstruct
-    public void setup() {
-        executorService = Executors.newFixedThreadPool(threads);
-    }
-
     @PreDestroy
     public void shutdown() {
-        executorService.shutdownNow();
         clients.values().forEach(emitters -> emitters.forEach(FintSseEmitter::complete));
     }
 
@@ -93,21 +76,22 @@ public class SseService {
         if (emitters == null) {
             log.info("No sse clients registered for {}", event.getOrgId());
         } else {
-            emitters.forEach(
-                    emitter -> executorService.execute(() -> {
-                                try {
-                                    log.info("Sending event {} to {}", event.getCorrId(), emitter);
-                                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
-                                    emitter.send(builder);
-                                } catch (Exception e) {
-                                    log.warn("Exception when trying to send message to SseEmitter", e.getMessage());
-                                    log.warn("Removing subscriber {}", event.getOrgId());
-                                    log.debug("Details: {}", event, e);
-                                    executorService.execute(() -> removeEmitter(event.getOrgId(), emitter));
-                                }
-                            }
-                    )
-            );
+            List<FintSseEmitter> toBeRemoved = new ArrayList<>();
+            emitters.forEach(emitter -> {
+                try {
+                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
+                    emitter.send(builder);
+                } catch (Exception e) {
+                    log.warn("Exception when trying to send message to SseEmitter", e.getMessage());
+                    log.warn("Removing subscriber {}", event.getOrgId());
+                    log.debug("Details: {}", event, e);
+                    toBeRemoved.add(emitter);
+                }
+            });
+
+            for (FintSseEmitter emitter : toBeRemoved) {
+                removeEmitter(event.getOrgId(), emitter);
+            }
         }
     }
 
