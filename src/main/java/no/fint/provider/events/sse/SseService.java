@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -38,7 +39,10 @@ public class SseService {
             return registeredEmitter.get();
         } else {
             log.info("id: {}, {} connected", id, orgId);
-            FintSseEmitter emitter = new FintSseEmitter(id, TimeUnit.MINUTES.toMillis(providerProps.getSseTimeoutMinutes()));
+            FintSseEmitter emitter = new FintSseEmitter(id,
+                    TimeUnit.MINUTES.toMillis(
+                            ThreadLocalRandom.current().nextInt(2000) +
+                            providerProps.getSseTimeoutMinutes()));
             emitter.onCompletion(() -> {
                 log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
                 removeEmitter(orgId, emitter);
