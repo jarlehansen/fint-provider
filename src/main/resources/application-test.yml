@@ -2,6 +2,7 @@ fint:
  hazelcast:
   members: localhost
  provider:
+  tracing: true
   test-mode: true
   sse:
    maxPoolSize: 10
