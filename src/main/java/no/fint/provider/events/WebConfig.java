@@ -28,12 +28,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
         configurer.setDefaultTimeout(TimeUnit.MINUTES.toMillis(providerProps.getSseTimeoutMinutes()));
-        configurer.setTaskExecutor(mvcTaskExecutor());
+        configurer.setTaskExecutor(threadPoolTaskExecutor());
     }
 
     @Bean
     @ConfigurationProperties("fint.provider.sse")
-    public ThreadPoolTaskExecutor mvcTaskExecutor() {
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setThreadGroupName("mvc-executor");
         return taskExecutor;
