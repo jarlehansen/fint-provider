@@ -50,10 +50,10 @@ public class DownstreamSubscriber implements FintEventListener {
     @PostConstruct
     public void init() throws IOException {
         if (tracing) {
-            traceFile = Files.createTempFile("trace", ".json");
+            traceFile = Files.createTempFile("downstream", ".json");
             Files.write(traceFile, "[\n{}".getBytes());
             objectMapper = new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-            log.info("Tracing inbound events to {}", traceFile.toAbsolutePath());
+            log.info("Tracing downstream events to {}", traceFile.toAbsolutePath());
         }
     }
 
