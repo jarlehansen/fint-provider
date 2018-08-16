@@ -20,7 +20,7 @@ class SseServiceSpec extends Specification {
 
     def "Return SseEmitter when subscribing with new orgId"() {
         when:
-        def emitter = sseService.subscribe('123', 'hfk.no')
+        def emitter = sseService.subscribe('123', 'hfk.no', 'client')
 
         then:
         emitter != null
@@ -29,8 +29,8 @@ class SseServiceSpec extends Specification {
 
     def "Return new SseEmitter when subscribing with already registered orgId"() {
         when:
-        def emitter1 = sseService.subscribe('123', 'hfk.no')
-        def emitter2 = sseService.subscribe('234', 'hfk.no')
+        def emitter1 = sseService.subscribe('123', 'hfk.no', 'client')
+        def emitter2 = sseService.subscribe('234', 'hfk.no', 'client')
 
         then:
         sseService.getSseClients().size() == 1
@@ -40,7 +40,7 @@ class SseServiceSpec extends Specification {
     def "Send Event to registered emitter"() {
         given:
         def event = new Event('hfk.no', 'FK', 'GET_ALL_EMPLOYEES', 'test')
-        sseService.subscribe('123', 'hfk.no')
+        sseService.subscribe('123', 'hfk.no', 'client')
 
         when:
         sseService.send(event)

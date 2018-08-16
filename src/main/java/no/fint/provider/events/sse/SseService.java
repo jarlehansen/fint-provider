@@ -28,7 +28,7 @@ public class SseService {
     }
 
     @Synchronized
-    public SseEmitter subscribe(String id, String orgId) {
+    public SseEmitter subscribe(String id, String orgId, String client) {
         FintSseEmitters fintSseEmitters = clients.get(orgId);
         if (fintSseEmitters == null) {
             fintSseEmitters = FintSseEmitters.with(providerProps.getMaxNumberOfEmitters(), this::closeEmitter);
@@ -38,11 +38,11 @@ public class SseService {
         if (registeredEmitter.isPresent()) {
             return registeredEmitter.get();
         } else {
-            log.info("id: {}, {} connected", id, orgId);
-            FintSseEmitter emitter = new FintSseEmitter(id,
+            log.info("{}: {} connected", orgId, id);
+            FintSseEmitter emitter = new FintSseEmitter(id, client,
                     TimeUnit.MINUTES.toMillis(
                             ThreadLocalRandom.current().nextInt(2000) +
-                            providerProps.getSseTimeoutMinutes()));
+                                    providerProps.getSseTimeoutMinutes()));
             emitter.onCompletion(() -> {
                 log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
                 removeEmitter(orgId, emitter);

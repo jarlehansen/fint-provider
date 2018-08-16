@@ -6,7 +6,7 @@ class FintSseEmitterSpec extends Specification {
 
     def "Create new FintSseEmitter"() {
         when:
-        def fintSseEmitter = new FintSseEmitter('123', 123)
+        def fintSseEmitter = new FintSseEmitter('123', 'client', 123)
 
         then:
         fintSseEmitter.id == '123'
