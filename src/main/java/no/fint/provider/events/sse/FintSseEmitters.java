@@ -22,10 +22,10 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
             if (removeCallback != null) {
                 removeCallback.apply(emitter);
             }
-            emitters.remove();
+            emitters.removeLast();
         }
 
-        emitters.add(emitter);
+        emitters.addFirst(emitter);
     }
 
     public void remove(FintSseEmitter emitter) {
