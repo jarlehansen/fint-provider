@@ -2,6 +2,7 @@ package no.fint.provider.events.eventstate;
 
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.FintAuditService;
+import no.fint.event.model.ResponseStatus;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class JanitorService {
         log.debug("Running janitor service");
         eventStateService.getExpiredEvents().forEach(event -> {
             log.info("Event expired: {}", event);
-
+            event.setResponseStatus(ResponseStatus.ERROR);
             event.setStatus(Status.ADAPTER_NOT_CONFIRMED);
             event.setMessage("Event expired");
             fintAuditService.audit(event);
