@@ -39,9 +39,8 @@ class ResponseServiceSpec extends Specification {
         responseService.handleAdapterResponse(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.of(new EventState(event, 10))
+        1 * eventStateService.remove(event) >> Optional.of(new EventState(event, 10))
         1 * fintEvents.sendUpstream(event)
-        1 * eventStateService.remove(event)
     }
 
     def "Throw UnknownEventException when event is not found in EventState"() {
@@ -52,7 +51,7 @@ class ResponseServiceSpec extends Specification {
         responseService.handleAdapterResponse(event)
 
         then:
-        1 * eventStateService.get(event) >> Optional.empty()
+        1 * eventStateService.remove(event) >> Optional.empty()
         thrown(UnknownEventException)
     }
 }
