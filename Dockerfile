@@ -7,4 +7,4 @@ FROM openjdk:8-jre-alpine
 COPY --from=builder /home/gradle/build/deps/external/*.jar /data/
 COPY --from=builder /home/gradle/build/deps/fint/*.jar /data/
 COPY --from=builder /home/gradle/build/libs/fint-provider-*.jar /data/fint-provider.jar
-CMD ["java", "-jar", "/data/fint-provider.jar"]
+CMD ["java", "-XX:+ExitOnOutOfMemoryError", "-jar", "/data/fint-provider.jar"]
