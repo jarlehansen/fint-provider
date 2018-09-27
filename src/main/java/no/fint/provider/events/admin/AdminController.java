@@ -65,7 +65,7 @@ public class AdminController {
         )).collect(Collectors.toList());
     }
 
-    @GetMapping("/orgIds/{orgId}")
+    @GetMapping("/orgIds/{orgId:.+}")
     public ResponseEntity getOrganization(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
         if (adminService.isRegistered(orgId)) {
             return ResponseEntity.ok(ImmutableMap.of(
@@ -77,7 +77,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/orgIds/{orgId}")
+    @PostMapping("/orgIds/{orgId:.+}")
     public ResponseEntity registerOrgId(
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId,
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client) {

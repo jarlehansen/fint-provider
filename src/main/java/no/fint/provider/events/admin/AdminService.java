@@ -25,10 +25,13 @@ public class AdminService {
         return orgIds.get(orgId);
     }
 
+    // TODO This is not safe - a restarted consumer needs to get re-registered.
+    @Deprecated
     public boolean isRegistered(String orgId) {
         return orgIds.containsKey(orgId);
     }
 
+    // TODO Validation towards fint-admin-portal for enabled orgIds.
     public boolean register(String orgId, String client) {
         if (isRegistered(orgId)) {
             log.warn("OrgId {} is already registered, skipping new registration", orgId);

@@ -45,8 +45,8 @@ repositories {
 
 dependencies {
     compile('no.fint:fint-audit-mongo-plugin:1.4.1')
-    compile('no.fint:fint-events:2.1.0-rc-1')
-    compile('no.fint:fint-event-model:2.0.1')
+    compile('no.fint:fint-events:2.2.0-rc-1')
+    compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-springfox-extension:0.0.1')
 
     compile('org.projectlombok:lombok')
