@@ -21,7 +21,7 @@ class AdminDownstreamSubscriberSpec extends Specification {
         subscriber.accept(event)
 
         then:
-        1 * adminService.register('rogfk.no')
+        1 * adminService.register('rogfk.no', 'test')
     }
 
     def "Do not process event with unknown action"() {
@@ -32,6 +32,6 @@ class AdminDownstreamSubscriberSpec extends Specification {
         subscriber.accept(event)
 
         then:
-        0 * adminService.register('rogfk.no')
+        0 * adminService.register('rogfk.no', 'test')
     }
 }

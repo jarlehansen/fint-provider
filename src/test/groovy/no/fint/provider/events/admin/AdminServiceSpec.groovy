@@ -1,5 +1,7 @@
 package no.fint.provider.events.admin
 
+import no.fint.event.model.Event
+import no.fint.events.FintEvents
 import spock.lang.Specification
 
 class AdminServiceSpec extends Specification {
@@ -28,13 +30,15 @@ class AdminServiceSpec extends Specification {
 
     def "Register new orgId once"() {
         given:
-        def adminService = new AdminService()
+        def fintEvents = Mock(FintEvents)
+        def adminService = new AdminService(fintEvents: fintEvents)
 
         when:
-        adminService.register('123')
-        adminService.register('123')
+        adminService.register('123', 'spock')
+        adminService.register('123', 'spock')
 
         then:
+        1 * fintEvents.sendUpstream(_ as Event)
         adminService.isRegistered('123')
         adminService.getTimestamp('123') > 0
     }

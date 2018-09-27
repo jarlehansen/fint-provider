@@ -27,7 +27,7 @@ public class AdminDownstreamSubscriber implements FintEventListener {
     @Override
     public void accept(Event event) {
         if (event.isRegisterOrgId()) {
-            adminService.register(event.getOrgId());
+            adminService.register(event.getOrgId(), event.getClient());
         } else {
             log.error("Cannot process event action {} with system orgId", event.getAction());
         }
