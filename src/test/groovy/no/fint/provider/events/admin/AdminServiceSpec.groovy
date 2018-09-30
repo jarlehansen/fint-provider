@@ -28,7 +28,7 @@ class AdminServiceSpec extends Specification {
         !registered
     }
 
-    def "Register new orgId once"() {
+    def "Register new orgId every time"() {
         given:
         def fintEvents = Mock(FintEvents)
         def adminService = new AdminService(fintEvents: fintEvents)
@@ -38,7 +38,7 @@ class AdminServiceSpec extends Specification {
         adminService.register('123', 'spock')
 
         then:
-        1 * fintEvents.sendUpstream(_ as Event)
+        2 * fintEvents.sendUpstream(_ as Event)
         adminService.isRegistered('123')
         adminService.getTimestamp('123') > 0
     }

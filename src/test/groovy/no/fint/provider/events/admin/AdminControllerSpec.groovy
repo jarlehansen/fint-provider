@@ -50,13 +50,13 @@ class AdminControllerSpec extends MockMvcSpecification {
                 .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, equalTo('http://localhost/admin/orgIds/123')))
     }
 
-    def "POST new orgId, return bad request if orgId is already registered"() {
+    def "POST new orgId, return no content if orgId is already registered"() {
         when:
         def response = mockMvc.perform(post('/admin/orgIds/123').header(HeaderConstants.CLIENT, 'spock'))
 
         then:
         1 * adminService.isRegistered('123') >> true
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNoContent())
     }
 
     def "GET all registered orgIds"() {
