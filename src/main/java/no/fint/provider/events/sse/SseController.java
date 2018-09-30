@@ -11,10 +11,12 @@ import no.fint.provider.events.Constants;
 import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -76,4 +78,8 @@ public class SseController {
     public void authorize() {
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity handleIllegalArgumentException(Exception e) {
+        return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
+    }
 }
