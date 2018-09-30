@@ -92,4 +92,20 @@ class AdminControllerSpec extends MockMvcSpecification {
         then:
         response.andExpect(status().isNotFound())
     }
+
+    def "Reject registering unknown orgId"() {
+        when:
+        def response = mockMvc.perform(post('/admin/orgIds/invalid.org').header(HeaderConstants.CLIENT, 'spock'))
+
+        then:
+        response.andExpect(status().is4xxClientError())
+        1 * adminService.register('invalid.org', 'spock') >> false
+
+        when:
+        def response2 = mockMvc.perform(post('/admin/orgIds/valid.org').header(HeaderConstants.CLIENT, 'spock'))
+
+        then:
+        response2.andExpect(status().is2xxSuccessful())
+        1 * adminService.register('valid.org', 'spock') >> true
+    }
 }

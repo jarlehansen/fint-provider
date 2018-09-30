@@ -2,15 +2,19 @@ package no.fint.provider.events.admin
 
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
+import no.fint.events.FintEvents
 import spock.lang.Specification
 
 class AdminDownstreamSubscriberSpec extends Specification {
     private AdminService adminService
+    private FintEvents fintEvents
     private AdminDownstreamSubscriber subscriber
 
     void setup() {
-        adminService = Mock(AdminService)
-        subscriber = new AdminDownstreamSubscriber(adminService: adminService)
+        adminService = Mock()
+        fintEvents = Mock()
+        subscriber = new AdminDownstreamSubscriber(adminService: adminService, fintEvents: fintEvents)
+        subscriber.init()
     }
 
     def "Receive register orgId"() {

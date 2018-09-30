@@ -2,6 +2,7 @@ package no.fint.provider.events.admin
 
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
+import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 
 class AdminServiceSpec extends Specification {
@@ -52,5 +53,48 @@ class AdminServiceSpec extends Specification {
 
         then:
         orgIds.size() == 2
+    }
+
+    def "Accept valid orgID and reject invalid orgID"() {
+        given:
+        def fintEvents = Mock(FintEvents)
+        def adminService = new AdminService(validAssets: [ 'valid.org'], fintEvents: fintEvents)
+
+        when:
+        def valid = adminService.register('valid.org', 'spock')
+
+        then:
+        valid
+        1 * fintEvents.sendUpstream(_ as Event)
+
+        when:
+        valid = adminService.register('invalid.org', 'spock')
+
+        then:
+        !valid
+        0 * fintEvents.sendUpstream(_ as Event)
+    }
+
+    def "Refresh works if assets endpoint not configured"() {
+        given:
+        def adminService = new AdminService()
+
+        when:
+        adminService.refreshAssets()
+
+        then:
+        noExceptionThrown()
+    }
+
+    def "Able to refresh assets using assets endpoint"() {
+        given:
+        def restTemplate = Mock(RestTemplate)
+        def adminService = new AdminService(assetsEndpoint: 'http://fake.org', restTemplate: restTemplate)
+
+        when:
+        adminService.refreshAssets()
+
+        then:
+        1 * restTemplate.getForObject('http://fake.org', String[]) >> [ 'valid.org', 'valid.com' ].toArray(new String[2])
     }
 }

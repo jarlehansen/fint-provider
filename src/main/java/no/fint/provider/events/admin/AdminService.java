@@ -10,12 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -39,12 +36,8 @@ public class AdminService {
     public void refreshAssets() {
         if (StringUtils.isEmpty(assetsEndpoint))
             return;
-        try {
-            validAssets = restTemplate.getForObject(assetsEndpoint, String[].class);
-            log.info("Valid assets: {}", Arrays.toString(validAssets));
-        } catch (RestClientException e) {
-            log.info("Unable to fetch valid assets from {}: {}", assetsEndpoint, e);
-        }
+        validAssets = restTemplate.getForObject(assetsEndpoint, String[].class);
+        log.info("Valid assets: {}", Arrays.toString(validAssets));
     }
 
     @Getter
