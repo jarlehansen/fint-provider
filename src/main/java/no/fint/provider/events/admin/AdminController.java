@@ -82,7 +82,7 @@ public class AdminController {
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId,
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client) {
         if (adminService.isRegistered(orgId)) {
-            return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
+            return ResponseEntity.noContent().build();
         } else if (adminService.register(orgId, client)) {
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
