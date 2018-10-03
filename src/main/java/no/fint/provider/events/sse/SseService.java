@@ -1,10 +1,14 @@
 package no.fint.provider.events.sse;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
 import org.jooq.lambda.function.Consumer2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -78,6 +82,26 @@ public class SseService {
 
             toBeRemoved.forEach(Consumer2.from(this::removeEmitter).acceptPartially(event.getOrgId()));
         }
+    }
+
+    @Scheduled(initialDelay = 15000, fixedRateString = "${fint.provider.sse.heartbeat:15000}")
+    public void sendHeartbeat() {
+        log.debug("Heartbeat");
+        Multimap<String, FintSseEmitter> toBeRemoved = MultimapBuilder.hashKeys().linkedListValues().build();
+        clients.forEach((orgId, emitters) -> {
+            emitters.forEach(emitter -> {
+                try {
+                    SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
+                    emitter.send(builder);
+                } catch (Exception e) {
+                    log.warn("Exception when trying to send message to SseEmitter: {}", e.getMessage());
+                    log.warn("Removing emitter {} for {}", emitter.getId(), orgId);
+                    toBeRemoved.put(orgId, emitter);
+                }
+            });
+        });
+
+        toBeRemoved.forEach(this::removeEmitter);
     }
 
     public Map<String, FintSseEmitters> getSseClients() {

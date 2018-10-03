@@ -103,4 +103,23 @@ class SseServiceSpec extends Specification {
         then:
         1 * emitter.complete()
     }
+
+    def "Run heartbeat and remove failing emitter"() {
+        given:
+        def emitter = Mock(FintSseEmitter) {
+            getId() >> 'fake'
+        }
+        def emitters = FintSseEmitters.with(5)
+        emitters.add(emitter)
+        def clients = ['hfk.no': emitters] as ConcurrentHashMap
+        sseService = new SseService(providerProps: props, clients: clients)
+
+        when:
+        sseService.sendHeartbeat()
+
+        then:
+        1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IllegalStateException('Test exception') }
+        sseService.getSseClients().get('hfk.no').size() == 0
+
+    }
 }
