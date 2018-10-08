@@ -1,19 +1,24 @@
-fint:
- hazelcast:
-  members: localhost
- provider:
-  test-mode: true
-  sse:
-   maxPoolSize: 10
-   queueCapacity: 0
- audit:
-  test-mode: true
- events:
-  test-mode: true
-  queue-endpoint-enabled: true
+spring:
+  application:
+    name: fint-provider
 
- springfox:
-  swagger-https: false
+fint:
+  hazelcast:
+    members: localhost
+  provider:
+    assets:
+      endpoint: https://admin.fintlabs.no/api/components/assets/administrasjon_personal
+    test-mode: true
+    sse:
+      maxPoolSize: 10
+      queueCapacity: 0
+  audit:
+    test-mode: true
+  events:
+    test-mode: true
+    queue-endpoint-enabled: true
+  springfox:
+    swagger-https: false
 
 server:
- port: 8081
+  port: 8081

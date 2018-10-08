@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.audit.plugin.mongo.MongoAuditEvent;
+import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.Constants;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,7 +65,7 @@ public class AdminController {
         )).collect(Collectors.toList());
     }
 
-    @GetMapping("/orgIds/{orgId}")
+    @GetMapping("/orgIds/{orgId:.+}")
     public ResponseEntity getOrganization(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
         if (adminService.isRegistered(orgId)) {
             return ResponseEntity.ok(ImmutableMap.of(
@@ -75,16 +77,18 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/orgIds/{orgId}")
-    public ResponseEntity registerOrgId(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
+    @PostMapping("/orgIds/{orgId:.+}")
+    public ResponseEntity registerOrgId(
+            @ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId,
+            @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client) {
         if (adminService.isRegistered(orgId)) {
-            return ResponseEntity.badRequest().body(String.format("OrgId %s is already registered", orgId));
-        } else {
+            return ResponseEntity.noContent().build();
+        } else if (adminService.register(orgId, client)) {
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
-            adminService.register(orgId);
-
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
             return ResponseEntity.created(location).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized orgId " + orgId);
         }
     }
 }

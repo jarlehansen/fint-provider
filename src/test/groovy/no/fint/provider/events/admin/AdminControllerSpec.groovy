@@ -2,6 +2,7 @@ package no.fint.provider.events.admin
 
 import no.fint.audit.plugin.mongo.MongoAuditEvent
 import no.fint.event.model.Event
+import no.fint.event.model.HeaderConstants
 import no.fint.events.FintEvents
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
@@ -39,21 +40,23 @@ class AdminControllerSpec extends MockMvcSpecification {
 
     def "POST new orgId"() {
         when:
-        def response = mockMvc.perform(post('/admin/orgIds/123'))
+        def response = mockMvc.perform(post('/admin/orgIds/123').header(HeaderConstants.CLIENT, 'spock'))
 
         then:
         1 * fintEvents.registerDownstreamListener('123', downstreamSubscriber)
+        1 * adminService.register('123', 'spock') >> true
+        1 * adminService.isRegistered('123') >> false
         response.andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.LOCATION, equalTo('http://localhost/admin/orgIds/123')))
     }
 
-    def "POST new orgId, return bad request if orgId is already registered"() {
+    def "POST new orgId, return no content if orgId is already registered"() {
         when:
-        def response = mockMvc.perform(post('/admin/orgIds/123'))
+        def response = mockMvc.perform(post('/admin/orgIds/123').header(HeaderConstants.CLIENT, 'spock'))
 
         then:
         1 * adminService.isRegistered('123') >> true
-        response.andExpect(status().isBadRequest())
+        response.andExpect(status().isNoContent())
     }
 
     def "GET all registered orgIds"() {
@@ -88,5 +91,21 @@ class AdminControllerSpec extends MockMvcSpecification {
 
         then:
         response.andExpect(status().isNotFound())
+    }
+
+    def "Reject registering unknown orgId"() {
+        when:
+        def response = mockMvc.perform(post('/admin/orgIds/invalid.org').header(HeaderConstants.CLIENT, 'spock'))
+
+        then:
+        response.andExpect(status().is4xxClientError())
+        1 * adminService.register('invalid.org', 'spock') >> false
+
+        when:
+        def response2 = mockMvc.perform(post('/admin/orgIds/valid.org').header(HeaderConstants.CLIENT, 'spock'))
+
+        then:
+        response2.andExpect(status().is2xxSuccessful())
+        1 * adminService.register('valid.org', 'spock') >> true
     }
 }
