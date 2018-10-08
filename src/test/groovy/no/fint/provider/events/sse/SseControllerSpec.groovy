@@ -2,6 +2,7 @@ package no.fint.provider.events.sse
 
 import no.fint.event.model.HeaderConstants
 import no.fint.events.FintEvents
+import no.fint.provider.events.admin.AdminService
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
 import org.springframework.test.web.servlet.MockMvc
@@ -12,12 +13,14 @@ class SseControllerSpec extends MockMvcSpecification {
     private SseService sseService
     private FintEvents fintEvents
     private MockMvc mockMvc
+    private AdminService adminService
 
     void setup() {
-        sseService = Mock(SseService)
-        fintEvents = Mock(FintEvents)
+        sseService = Mock()
+        fintEvents = Mock()
+        adminService = Mock()
         downstreamSubscriber = Mock(DownstreamSubscriber)
-        controller = new SseController(sseService: sseService, fintEvents: fintEvents, downstreamSubscriber: downstreamSubscriber)
+        controller = new SseController(sseService: sseService, fintEvents: fintEvents, downstreamSubscriber: downstreamSubscriber, adminService: adminService)
         mockMvc = standaloneSetup(controller)
     }
 
@@ -28,6 +31,7 @@ class SseControllerSpec extends MockMvcSpecification {
                 .header(HeaderConstants.CLIENT, 'client'))
 
         then:
+        1 * adminService.register('rogfk.no', 'client') >> true
         1 * sseService.subscribe('123', 'rogfk.no', 'client')
         1 * fintEvents.registerDownstreamListener('rogfk.no', downstreamSubscriber)
         response.andExpect(status().isOk())
