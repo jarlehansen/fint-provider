@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -56,7 +57,7 @@ public class AdminService {
             log.warn("OrgId {} is not enabled!", orgId);
             return false;
         } else {
-            Event e = new Event(orgId, "provider", DefaultActions.REGISTER_ORG_ID, client);
+            Event e = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID, client);
             fintEvents.sendUpstream(e);
             orgIds.put(orgId, System.currentTimeMillis());
             return true;

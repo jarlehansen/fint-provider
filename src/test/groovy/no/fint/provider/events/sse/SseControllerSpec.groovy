@@ -37,6 +37,20 @@ class SseControllerSpec extends MockMvcSpecification {
         response.andExpect(status().isOk())
     }
 
+    def "Subscribe to sse client with invalid org should fail"() {
+        when:
+        def response = mockMvc.perform(get('/sse/123')
+                .header(HeaderConstants.ORG_ID, 'rogfk.no')
+                .header(HeaderConstants.CLIENT, 'client'))
+
+        then:
+        1 * adminService.register('rogfk.no', 'client') >> false
+        0 * sseService.subscribe('123', 'rogfk.no', 'client')
+        0 * fintEvents.registerDownstreamListener('rogfk.no', downstreamSubscriber)
+        response.andExpect(status().is4xxClientError())
+
+    }
+
     def "Get registered sse clients"() {
         given:
         def emitter = new FintSseEmitter('123', 'client', 1000)

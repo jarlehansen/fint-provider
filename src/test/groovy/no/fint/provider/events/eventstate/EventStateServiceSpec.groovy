@@ -64,4 +64,19 @@ class EventStateServiceSpec extends Specification {
         then:
         !eventState.isPresent()
     }
+
+    def "Get expired EventStates"() {
+        given:
+        def event1 = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
+        def event2 = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
+        eventStateService.add(event1, -2)
+        eventStateService.add(event2, 2)
+
+        when:
+        def expired = eventStateService.getExpiredEvents()
+
+        then:
+        expired.size() == 1
+        eventStateService.getEventStates().size() == 1
+    }
 }
