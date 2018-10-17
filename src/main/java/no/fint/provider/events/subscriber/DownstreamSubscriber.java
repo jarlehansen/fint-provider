@@ -12,15 +12,11 @@ import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.eventstate.EventStateService;
 import no.fint.provider.events.sse.SseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class DownstreamSubscriber implements FintEventListener {
-
-    @Value("${fint.provider.trace.downstream:false}")
-    private boolean tracing;
 
     @Autowired
     private SseService sseService;
@@ -38,7 +34,7 @@ public class DownstreamSubscriber implements FintEventListener {
     public void accept(Event event) {
         try {
             log.debug("Event received: {}", event);
-            if (tracing) {
+            if (providerProps.isTraceDownstream()) {
                 fintAuditService.audit(event, false);
             }
             if (event.isHealthCheck()) {

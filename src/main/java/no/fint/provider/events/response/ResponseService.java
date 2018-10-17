@@ -5,11 +5,11 @@ import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
 import no.fint.event.model.Status;
 import no.fint.events.FintEvents;
+import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.eventstate.EventState;
 import no.fint.provider.events.eventstate.EventStateService;
 import no.fint.provider.events.exceptions.UnknownEventException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,9 +18,6 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ResponseService {
-
-    @Value("${fint.provider.trace.response:false}")
-    private boolean tracing;
 
     @Autowired
     private EventStateService eventStateService;
@@ -31,11 +28,14 @@ public class ResponseService {
     @Autowired
     private FintEvents fintEvents;
 
+    @Autowired
+    private ProviderProps providerProps;
+
     public void handleAdapterResponse(Event event) {
         log.debug("{}: Response for {} from {} status {} with {} elements.",
                 event.getCorrId(), event.getAction(), event.getOrgId(), event.getStatus(),
                 Optional.ofNullable(event.getData()).map(List::size).orElse(0));
-        if (tracing) {
+        if (providerProps.isTraceResponse()) {
             fintAuditService.audit(event, false);
         }
         if (event.isHealthCheck()) {

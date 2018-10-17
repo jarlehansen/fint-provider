@@ -22,4 +22,11 @@ public class ProviderProps {
 
     @Value("${fint.provider.sse-timeout-minutes:17}")
     private int sseTimeoutMinutes;
+
+    @Value("${fint.provider.trace.downstream:false}")
+    private boolean traceDownstream;
+
+    @Value("${fint.provider.trace.response:false}")
+    private boolean traceResponse;
+
 }
