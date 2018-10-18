@@ -42,7 +42,6 @@ public class DownstreamSubscriber implements FintEventListener {
 
             sseService.send(event);
             fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER);
-
         } catch (Exception e) {
             event.setMessage(e.getMessage());
             fintAuditService.audit(event, Status.ERROR);

@@ -28,25 +28,26 @@ public class AdminService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${fint.provider.assets.endpoint:}")
+    @Value("${fint.provider.assets.endpoint:}") // TODO move to ProviderProps?
     private String assetsEndpoint;
 
-    @Value("${fint.events.orgIds:}")
+    @Value("${fint.events.orgIds:}") // TODO rename to fint.provider.events.orgIds? Move to ProviderProps?
     private volatile String[] validAssets;
-
-    @Scheduled(initialDelay = 1, fixedRateString = "${fint.provider.assets.rate:3600000}")
-    public void refreshAssets() {
-        if (StringUtils.isEmpty(assetsEndpoint))
-            return;
-        String[] assets = restTemplate.getForObject(assetsEndpoint, String[].class);
-        if (ArrayUtils.isNotEmpty(assets)) {
-            validAssets = assets;
-            log.info("Valid assets: {}", Arrays.toString(validAssets));
-        }
-    }
 
     @Getter
     private Map<String, Long> orgIds = new ConcurrentHashMap<>();
+
+    // TODO could be a string constant in ProviderProps
+    @Scheduled(initialDelay = 1, fixedRateString = "${fint.provider.assets.rate:3600000}")
+    public void refreshAssets() {
+        if (StringUtils.isNotEmpty(assetsEndpoint)) {
+            String[] assets = restTemplate.getForObject(assetsEndpoint, String[].class);
+            if (ArrayUtils.isNotEmpty(assets)) {
+                validAssets = assets;
+                log.info("Valid assets: {}", Arrays.toString(validAssets));
+            }
+        }
+    }
 
     public Long getTimestamp(String orgId) {
         return orgIds.get(orgId);
@@ -57,7 +58,7 @@ public class AdminService {
     }
 
     public boolean register(String orgId, String client) {
-        if (!isRegistered(orgId) && ArrayUtils.isNotEmpty(validAssets) && Stream.of(validAssets).noneMatch(orgId::equals)) {
+        if (orgNotEnabled(orgId)) {
             log.warn("OrgId {} is not enabled!", orgId);
             return false;
         } else {
@@ -66,5 +67,9 @@ public class AdminService {
             orgIds.put(orgId, System.currentTimeMillis());
             return true;
         }
+    }
+
+    private boolean orgNotEnabled(String orgId) {
+        return !isRegistered(orgId) && ArrayUtils.isNotEmpty(validAssets) && Stream.of(validAssets).noneMatch(orgId::equals);
     }
 }

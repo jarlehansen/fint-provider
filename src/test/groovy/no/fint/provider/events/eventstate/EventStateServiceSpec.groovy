@@ -35,8 +35,7 @@ class EventStateServiceSpec extends Specification {
         def eventState = eventStateService.get(event)
 
         then:
-        eventState.isPresent()
-        eventState.get().event == event
+        eventState.event == event
         eventStateService.getEventStates().size() == 1
     }
 
@@ -50,7 +49,7 @@ class EventStateServiceSpec extends Specification {
         def eventState = eventStateService.get(event)
 
         then:
-        !eventState.isPresent()
+        !eventState
     }
 
     def "Trying to remove EventState that does not exist"() {
@@ -62,7 +61,7 @@ class EventStateServiceSpec extends Specification {
         def eventState = eventStateService.get(event)
 
         then:
-        !eventState.isPresent()
+        !eventState
     }
 
     def "Get expired EventStates"() {
