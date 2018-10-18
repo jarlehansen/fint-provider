@@ -34,9 +34,6 @@ public class DownstreamSubscriber implements FintEventListener {
     public void accept(Event event) {
         try {
             log.debug("Event received: {}", event);
-            if (providerProps.isTraceDownstream()) {
-                fintAuditService.audit(event, false);
-            }
             if (event.isHealthCheck()) {
                 event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
             } else {
