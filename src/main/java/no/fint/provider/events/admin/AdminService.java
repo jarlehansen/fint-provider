@@ -6,11 +6,12 @@ import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.Constants;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -37,8 +38,11 @@ public class AdminService {
     public void refreshAssets() {
         if (StringUtils.isEmpty(assetsEndpoint))
             return;
-        validAssets = restTemplate.getForObject(assetsEndpoint, String[].class);
-        log.info("Valid assets: {}", Arrays.toString(validAssets));
+        String[] assets = restTemplate.getForObject(assetsEndpoint, String[].class);
+        if (ArrayUtils.isNotEmpty(assets)) {
+            validAssets = assets;
+            log.info("Valid assets: {}", Arrays.toString(validAssets));
+        }
     }
 
     @Getter
@@ -53,7 +57,7 @@ public class AdminService {
     }
 
     public boolean register(String orgId, String client) {
-        if (!isRegistered(orgId) && validAssets != null && Stream.of(validAssets).noneMatch(orgId::equals)) {
+        if (!isRegistered(orgId) && ArrayUtils.isNotEmpty(validAssets) && Stream.of(validAssets).noneMatch(orgId::equals)) {
             log.warn("OrgId {} is not enabled!", orgId);
             return false;
         } else {
