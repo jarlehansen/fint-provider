@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProviderProps {
 
+    public static final String PROVIDER_ASSETS_RATE = "${fint.provider.assets.rate:3600000}";
+    public static final String EVENTS_ORG_IDS = "${fint.events.orgIds:}";
+
     @Value("${fint.provider.ttl-status:2}")
     private int statusTtl;
 
@@ -22,5 +25,8 @@ public class ProviderProps {
 
     @Value("${fint.provider.sse-timeout-minutes:17}")
     private int sseTimeoutMinutes;
+
+    @Value("${fint.provider.assets.endpoint:}")
+    private String assetsEndpoint;
 
 }

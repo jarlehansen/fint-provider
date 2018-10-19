@@ -10,7 +10,7 @@ import no.fint.events.FintEvents;
 import no.fint.provider.events.Constants;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -39,14 +39,14 @@ public class AdminController {
     private AdminService adminService;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private MongoOperations mongo;
 
     @Autowired
     private DownstreamSubscriber downstreamSubscriber;
 
     @GetMapping("/audit/events")
     public List<MongoAuditEvent> getAllEvents() {
-        return mongoTemplate.findAll(MongoAuditEvent.class);
+        return mongo.findAll(MongoAuditEvent.class);
     }
 
     @GetMapping("/audit/events/since/{when}")
@@ -54,7 +54,7 @@ public class AdminController {
         Duration duration = Duration.parse(when);
         Criteria c = Criteria.where("timestamp").gt(ZonedDateTime.now().minus(duration).toInstant().toEpochMilli());
         Query q = new Query(c);
-        return mongoTemplate.find(q, MongoAuditEvent.class);
+        return mongo.find(q, MongoAuditEvent.class);
     }
 
     @GetMapping("/orgIds")

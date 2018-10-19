@@ -14,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
+
     @Autowired
     private ProviderProps providerProps;
-
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {

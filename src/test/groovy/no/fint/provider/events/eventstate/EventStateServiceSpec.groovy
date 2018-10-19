@@ -32,11 +32,8 @@ class EventStateServiceSpec extends Specification {
 
         when:
         eventStateService.add(event, 2)
-        def eventState = eventStateService.get(event)
 
         then:
-        eventState.isPresent()
-        eventState.get().event == event
         eventStateService.getEventStates().size() == 1
     }
 
@@ -45,21 +42,26 @@ class EventStateServiceSpec extends Specification {
         def event = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
         eventStateService.add(event, 2)
 
+        expect:
+        eventStateService.getEventStates().size() == 1
+
         when:
-        eventStateService.remove(event)
-        def eventState = eventStateService.get(event)
+        def eventState = eventStateService.remove(event)
 
         then:
-        !eventState.isPresent()
+        eventState.isPresent()
+        eventStateService.getEventStates().isEmpty()
     }
 
     def "Trying to remove EventState that does not exist"() {
         given:
         def event = new Event()
 
+        expect:
+        eventStateService.getEventStates().isEmpty()
+
         when:
-        eventStateService.remove(event)
-        def eventState = eventStateService.get(event)
+        def eventState = eventStateService.remove(event)
 
         then:
         !eventState.isPresent()

@@ -36,14 +36,8 @@ public class EventStateService {
         eventStates.put(event.getCorrId(), new EventState(event, timeToLiveInMinutes));
     }
 
-    public Optional<EventState> get(Event event) {
-        Optional<EventState> result = Optional.ofNullable(eventStates.get(event.getCorrId()));
-        return result;
-    }
-
     public Optional<EventState> remove(Event event) {
-        Optional<EventState> eventState = Optional.ofNullable(eventStates.remove(event.getCorrId()));
-        return eventState;
+        return Optional.ofNullable(eventStates.remove(event.getCorrId()));
     }
 
     public List<Event> getExpiredEvents() {

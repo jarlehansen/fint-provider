@@ -36,22 +36,25 @@ public class StatusService {
         Optional<EventState> state = eventStateService.remove(event);
         if (state.isPresent()) {
             fintAuditService.audit(event);
-            EventState eventState = state.get();
 
             if (event.getStatus() == Status.ADAPTER_ACCEPTED) {
                 eventStateService.add(event, providerProps.getResponseTtl());
             } else {
-                if (event.getResponseStatus() == null) {
-                    event.setResponseStatus(ResponseStatus.REJECTED);
-                }
-                log.debug("{} adapter did not acknowledge the event (status: {}), sending event upstream.", event.getOrgId(), event.getStatus().name());
-                event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
-                fintEvents.sendUpstream(event);
+                sendResponse(event);
             }
         } else {
             log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);
             throw new UnknownEventException();
         }
+    }
+
+    private void sendResponse(Event event) {
+        if (event.getResponseStatus() == null) {
+            event.setResponseStatus(ResponseStatus.REJECTED);
+        }
+        log.debug("{} adapter did not acknowledge the event (status: {}), sending event upstream.", event.getOrgId(), event.getStatus().name());
+        event.setMessage(String.format("Adapter did not acknowledge the event (status: %s)", event.getStatus().name()));
+        fintEvents.sendUpstream(event);
     }
 
 }
