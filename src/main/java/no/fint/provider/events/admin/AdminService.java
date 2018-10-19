@@ -6,6 +6,7 @@ import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.Constants;
+import no.fint.provider.events.ProviderProps;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +27,21 @@ public class AdminService {
     @Autowired
     private FintEvents fintEvents;
 
+    @Autowired
+    private ProviderProps props;
+
     private RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${fint.provider.assets.endpoint:}") // TODO move to ProviderProps?
-    private String assetsEndpoint;
-
-    @Value("${fint.events.orgIds:}") // TODO rename to fint.provider.events.orgIds? Move to ProviderProps?
+    @Value(ProviderProps.EVENTS_ORG_IDS)
     private volatile String[] validAssets;
 
     @Getter
     private Map<String, Long> orgIds = new ConcurrentHashMap<>();
 
-    // TODO could be a string constant in ProviderProps
-    @Scheduled(initialDelay = 1, fixedRateString = "${fint.provider.assets.rate:3600000}")
+    @Scheduled(initialDelay = 1, fixedRateString = ProviderProps.PROVIDER_ASSETS_RATE)
     public void refreshAssets() {
-        if (StringUtils.isNotEmpty(assetsEndpoint)) {
-            String[] assets = restTemplate.getForObject(assetsEndpoint, String[].class);
+        if (StringUtils.isNotEmpty(props.getAssetsEndpoint())) {
+            String[] assets = restTemplate.getForObject(props.getAssetsEndpoint(), String[].class);
             if (ArrayUtils.isNotEmpty(assets)) {
                 validAssets = assets;
                 log.info("Valid assets: {}", Arrays.toString(validAssets));
@@ -58,7 +58,7 @@ public class AdminService {
     }
 
     public boolean register(String orgId, String client) {
-        if (orgNotEnabled(orgId)) {
+        if (!isRegistered(orgId) && orgNotEnabled(orgId)) {
             log.warn("OrgId {} is not enabled!", orgId);
             return false;
         } else {
@@ -70,6 +70,6 @@ public class AdminService {
     }
 
     private boolean orgNotEnabled(String orgId) {
-        return !isRegistered(orgId) && ArrayUtils.isNotEmpty(validAssets) && Stream.of(validAssets).noneMatch(orgId::equals);
+        return ArrayUtils.isNotEmpty(validAssets) && Stream.of(validAssets).noneMatch(orgId::equals);
     }
 }

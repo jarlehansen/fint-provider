@@ -36,10 +36,6 @@ public class EventStateService {
         eventStates.put(event.getCorrId(), new EventState(event, timeToLiveInMinutes));
     }
 
-    EventState get(Event event) {
-        return eventStates.get(event.getCorrId());
-    }
-
     public Optional<EventState> remove(Event event) {
         return Optional.ofNullable(eventStates.remove(event.getCorrId()));
     }
