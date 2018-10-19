@@ -32,16 +32,19 @@ public class DownstreamSubscriber implements FintEventListener {
 
     @Override
     public void accept(Event event) {
-        log.debug("Event received: {}", event);
-        if (event.isHealthCheck()) {
-            event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
-        }
+        try {
+            log.debug("Event received: {}", event);
+            if (event.isHealthCheck()) {
+                event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
+            } else {
+                eventStateService.add(event, providerProps.getStatusTtl());
+            }
 
-        sseService.send(event);
-        fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER);
-
-        if (!event.isHealthCheck()) {
-            eventStateService.add(event, providerProps.getStatusTtl());
+            sseService.send(event);
+            fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER);
+        } catch (Exception e) {
+            event.setMessage(e.getMessage());
+            fintAuditService.audit(event, Status.ERROR);
         }
     }
 }

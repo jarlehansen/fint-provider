@@ -2,6 +2,7 @@ package no.fint.provider.events.admin
 
 import no.fint.event.model.Event
 import no.fint.events.FintEvents
+import no.fint.provider.events.ProviderProps
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 
@@ -77,7 +78,7 @@ class AdminServiceSpec extends Specification {
 
     def "Refresh works if assets endpoint not configured"() {
         given:
-        def adminService = new AdminService()
+        def adminService = new AdminService(props: Mock(ProviderProps))
 
         when:
         adminService.refreshAssets()
@@ -89,7 +90,10 @@ class AdminServiceSpec extends Specification {
     def "Able to refresh assets using assets endpoint"() {
         given:
         def restTemplate = Mock(RestTemplate)
-        def adminService = new AdminService(assetsEndpoint: 'http://fake.org', restTemplate: restTemplate)
+        def props = Mock(ProviderProps) {
+            getAssetsEndpoint() >> 'http://fake.org'
+        }
+        def adminService = new AdminService(props: props, restTemplate: restTemplate)
 
         when:
         adminService.refreshAssets()

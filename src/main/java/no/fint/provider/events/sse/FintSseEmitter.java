@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @EqualsAndHashCode(callSuper = true)
 public class FintSseEmitter extends SseEmitter {
     private String id;
+    private String client;
     private String registered;
     private final AtomicInteger eventCounter = new AtomicInteger();
 
@@ -20,9 +21,10 @@ public class FintSseEmitter extends SseEmitter {
         setRegisteredDate();
     }
 
-    public FintSseEmitter(String id, long timeout) {
+    public FintSseEmitter(String id, String client, long timeout) {
         super(timeout);
         this.id = id;
+        this.client = client;
         setRegisteredDate();
     }
 

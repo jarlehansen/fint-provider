@@ -8,5 +8,6 @@ import lombok.Data;
 public class SseClient {
     private String registered;
     private String id;
+    private String client;
     private int events;
 }

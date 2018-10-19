@@ -21,4 +21,20 @@ class EventStateSpec extends Specification {
         !eventState.expired()
     }
 
+    def "Two events with same information are not equal"() {
+        when:
+        def event2 = new Event(event)
+
+        then:
+        event.equals(event)
+        event2.equals(event)
+        event2.hashCode() == event.hashCode()
+
+        when:
+        event2.corrId = 'Something else'
+
+        then:
+        !event2.equals(event)
+        event2.hashCode() != event.hashCode()
+    }
 }

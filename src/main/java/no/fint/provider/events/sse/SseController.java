@@ -44,8 +44,9 @@ public class SseController {
     public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                                 @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
                                 @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
+        log.info("{}: Client {}, ID {}", orgId, client, id);
         if (adminService.register(orgId, client)) {
-            SseEmitter emitter = sseService.subscribe(id, orgId);
+            SseEmitter emitter = sseService.subscribe(id, orgId, client);
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
             return emitter;
         } else {
@@ -60,7 +61,7 @@ public class SseController {
         List<SseOrg> orgs = new ArrayList<>();
         clients.forEach((key, value) -> {
             List<SseClient> sseClients = new ArrayList<>();
-            value.forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId(), emitter.getEventCounter().get())));
+            value.forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId(), emitter.getClient(), emitter.getEventCounter().get())));
 
             orgs.add(new SseOrg(key, sseClients));
         });

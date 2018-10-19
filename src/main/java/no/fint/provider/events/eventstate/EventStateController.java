@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -22,7 +22,7 @@ public class EventStateController {
     private EventStateService eventStateService;
 
     @GetMapping
-    public Set<EventState> getEventState() {
+    public Collection<EventState> getEventState() {
         return eventStateService.getEventStates();
     }
 

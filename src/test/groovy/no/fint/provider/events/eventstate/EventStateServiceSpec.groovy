@@ -1,9 +1,8 @@
 package no.fint.provider.events.eventstate
 
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.core.ISet
+import com.hazelcast.core.IMap
 import no.fint.event.model.Event
-import no.fint.events.FintEvents
 import no.fint.provider.events.ProviderProps
 import spock.lang.Specification
 
@@ -16,7 +15,7 @@ class EventStateServiceSpec extends Specification {
             getKey() >> 'current-corrids'
         }
         hazelcastInstance = Mock(HazelcastInstance)
-        eventStateService = new EventStateService(eventStates: [], providerProps: props, hazelcastInstance: hazelcastInstance)
+        eventStateService = new EventStateService(eventStates: [:], providerProps: props, hazelcastInstance: hazelcastInstance)
     }
 
     def "Init EventStateService"() {
@@ -24,7 +23,7 @@ class EventStateServiceSpec extends Specification {
         eventStateService.init()
 
         then:
-        1 * hazelcastInstance.getSet('current-corrids') >> Mock(ISet)
+        1 * hazelcastInstance.getMap('current-corrids') >> Mock(IMap)
     }
 
     def "Add and get new EventState"() {
@@ -33,11 +32,8 @@ class EventStateServiceSpec extends Specification {
 
         when:
         eventStateService.add(event, 2)
-        def eventState = eventStateService.get(event)
 
         then:
-        eventState.isPresent()
-        eventState.get().event == event
         eventStateService.getEventStates().size() == 1
     }
 
@@ -46,23 +42,43 @@ class EventStateServiceSpec extends Specification {
         def event = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
         eventStateService.add(event, 2)
 
+        expect:
+        eventStateService.getEventStates().size() == 1
+
         when:
-        eventStateService.remove(event)
-        def eventState = eventStateService.get(event)
+        def eventState = eventStateService.remove(event)
 
         then:
-        !eventState.isPresent()
+        eventState.isPresent()
+        eventStateService.getEventStates().isEmpty()
     }
 
     def "Trying to remove EventState that does not exist"() {
         given:
         def event = new Event()
 
+        expect:
+        eventStateService.getEventStates().isEmpty()
+
         when:
-        eventStateService.remove(event)
-        def eventState = eventStateService.get(event)
+        def eventState = eventStateService.remove(event)
 
         then:
         !eventState.isPresent()
+    }
+
+    def "Get expired EventStates"() {
+        given:
+        def event1 = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
+        def event2 = new Event('rogfk.no', 'test', 'GET_ALL', 'test')
+        eventStateService.add(event1, -2)
+        eventStateService.add(event2, 2)
+
+        when:
+        def expired = eventStateService.getExpiredEvents()
+
+        then:
+        expired.size() == 1
+        eventStateService.getEventStates().size() == 1
     }
 }

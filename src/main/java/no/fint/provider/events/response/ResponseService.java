@@ -32,19 +32,27 @@ public class ResponseService {
                 event.getCorrId(), event.getAction(), event.getOrgId(), event.getStatus(),
                 Optional.ofNullable(event.getData()).map(List::size).orElse(0));
         if (event.isHealthCheck()) {
+            sendHealthCheckResponse(event);
+        } else {
+            sendResponse(event);
+        }
+    }
+
+    private void sendHealthCheckResponse(Event event) {
+        event.setStatus(Status.UPSTREAM_QUEUE);
+        fintEvents.sendUpstream(event);
+    }
+
+    private void sendResponse(Event event) {
+        Optional<EventState> state = eventStateService.remove(event);
+        if (state.isPresent()) {
+            fintAuditService.audit(event, Status.ADAPTER_RESPONSE);
             event.setStatus(Status.UPSTREAM_QUEUE);
             fintEvents.sendUpstream(event);
+            fintAuditService.audit(event, Status.UPSTREAM_QUEUE);
         } else {
-            Optional<EventState> state = eventStateService.remove(event);
-            if (state.isPresent()) {
-                fintAuditService.audit(event, Status.ADAPTER_RESPONSE);
-                event.setStatus(Status.UPSTREAM_QUEUE);
-                fintEvents.sendUpstream(event);
-                fintAuditService.audit(event, Status.UPSTREAM_QUEUE);
-            } else {
-                log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);
-                throw new UnknownEventException();
-            }
+            log.error("EventState with corrId {} was not found. Either the Event has expired or the provider does not recognize the corrId. {}", event.getCorrId(), event);
+            throw new UnknownEventException();
         }
     }
 }
