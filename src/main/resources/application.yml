@@ -3,3 +3,7 @@ server:
 
 fint:
  version: '@version@'
+
+security:
+ basic:
+  enabled: false
