@@ -44,7 +44,9 @@ repositories {
 
 
 dependencies {
-    compile('no.fint:fint-sse:1.1.4-rc-2')
+    compile('no.fint:fint-sse:1.1.4-rc-2') {
+        exclude group: 'org.springframework.security.oauth', module: 'spring-security-oauth2'
+    }
     compile('org.glassfish.jersey.core:jersey-client:2.26')
     compile('org.glassfish.jersey.core:jersey-common:2.26')
     
