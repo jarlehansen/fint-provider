@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
 @SpringBootTest
-class TestModeControllerSpec extends Specification {
+class TestModeSpec extends Specification {
 
     @Autowired(required = false)
     private TestModeController controller
