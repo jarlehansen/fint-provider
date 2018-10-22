@@ -8,10 +8,10 @@ import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
+import no.fint.provider.events.testMode.EnabledIfTestMode;
 import no.fint.provider.events.testMode.TestModeConstants;
 import no.fint.sse.AbstractEventListener;
 import no.fint.sse.FintSse;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,8 +24,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.Instant;
 
+@EnabledIfTestMode
 @Slf4j
-@ConditionalOnProperty(name = "fint.provider.test-mode", havingValue = "true")
 @Component
 public class TestModeAdapter extends AbstractEventListener {
     private FintSse fintSse;
