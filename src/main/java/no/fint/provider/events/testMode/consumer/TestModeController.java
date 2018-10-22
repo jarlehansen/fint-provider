@@ -26,7 +26,7 @@ public class TestModeController implements FintEventListener {
     @Autowired
     private FintEvents fintEvents;
 
-    private List<ReceivedEvent> receivedEvents = Collections.synchronizedList(new ArrayList<>());
+    private final List<ReceivedEvent> receivedEvents = Collections.synchronizedList(new ArrayList<>());
 
     @PostConstruct
     public void init() {
