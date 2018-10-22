@@ -12,21 +12,7 @@
 | fint.provider.max-number-of-emitters | The max number of emitters one orgId can have | 50 |
 | fint.provider.event-state.list-name | The name of the list used to store event states stored in redisson | current-corrids |
 | fint.provider.swagger-https | Force https in the swagger api-docs request | true (disabled in the test profile) |
-
-## Run provider locally
-
-* [provider - http://localhost:8080/provider/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-* [consumer - http://localhost:8090/swagger-ui.html](http://localhost:8090/swagger-ui.html)
-* [redis-commander - http://localhost:8081](http://localhost:8081)
-
-Start fint-provider + test-consumer and adapter  
-`npm start --prefix test-clients`
-
-Start only test-clients (useful to debug fint-provider)  
-`npm run start-test-clients --prefix test-clients`
-
-Start fint-provider + test-consumer (useful to test adapter)  
-`npm run start-test-consumer --prefix test-clients`
+| fint.provider.test-mode | Runs the provider in test-mode, enabling a test consumer and adapter. | false |
 
 ## Log payload
 

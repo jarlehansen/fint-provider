@@ -8,7 +8,6 @@ fint:
   provider:
     assets:
       endpoint: https://admin.fintlabs.no/api/components/assets/administrasjon_personal
-    test-mode: true
     sse:
       maxPoolSize: 10
       queueCapacity: 0
