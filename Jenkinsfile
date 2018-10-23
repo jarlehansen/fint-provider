@@ -47,8 +47,11 @@ pipeline {
                     image 'gradle:4.9.0-jdk8-alpine'
                 }
             }
+            environment {
+                COVERALLS_REPO_TOKEN = "9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z"
+            }
             steps {
-                sh 'gradle jacocoTestReport coveralls'
+                sh 'gradle --no-daemon build jacocoTestReport coveralls'
             }
         }
     }
