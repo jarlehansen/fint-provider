@@ -1,6 +1,7 @@
 package no.fint.provider.events.testmode
 
 import no.fint.provider.events.testmode.adapter.TestModeAdapter
+import no.fint.provider.events.testmode.consumer.TestModeController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
