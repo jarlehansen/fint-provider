@@ -40,5 +40,16 @@ pipeline {
                 }
             }
         }
+        stage('Coverage') {
+            agent {
+                docker {
+                    label 'docker'
+                    image 'gradle:4.9.0-jdk8-alpine'
+                }
+            }
+            steps {
+                sh 'gradle jacocoTestReport coveralls'
+            }
+        }
     }
 }
