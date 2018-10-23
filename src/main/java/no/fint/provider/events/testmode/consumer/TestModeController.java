@@ -1,4 +1,4 @@
-package no.fint.provider.events.testMode.consumer;
+package no.fint.provider.events.testmode.consumer;
 
 
 import com.google.common.collect.ImmutableMap;
@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.events.FintEventListener;
 import no.fint.events.FintEvents;
-import no.fint.provider.events.testMode.EnabledIfTestMode;
-import no.fint.provider.events.testMode.TestModeConstants;
+import no.fint.provider.events.testmode.EnabledIfTestMode;
+import no.fint.provider.events.testmode.TestModeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +32,7 @@ public class TestModeController implements FintEventListener {
     public void init() {
         log.info("Test mode enabled, starting consumer");
         fintEvents.registerUpstreamListener(TestModeConstants.ORGID, this);
+        fintEvents.registerUpstreamSystemListener(this);
     }
 
     @PostMapping

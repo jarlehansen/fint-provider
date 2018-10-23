@@ -1,4 +1,4 @@
-package no.fint.provider.events.testMode.adapter;
+package no.fint.provider.events.testmode.adapter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -8,10 +8,11 @@ import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
-import no.fint.provider.events.testMode.EnabledIfTestMode;
-import no.fint.provider.events.testMode.TestModeConstants;
+import no.fint.provider.events.testmode.EnabledIfTestMode;
+import no.fint.provider.events.testmode.TestModeConstants;
 import no.fint.sse.AbstractEventListener;
 import no.fint.sse.FintSse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,13 +29,20 @@ import java.time.Instant;
 @Slf4j
 @Component
 public class TestModeAdapter extends AbstractEventListener {
+    @Value("${server.context-path:/}")
+    private String contextPath;
+
+    @Value("${server.port:8080}")
+    private int port;
+
     private FintSse fintSse;
     private RestTemplate restTemplate = new RestTemplate();
 
     @PostConstruct
     public void init() {
         log.info("Test-mode enabled, starting sse adapter");
-        fintSse = new FintSse("http://localhost:8080/provider/sse/%s");
+        String sseUrl = "http://localhost:" + port + "/" + contextPath + "/sse/%s";
+        fintSse = new FintSse(sseUrl);
         fintSse.connect(this, ImmutableMap.of(
                 HeaderConstants.ORG_ID, TestModeConstants.ORGID,
                 HeaderConstants.CLIENT, TestModeConstants.CLIENT

@@ -1,4 +1,4 @@
-package no.fint.provider.events.testMode;
+package no.fint.provider.events.testmode;
 
 public enum TestModeConstants {
     ;

@@ -1,4 +1,4 @@
-package no.fint.provider.events.testMode;
+package no.fint.provider.events.testmode;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
