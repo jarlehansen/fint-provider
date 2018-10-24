@@ -7,6 +7,7 @@ import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.test.context.ActiveProfiles
+import spock.lang.Requires
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
@@ -24,6 +25,7 @@ class TestModeSpec extends Specification {
     @Autowired
     private TestRestTemplate restTemplate
 
+    @Requires({ env.INTEGRATION })
     def 'Loopback events'() {
         when:
         TimeUnit.SECONDS.sleep(10)

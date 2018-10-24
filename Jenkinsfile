@@ -49,9 +49,10 @@ pipeline {
             }
             environment {
                 COVERALLS_REPO_TOKEN = "9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z"
+                INTEGRATION = true
             }
             steps {
-                sh 'gradle --no-daemon build jacocoTestReport coveralls'
+                sh 'gradle --no-daemon test jacocoTestReport coveralls'
             }
         }
     }
