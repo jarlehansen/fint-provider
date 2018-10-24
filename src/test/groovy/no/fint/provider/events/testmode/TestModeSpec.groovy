@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = Application)
 @ActiveProfiles('local')
+@Requires({ env.INTEGRATION })
 class TestModeSpec extends Specification {
 
     @LocalServerPort
@@ -25,7 +26,6 @@ class TestModeSpec extends Specification {
     @Autowired
     private TestRestTemplate restTemplate
 
-    @Requires({ env.INTEGRATION })
     def 'Loopback events'() {
         when:
         TimeUnit.SECONDS.sleep(10)
