@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = Application)
 @ActiveProfiles('local')
-@Requires({ env.INTEGRATION })
+@Requires({ Boolean.valueOf(sys['integration-test']) })
 class TestModeSpec extends Specification {
 
     @LocalServerPort

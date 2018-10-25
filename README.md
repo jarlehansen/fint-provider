@@ -22,3 +22,10 @@ To log the event payload add the configuration to `application.properties` or as
 logging.level.no.fint.provider.events.status.StatusController: DEBUG
 logging.level.no.fint.provider.events.response.ResponseController: DEBUG
 ```
+
+## Integration test
+
+To enable integration test set the following system property:
+```
+integration-test=true
+```
