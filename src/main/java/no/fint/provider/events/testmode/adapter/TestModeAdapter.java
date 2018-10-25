@@ -84,14 +84,16 @@ public class TestModeAdapter extends AbstractEventListener {
     private void postStatus(Event event) {
         HttpHeaders headers = new HttpHeaders();
         headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
-        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/status", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:{port}/{context}/status",
+                HttpMethod.POST, new HttpEntity<>(event, headers), Void.class, port, contextPath);
         log.info("Provider POST response: {}", response.getStatusCode());
     }
 
     private void postResponse(Event event) {
         HttpHeaders headers = new HttpHeaders();
         headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
-        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/response", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:{port}/{context}/response",
+                HttpMethod.POST, new HttpEntity<>(event, headers), Void.class, port, contextPath);
         log.info("Provider POST response: {}", response.getStatusCode());
     }
 }

@@ -32,7 +32,7 @@ public class TestModeController implements FintEventListener {
     public void init() {
         log.info("Test mode enabled, starting consumer");
         fintEvents.registerUpstreamListener(TestModeConstants.ORGID, this);
-        fintEvents.registerUpstreamSystemListener(this);
+        fintEvents.registerUpstreamSystemListener((event -> log.info("Received system event: {}", event)));
     }
 
     @PostMapping

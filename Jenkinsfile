@@ -40,5 +40,20 @@ pipeline {
                 }
             }
         }
+        stage('Coverage') {
+            agent {
+                docker {
+                    label 'docker'
+                    image 'gradle:4.9.0-jdk8-alpine'
+                }
+            }
+            environment {
+                COVERALLS_REPO_TOKEN = "9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z"
+                INTEGRATION = true
+            }
+            steps {
+                sh 'gradle --no-daemon test jacocoTestReport coveralls'
+            }
+        }
     }
 }
