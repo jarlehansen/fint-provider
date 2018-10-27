@@ -12,7 +12,7 @@ import spock.lang.Specification
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = Application)
-@Requires({ Boolean.valueOf(sys['fint.provider.test-mode']) })
+@Requires({ TestModeConditional.integrationTest() })
 class TestModeSpec extends Specification {
 
     @LocalServerPort
