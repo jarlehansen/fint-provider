@@ -6,15 +6,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.test.context.ActiveProfiles
 import spock.lang.Requires
 import spock.lang.Specification
 
 import java.util.concurrent.TimeUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = Application)
-@ActiveProfiles('local')
-@Requires({ Boolean.valueOf(sys['integration-test']) })
+@Requires({ Boolean.valueOf(sys['fint.provider.test-mode']) })
 class TestModeSpec extends Specification {
 
     @LocalServerPort
