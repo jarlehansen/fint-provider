@@ -48,8 +48,8 @@ pipeline {
                 }
             }
             environment {
-                COVERALLS_REPO_TOKEN = "9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z"
-                SPRING_PROFILES_ACTIVE = "integration"
+                COVERALLS_REPO_TOKEN = '9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z'
+                SPRING_PROFILES_ACTIVE = 'integration'
             }
             steps {
                 sh 'gradle --no-daemon test jacocoTestReport coveralls'
