@@ -53,7 +53,7 @@ pipeline {
                 SPRING_PROFILES_ACTIVE = 'integration'
             }
             steps {
-                sh 'gradle --no-daemon test jacocoTestReport coveralls'
+                sh 'gradle --no-daemon check jacocoTestReport coveralls'
             }
         }
     }
