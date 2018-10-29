@@ -25,7 +25,4 @@ logging.level.no.fint.provider.events.response.ResponseController: DEBUG
 
 ## Integration test
 
-To enable integration test set the following system property:
-```
-integration-test=true
-```
+To enable integration test enable the `integration` spring profile.
