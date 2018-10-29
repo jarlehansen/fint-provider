@@ -1,20 +1,18 @@
-package no.fint.adapter;
+package no.fint.provider.events.testmode.adapter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import no.fint.Actions;
-import no.fint.Constants;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;
 import no.fint.event.model.Status;
 import no.fint.event.model.health.Health;
 import no.fint.event.model.health.HealthStatus;
-import no.fint.model.relation.FintResource;
+import no.fint.provider.events.testmode.EnabledIfTestMode;
+import no.fint.provider.events.testmode.TestModeConstants;
 import no.fint.sse.AbstractEventListener;
 import no.fint.sse.FintSse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,24 +23,30 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.time.Instant;
 
+@EnabledIfTestMode
 @Slf4j
-@ConditionalOnProperty(name = "adapter-enabled", havingValue = "true", matchIfMissing = true)
 @Component
-public class Adapter extends AbstractEventListener {
+public class TestModeAdapter extends AbstractEventListener {
+    @Value("${server.context-path:/}")
+    private String contextPath;
+
+    @Value("${server.port:8080}")
+    private int port;
+
     private FintSse fintSse;
-
-    @Autowired
-    private Resources resources;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate();
 
     @PostConstruct
     public void init() {
-        log.info("Starting adapter");
-        fintSse = new FintSse("http://localhost:8080/provider/sse/%s");
-        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, Constants.ORGID));
+        log.info("Test-mode enabled, starting sse adapter");
+        String sseUrl = "http://localhost:" + port + "/" + contextPath + "/sse/%s";
+        fintSse = new FintSse(sseUrl);
+        fintSse.connect(this, ImmutableMap.of(
+                HeaderConstants.ORG_ID, TestModeConstants.ORGID,
+                HeaderConstants.CLIENT, TestModeConstants.CLIENT
+        ));
     }
 
     @Scheduled(fixedRate = 5000L)
@@ -67,20 +71,12 @@ public class Adapter extends AbstractEventListener {
             healthCheckEvent.setStatus(Status.TEMP_UPSTREAM_QUEUE);
             healthCheckEvent.addData(new Health("test-adapter", HealthStatus.APPLICATION_HEALTHY));
             postResponse(healthCheckEvent);
-        } else {
-            Event<FintResource> responseEvent = new Event<>(event);
+        } else if (TestModeConstants.ACTION.equals(event.getAction())) {
+            Event<String> responseEvent = new Event<>(event);
             responseEvent.setStatus(Status.ADAPTER_ACCEPTED);
             postStatus(responseEvent);
 
-            if (event.getAction().equals(Actions.GET_ALL_PERSONS)) {
-                responseEvent.setData(resources.createPersonList());
-            } else if (event.getAction().equals(Actions.GET_ALL_ADDRESSES)) {
-                responseEvent.setData(resources.createAddressList());
-            } else if (event.getAction().equals(Actions.GET_ADDRESS)) {
-                responseEvent.setData(resources.createAddress(event.getQuery()));
-            } else if (event.getAction().equals(Actions.GET_PERSON)) {
-                responseEvent.setData(resources.createPerson(event.getQuery()));
-            }
+            responseEvent.addData(String.format("Message from test-adapter: %s", Instant.now().toString()));
             postResponse(responseEvent);
         }
     }
@@ -88,18 +84,16 @@ public class Adapter extends AbstractEventListener {
     private void postStatus(Event event) {
         HttpHeaders headers = new HttpHeaders();
         headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
-        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/status", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:{port}/{context}/status",
+                HttpMethod.POST, new HttpEntity<>(event, headers), Void.class, port, contextPath);
         log.info("Provider POST response: {}", response.getStatusCode());
     }
 
     private void postResponse(Event event) {
         HttpHeaders headers = new HttpHeaders();
         headers.put(HeaderConstants.ORG_ID, Lists.newArrayList(event.getOrgId()));
-        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:8080/provider/response", HttpMethod.POST, new HttpEntity<>(event, headers), Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange("http://localhost:{port}/{context}/response",
+                HttpMethod.POST, new HttpEntity<>(event, headers), Void.class, port, contextPath);
         log.info("Provider POST response: {}", response.getStatusCode());
-    }
-
-    public void registerOrgId(String orgId) {
-        fintSse.connect(this, ImmutableMap.of(HeaderConstants.ORG_ID, orgId));
     }
 }

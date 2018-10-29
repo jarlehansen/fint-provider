@@ -10,13 +10,9 @@ fint:
     sse:
       maxPoolSize: 10
       queueCapacity: 0
+    assets:
+      endpoint: http://localhost:8080/endpoints
   audit:
     test-mode: true
-  events:
-    test-mode: true
-    queue-endpoint-enabled: true
   springfox:
     swagger-https: false
-
-server:
-  port: 8081

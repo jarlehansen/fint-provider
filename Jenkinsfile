@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                sh 'git clean -fdx'
                 sh "docker build -t ${GIT_COMMIT} ."
             }
         }
@@ -48,10 +49,11 @@ pipeline {
                 }
             }
             environment {
-                COVERALLS_REPO_TOKEN = "9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z"
+                COVERALLS_REPO_TOKEN = '9AOqHwDAKkTQGoKNX1e1dj88fxJXgZe2z'
+                SPRING_PROFILES_ACTIVE = 'integration'
             }
             steps {
-                sh 'gradle --no-daemon build jacocoTestReport coveralls'
+                sh 'gradle --no-daemon check jacocoTestReport coveralls'
             }
         }
     }

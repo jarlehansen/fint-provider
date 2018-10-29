@@ -1,13 +1,13 @@
 package no.fint.provider.events.eventstate;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import no.fint.event.model.Event;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-@Data
+@Getter
 @EqualsAndHashCode(of = "corrId")
 public class EventState implements Serializable {
     private final String corrId;
