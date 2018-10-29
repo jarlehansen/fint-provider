@@ -2,7 +2,6 @@ package no.fint.provider.events.sse;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
