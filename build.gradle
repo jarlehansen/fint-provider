@@ -61,6 +61,7 @@ dependencies {
     compile('com.jayway.jsonpath:json-path:2.4.0')
     compile('org.reflections:reflections:0.9.11')
     compile('org.apache.commons:commons-lang3:3.8')
+    compile('org.jooq:jool-java-8:0.9.14')
 
     compile('org.springframework.boot:spring-boot-starter-web')
     runtime('org.springframework.boot:spring-boot-devtools')

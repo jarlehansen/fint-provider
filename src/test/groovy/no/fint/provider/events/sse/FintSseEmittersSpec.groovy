@@ -3,20 +3,19 @@ package no.fint.provider.events.sse
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
 
-import java.util.function.Function
+import java.util.function.Consumer
 
 class FintSseEmittersSpec extends Specification {
     private static final int MAX_SIZE = 2
     private FintSseEmitters sseEmitters
-    private Function<SseEmitter, Void> removeCallback
+    private Consumer<SseEmitter> removeCallback
     private boolean callback = false
 
     void setup() {
-        removeCallback = new Function<FintSseEmitter, Void>() {
+        removeCallback = new Consumer<FintSseEmitter>() {
             @Override
-            Void apply(FintSseEmitter emitter) {
+            void accept(FintSseEmitter emitter) {
                 callback = true
-                return null
             }
         }
         sseEmitters = new FintSseEmitters(MAX_SIZE, removeCallback)

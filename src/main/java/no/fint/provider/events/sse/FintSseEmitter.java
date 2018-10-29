@@ -1,7 +1,7 @@
 package no.fint.provider.events.sse;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
 public class FintSseEmitter extends SseEmitter {
     private String id;

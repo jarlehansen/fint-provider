@@ -1,9 +1,9 @@
 package no.fint.provider.events.sse;
 
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
+import org.jooq.lambda.function.Consumer2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -27,42 +27,25 @@ public class SseService {
         clients.values().forEach(emitters -> emitters.forEach(FintSseEmitter::complete));
     }
 
-    @Synchronized
-    public SseEmitter subscribe(String id, String orgId, String client) {
-        FintSseEmitters fintSseEmitters = clients.get(orgId);
-        if (fintSseEmitters == null) {
-            fintSseEmitters = FintSseEmitters.with(providerProps.getMaxNumberOfEmitters(), this::closeEmitter);
-        }
+    public synchronized SseEmitter subscribe(String id, String orgId, String client) {
+        final FintSseEmitters fintSseEmitters = Optional
+                .ofNullable(clients.get(orgId))
+                .orElseGet(() -> FintSseEmitters.with(providerProps.getMaxNumberOfEmitters(), SseEmitter::complete));
 
-        Optional<FintSseEmitter> registeredEmitter = fintSseEmitters.get(id);
-        if (registeredEmitter.isPresent()) {
-            return registeredEmitter.get();
-        } else {
+        return fintSseEmitters.get(id).orElseGet(() -> {
             log.info("{}: {} connected", orgId, id);
             FintSseEmitter emitter = new FintSseEmitter(id, client,
                     TimeUnit.MINUTES.toMillis(
                             ThreadLocalRandom.current().nextInt(2000) +
                                     providerProps.getSseTimeoutMinutes()));
-            emitter.onCompletion(() -> {
-                log.info("onCompletion called for {}, id: {}", orgId, emitter.getId());
-                removeEmitter(orgId, emitter);
-            });
-            emitter.onTimeout(() -> {
-                log.info("onTimeout called for {}, id: {}", orgId, emitter.getId());
-                removeEmitter(orgId, emitter);
-            });
+
+            emitter.onCompletion(Consumer2.from(this::removeEmitter).acceptPartially(orgId,emitter));
+            emitter.onTimeout(Consumer2.from(this::removeEmitter).acceptPartially(orgId,emitter));
 
             fintSseEmitters.add(emitter);
             clients.put(orgId, fintSseEmitters);
             return emitter;
-        }
-    }
-
-    private Void closeEmitter(SseEmitter emitter) {
-        if (emitter != null) {
-            emitter.complete();
-        }
-        return null;
+        });
     }
 
     private void removeEmitter(String orgId, FintSseEmitter emitter) {
@@ -93,9 +76,7 @@ public class SseService {
                 }
             });
 
-            for (FintSseEmitter emitter : toBeRemoved) {
-                removeEmitter(event.getOrgId(), emitter);
-            }
+            toBeRemoved.forEach(Consumer2.from(this::removeEmitter).acceptPartially(event.getOrgId()));
         }
     }
 

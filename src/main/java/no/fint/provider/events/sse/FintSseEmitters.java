@@ -4,14 +4,14 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class FintSseEmitters implements Iterable<FintSseEmitter> {
     private final int maxSize;
     private final ConcurrentLinkedDeque<FintSseEmitter> emitters;
-    private Function<FintSseEmitter, Void> removeCallback;
+    private Consumer<FintSseEmitter> removeCallback;
 
-    public FintSseEmitters(int maxSize, Function<FintSseEmitter, Void> removeCallback) {
+    public FintSseEmitters(int maxSize, Consumer<FintSseEmitter> removeCallback) {
         this.maxSize = maxSize;
         this.emitters = new ConcurrentLinkedDeque<>();
         this.removeCallback = removeCallback;
@@ -20,7 +20,7 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
     public void add(FintSseEmitter emitter) {
         if (emitters.size() >= maxSize) {
             if (removeCallback != null) {
-                removeCallback.apply(emitter);
+                removeCallback.accept(emitter);
             }
             emitters.removeLast();
         }
@@ -49,7 +49,7 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
         return new FintSseEmitters(maxSize, null);
     }
 
-    public static FintSseEmitters with(int maxSize, Function<FintSseEmitter, Void> removeCallback) {
+    public static FintSseEmitters with(int maxSize, Consumer<FintSseEmitter> removeCallback) {
         return new FintSseEmitters(maxSize, removeCallback);
     }
 }

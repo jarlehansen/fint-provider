@@ -38,7 +38,7 @@ public class AdminService {
     @Getter
     private Map<String, Long> orgIds = new ConcurrentHashMap<>();
 
-    @Scheduled(initialDelay = 1, fixedRateString = ProviderProps.PROVIDER_ASSETS_RATE)
+    @Scheduled(initialDelay = 100, fixedRateString = ProviderProps.PROVIDER_ASSETS_RATE)
     public void refreshAssets() {
         if (StringUtils.isNotEmpty(props.getAssetsEndpoint())) {
             String[] assets = restTemplate.getForObject(props.getAssetsEndpoint(), String[].class);

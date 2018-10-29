@@ -11,7 +11,7 @@ fint:
       maxPoolSize: 10
       queueCapacity: 0
     assets:
-      endpoint: http://localhost:8080/provider/endpoints
+      endpoint: http://localhost:8080/endpoints
   audit:
     test-mode: true
   springfox:
