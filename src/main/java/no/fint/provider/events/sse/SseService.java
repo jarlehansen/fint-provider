@@ -42,8 +42,8 @@ public class SseService {
                             ThreadLocalRandom.current().nextInt(2000) +
                                     providerProps.getSseTimeoutMinutes()));
 
-            emitter.onCompletion(Consumer2.from(this::removeEmitter).acceptPartially(orgId,emitter));
-            emitter.onTimeout(Consumer2.from(this::removeEmitter).acceptPartially(orgId,emitter));
+            emitter.onCompletion(Consumer2.from(this::removeEmitter).acceptPartially(orgId, emitter));
+            emitter.onTimeout(Consumer2.from(this::removeEmitter).acceptPartially(orgId, emitter));
 
             fintSseEmitters.add(emitter);
             clients.put(orgId, fintSseEmitters);
