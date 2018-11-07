@@ -44,7 +44,7 @@ repositories {
 
 
 dependencies {
-    compile('no.fint:fint-sse:1.1.4-rc-2') {
+    compile('no.fint:fint-sse:1.2.0') {
         exclude group: 'org.springframework.security.oauth', module: 'spring-security-oauth2'
     }
     compile('org.glassfish.jersey.core:jersey-client:2.26')
@@ -54,6 +54,7 @@ dependencies {
     compile('no.fint:fint-events:2.2.0-rc-1')
     compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-springfox-extension:0.0.1')
+    compile('no.fint:fint-spring-secrets:0.1.0')
 
     compile('org.projectlombok:lombok:1.18.2')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
