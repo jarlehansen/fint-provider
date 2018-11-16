@@ -16,6 +16,10 @@ pipeline {
                 withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
                     sh 'docker push dtr.fintlabs.no/beta/provider:latest'
                 }
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/provider:latest"
+                    sh "docker push 'fintlabs.azurecr.io/provider:latest'"
+                }
             }
         }
         stage('Publish Version') {
