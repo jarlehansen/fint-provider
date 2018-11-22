@@ -1,5 +1,5 @@
 server:
- context-path: '/provider'
+  context-path: '/provider'
 
 fint:
- version: '@version@'
+  version: '@version@'
