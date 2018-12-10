@@ -65,7 +65,6 @@ dependencies {
     compile('org.jooq:jool-java-8:0.9.14')
 
     compile('org.springframework.boot:spring-boot-starter-web')
-    runtime('org.springframework.boot:spring-boot-devtools')
     runtime('org.springframework.boot:spring-boot-starter-actuator')
     runtime('com.microsoft.azure:applicationinsights-spring-boot-starter:1.1.0-BETA')
     runtime('com.microsoft.azure:applicationinsights-logging-logback:2.2.0')
