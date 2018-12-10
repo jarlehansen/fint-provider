@@ -43,6 +43,10 @@ pipeline {
                 withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
                     sh "docker push dtr.fintlabs.no/beta/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
                 }
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker push fintlabs.azurecr.io/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
+                }
             }
         }
     }
