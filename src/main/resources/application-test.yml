@@ -6,7 +6,7 @@ fint:
   hazelcast:
     members: localhost
   provider:
-    test-mode: true
+    test-mode: false
     sse:
       maxPoolSize: 10
       queueCapacity: 0
