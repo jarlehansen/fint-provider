@@ -1,17 +1,17 @@
 springfox:
- title: 'test'
- version: '1.0.0'
+  title: 'test'
+  version: '1.0.0'
 
 fint:
- version: '${springfox.version}'
- audit:
-  test-mode: true
- events:
-  test-mode: true
+  version: '${springfox.version}'
+  audit:
+    test-mode: true
+  events:
+    test-mode: true
 
 spring:
- redis:
-  port: 16379
+  redis:
+    port: 16379
 
 logging.level.no.fint.provider.events.status.StatusController: DEBUG
 logging.level.no.fint.provider.events.response.ResponseController: DEBUG

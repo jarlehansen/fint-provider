@@ -4,6 +4,7 @@ import no.fint.provider.events.testmode.adapter.TestModeAdapter
 import no.fint.provider.events.testmode.consumer.TestModeController
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import spock.lang.Ignore
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -17,6 +18,7 @@ class TestModeDisabledSpec extends Specification {
     @Autowired(required = false)
     private TestModeAdapter adapter
 
+    @Ignore
     def "Test mode components are disabled by default"() {
         expect:
         !controller
