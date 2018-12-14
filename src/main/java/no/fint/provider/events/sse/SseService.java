@@ -86,18 +86,16 @@ public class SseService {
     public void sendHeartbeat() {
         log.debug("Heartbeat");
         Multimap<String, FintSseEmitter> toBeRemoved = MultimapBuilder.hashKeys().linkedListValues().build();
-        clients.forEach((orgId, emitters) -> {
-            emitters.forEach(emitter -> {
-                try {
-                    SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
-                    emitter.send(builder);
-                } catch (Exception e) {
-                    log.warn("Exception when trying to send message to SseEmitter: {}", e.getMessage());
-                    log.warn("Removing emitter {} for {}", emitter.getId(), orgId);
-                    toBeRemoved.put(orgId, emitter);
-                }
-            });
-        });
+        clients.forEach((orgId, emitters) -> emitters.forEach(emitter -> {
+            try {
+                SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
+                emitter.send(builder);
+            } catch (Exception e) {
+                log.warn("Exception when trying to send message to SseEmitter: {}", e.getMessage());
+                log.warn("Removing emitter {} for {}", emitter.getId(), orgId);
+                toBeRemoved.put(orgId, emitter);
+            }
+        }));
 
         toBeRemoved.forEach(this::removeEmitter);
     }
