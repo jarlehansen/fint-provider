@@ -4,22 +4,16 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
 
 import java.util.concurrent.atomic.AtomicReference
-import java.util.function.Consumer
 
 class FintSseEmittersSpec extends Specification {
     private static final int MAX_SIZE = 2
     private FintSseEmitters sseEmitters
-    private Consumer<SseEmitter> removeCallback
     private AtomicReference<SseEmitter> victim = new AtomicReference<>()
 
     void setup() {
-        removeCallback = new Consumer<FintSseEmitter>() {
-            @Override
-            void accept(FintSseEmitter emitter) {
-                victim.set(emitter)
-            }
-        }
-        sseEmitters = new FintSseEmitters(MAX_SIZE, removeCallback)
+        sseEmitters = new FintSseEmitters(MAX_SIZE, {
+            victim.set(it)
+        })
     }
 
     def "Add emitter and size is 1"() {
