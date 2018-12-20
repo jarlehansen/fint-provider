@@ -1,6 +1,0 @@
-fint-event-state-redis:
- image: "redis"
- hostname: "redis-event-state"
- restart: unless-stopped
- ports:
-  - "6379:6379"

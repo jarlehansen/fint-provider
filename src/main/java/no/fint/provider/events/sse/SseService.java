@@ -68,6 +68,18 @@ public class SseService {
         }
     }
 
+    public void sendHeartbeat() {
+        clients.forEach((orgId, emitters) -> emitters.forEach(emitter -> {
+            try {
+                SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
+                emitter.send(builder);
+            } catch (IOException e) {
+                log.info("Error sending heartbeat to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
+                log.debug("Details:", e);
+            }
+        }));
+    }
+
     public Map<String, FintSseEmitters> getSseClients() {
         return new HashMap<>(clients);
     }
