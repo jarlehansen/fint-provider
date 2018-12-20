@@ -1,5 +1,5 @@
 buildscript {
-    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.4.0/dependencies.gradle'
+    apply from: 'https://raw.githubusercontent.com/FINTprosjektet/fint-buildscripts/v1.5.0/dependencies.gradle'
     ext {
         springBootVersion = springBootVersion
     }
@@ -55,7 +55,6 @@ dependencies {
     compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-springfox-extension:0.0.1')
     compile('no.fint:fint-spring-secrets:0.1.0')
-    compile('no.fint:fint-hazelcast:1.2.0-alpha-1')
 
     compile('org.projectlombok:lombok:1.18.2')
     compile("com.github.springfox.loader:springfox-loader:${springfoxLoaderVersion}")
@@ -120,4 +119,4 @@ jacocoTestReport {
     }
 }
 
-apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.4.0/dependencyReport.gradle'
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.5.0/dependencyReport.gradle'

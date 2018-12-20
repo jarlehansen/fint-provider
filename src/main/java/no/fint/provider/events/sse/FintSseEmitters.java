@@ -9,20 +9,22 @@ import java.util.function.Consumer;
 public class FintSseEmitters implements Iterable<FintSseEmitter> {
     private final int maxSize;
     private final ConcurrentLinkedDeque<FintSseEmitter> emitters;
-    private Consumer<FintSseEmitter> removeCallback;
+    private final Consumer<FintSseEmitter> removeCallback;
 
     public FintSseEmitters(int maxSize, Consumer<FintSseEmitter> removeCallback) {
         this.maxSize = maxSize;
         this.emitters = new ConcurrentLinkedDeque<>();
-        this.removeCallback = removeCallback;
+        if (removeCallback == null) {
+            this.removeCallback = (o) -> {};
+        } else {
+            this.removeCallback = removeCallback;
+        }
     }
 
     public void add(FintSseEmitter emitter) {
-        if (emitters.size() >= maxSize) {
-            if (removeCallback != null) {
-                removeCallback.accept(emitter);
-            }
-            emitters.removeLast();
+        while (emitters.size() >= maxSize) {
+            FintSseEmitter victim = emitters.removeLast();
+            removeCallback.accept(victim);
         }
 
         emitters.addFirst(emitter);

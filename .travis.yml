@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 env:
-  - SPRING_PROFILES_ACTIVE=integration  
+  - SPRING_PROFILES_ACTIVE=integration
 install: true
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
