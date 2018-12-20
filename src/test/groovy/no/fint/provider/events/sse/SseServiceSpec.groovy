@@ -3,7 +3,6 @@ package no.fint.provider.events.sse
 import no.fint.event.model.Event
 import no.fint.provider.events.ProviderProps
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.util.concurrent.ConcurrentHashMap
@@ -61,8 +60,7 @@ class SseServiceSpec extends Specification {
         noExceptionThrown()
     }
 
-    @Ignore('No longer valid')
-    def "Remove registered emitter on exception when trying to send message"() {
+    def "Handle exception when trying to send message"() {
         given:
         def emitter = Mock(FintSseEmitter)
         def emitters = FintSseEmitters.with(5)
@@ -74,8 +72,7 @@ class SseServiceSpec extends Specification {
         sseService.send(new Event(orgId: 'hfk.no'))
 
         then:
-        1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IllegalStateException('Test exception') }
-        1 * emitter.complete()
+        1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IOException('Test exception') }
     }
 
     def "Remove all registered SSE clients"() {
@@ -106,8 +103,7 @@ class SseServiceSpec extends Specification {
         1 * emitter.complete()
     }
 
-    @Ignore('No longer valid')
-    def "Run heartbeat and remove failing emitter"() {
+    def "Run heartbeat"() {
         given:
         def emitter = Mock(FintSseEmitter) {
             getId() >> 'fake'
@@ -116,13 +112,12 @@ class SseServiceSpec extends Specification {
         emitters.add(emitter)
         def clients = ['hfk.no': emitters] as ConcurrentHashMap
         sseService = new SseService(providerProps: props, clients: clients)
+        def heartbeat = new Heartbeat(sseService: sseService)
 
         when:
-        sseService.sendHeartbeat()
+        heartbeat.sendHeartbeat()
 
         then:
-        1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IllegalStateException('Test exception') }
-        1 * emitter.complete()
-
+        1 * emitter.send(_ as SseEmitter.SseEventBuilder) >> { throw new IOException('Test exception') }
     }
 }
