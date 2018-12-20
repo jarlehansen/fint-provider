@@ -3,22 +3,17 @@ package no.fint.provider.events.sse
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import spock.lang.Specification
 
-import java.util.function.Consumer
+import java.util.concurrent.atomic.AtomicReference
 
 class FintSseEmittersSpec extends Specification {
     private static final int MAX_SIZE = 2
     private FintSseEmitters sseEmitters
-    private Consumer<SseEmitter> removeCallback
-    private boolean callback = false
+    private AtomicReference<SseEmitter> victim = new AtomicReference<>()
 
     void setup() {
-        removeCallback = new Consumer<FintSseEmitter>() {
-            @Override
-            void accept(FintSseEmitter emitter) {
-                callback = true
-            }
-        }
-        sseEmitters = new FintSseEmitters(MAX_SIZE, removeCallback)
+        sseEmitters = new FintSseEmitters(MAX_SIZE, {
+            victim.set(it)
+        })
     }
 
     def "Add emitter and size is 1"() {
@@ -34,11 +29,10 @@ class FintSseEmittersSpec extends Specification {
         given:
         def first = new FintSseEmitter()
         def last = new FintSseEmitter()
+        victim.set(null)
 
         when:
         sseEmitters.add(first)
-        sseEmitters.add(new FintSseEmitter())
-        sseEmitters.add(new FintSseEmitter())
         sseEmitters.add(new FintSseEmitter())
         sseEmitters.add(last)
         def size = sseEmitters.size()
@@ -47,7 +41,7 @@ class FintSseEmittersSpec extends Specification {
         size == MAX_SIZE
         !sseEmitters.contains(first)
         sseEmitters.contains(last)
-        callback
+        victim.get() == first
     }
 
     def "Remove emitter"() {

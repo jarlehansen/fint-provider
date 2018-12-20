@@ -3,13 +3,14 @@ package no.fint.provider.events.sse;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
-import org.jooq.lambda.function.Consumer2;
+import org.jooq.lambda.function.Consumer1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -42,22 +43,12 @@ public class SseService {
                             ThreadLocalRandom.current().nextInt(2000) +
                                     providerProps.getSseTimeoutMinutes()));
 
-            emitter.onCompletion(Consumer2.from(this::removeEmitter).acceptPartially(orgId, emitter));
+            emitter.onCompletion(Consumer1.from(fintSseEmitters::remove).acceptPartially(emitter));
 
             fintSseEmitters.add(emitter);
             clients.put(orgId, fintSseEmitters);
             return emitter;
         });
-    }
-
-    private void removeEmitter(String orgId, FintSseEmitter emitter) {
-        if (orgId != null && emitter != null) {
-            FintSseEmitters fintSseEmitters = clients.get(orgId);
-            if (fintSseEmitters != null) {
-                log.info("Removing emitter {} for {}", emitter.getId(), orgId);
-                fintSseEmitters.remove(emitter);
-            }
-        }
     }
 
     public void send(Event event) {
@@ -69,7 +60,7 @@ public class SseService {
                 try {
                     SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
                     emitter.send(builder);
-                } catch (Exception e) {
+                } catch (IOException e) {
                     log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                     log.debug("Details: {}", event, e);
                 }
@@ -85,7 +76,7 @@ public class SseService {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
                 emitter.send(builder);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                 log.debug("Details:", e);
             }
