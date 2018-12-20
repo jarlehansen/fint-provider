@@ -8,6 +8,8 @@ fint:
   provider:
     test-mode: false
     sse:
+      heartbeat:
+        enabled: true
       maxPoolSize: 10
       queueCapacity: 0
   audit:
@@ -20,3 +22,7 @@ fint:
 
 server:
   port: 8081
+
+logging:
+  level:
+    no.fint.provider.events.sse: DEBUG

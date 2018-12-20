@@ -5,7 +5,6 @@ import no.fint.event.model.Event;
 import no.fint.provider.events.ProviderProps;
 import org.jooq.lambda.function.Consumer1;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -69,19 +68,16 @@ public class SseService {
         }
     }
 
-    @Scheduled(initialDelay = 15000, fixedRateString = "${fint.provider.sse.heartbeat:15000}")
     public void sendHeartbeat() {
-        log.debug("Heartbeat");
         clients.forEach((orgId, emitters) -> emitters.forEach(emitter -> {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
                 emitter.send(builder);
             } catch (IOException e) {
-                log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
+                log.info("Error sending heartbeat to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                 log.debug("Details:", e);
             }
         }));
-
     }
 
     public Map<String, FintSseEmitters> getSseClients() {
