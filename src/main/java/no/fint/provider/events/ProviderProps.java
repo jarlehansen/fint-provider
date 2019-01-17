@@ -23,6 +23,9 @@ public class ProviderProps {
     @Value("${fint.provider.event-state.list-name:current-corrids}")
     private String key;
 
+    @Value("${fint.provider.event-state.hazelcast:true}")
+    private boolean useHazelcastForEventState;
+
     @Value("${fint.provider.sse-timeout-minutes:17}")
     private int sseTimeoutMinutes;
 

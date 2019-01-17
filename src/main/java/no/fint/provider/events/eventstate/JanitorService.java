@@ -26,7 +26,7 @@ public class JanitorService {
     public void cleanUpEventStates() {
         log.debug("Running janitor service");
         eventStateService.getExpiredEvents().forEach(event -> {
-            log.info("Event expired: {}", event);
+            log.debug("Event expired: {}", event);
             event.setResponseStatus(ResponseStatus.ERROR);
             event.setStatus(Status.ADAPTER_NOT_CONFIRMED);
             event.setMessage("Event expired");
