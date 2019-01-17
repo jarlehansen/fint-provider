@@ -25,7 +25,7 @@ public class EventStateService {
     @Autowired
     private ProviderProps providerProps;
 
-    private Map<String,EventState> eventStates;
+    private Map<String, EventState> eventStates;
 
     @PostConstruct
     public void init() {
@@ -48,7 +48,9 @@ public class EventStateService {
     public List<Event> getExpiredEvents() {
         List<EventState> expired = eventStates.values().stream().filter(EventState::expired).collect(Collectors.toList());
         long count = expired.stream().map(EventState::getCorrId).peek(eventStates::remove).count();
-        log.info("Removed {} expired events", count);
+        if (count > 0) {
+            log.info("Removed {} expired events", count);
+        }
         return expired.stream().map(EventState::getEvent).collect(Collectors.toList());
     }
 
