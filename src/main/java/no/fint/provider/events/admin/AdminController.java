@@ -22,6 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class AdminController {
     public List<Map> getOrganizations() {
         return adminService.getOrgIds().entrySet().stream().map(entry -> ImmutableMap.of(
                 "orgId", entry.getKey(),
-                "registered", entry.getValue()
+                "registered", new Date(entry.getValue())
         )).collect(Collectors.toList());
     }
 
@@ -70,7 +71,7 @@ public class AdminController {
         if (adminService.isRegistered(orgId)) {
             return ResponseEntity.ok(ImmutableMap.of(
                     "orgId", orgId,
-                    "registered", adminService.getTimestamp(orgId)
+                    "registered", new Date(adminService.getTimestamp(orgId))
             ));
         } else {
             return ResponseEntity.notFound().build();
