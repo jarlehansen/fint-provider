@@ -32,16 +32,12 @@ public class AdminDownstreamSubscriber implements FintEventListener {
         if (event.isRegisterOrgId()) {
             if (StringUtils.isEmpty(event.getOrgId())) {
                 log.info("Bootstrapping consumer with registered organizations: {}", adminService.getOrgIds().keySet());
-                Boolean result = adminService
+                adminService
                         .getOrgIds()
                         .keySet()
                         .stream()
                         .map(orgId -> new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID, Constants.COMPONENT))
-                        .map(fintEvents::sendUpstream)
-                        .reduce(Boolean.TRUE, Boolean::logicalAnd);
-                if (!result) {
-                    log.warn("Unable to send some of the events!");
-                }
+                        .forEach(fintEvents::sendUpstream);
             } else {
                 adminService.register(event.getOrgId(), event.getClient());
             }
