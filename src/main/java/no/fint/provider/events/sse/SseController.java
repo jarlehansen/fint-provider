@@ -11,6 +11,7 @@ import no.fint.provider.events.Constants;
 import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -39,22 +40,23 @@ public class SseController {
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @Synchronized
     @GetMapping("/{id}")
-    public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
-                                @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
-                                @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
+    public ResponseEntity<SseEmitter> subscribe(
+            @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
+            @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
+            @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
         try {
             log.info("{}: Client {}, ID {}", orgId, client, id);
             if (adminService.register(orgId, client)) {
                 SseEmitter emitter = sseService.subscribe(id, orgId, client);
                 fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
-                return emitter;
+                return ResponseEntity.ok(emitter);
             } else {
                 throw new IllegalArgumentException("Unknown orgId " + orgId);
             }
         } catch (Exception e) {
             SseEmitter emitter = new SseEmitter();
             emitter.completeWithError(e);
-            return emitter;
+            return ResponseEntity.badRequest().header("x-Error", e.getMessage()).body(emitter);
         }
     }
 
