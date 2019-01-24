@@ -11,12 +11,10 @@ import no.fint.provider.events.Constants;
 import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -44,13 +42,19 @@ public class SseController {
     public SseEmitter subscribe(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                                 @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
                                 @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
-        log.info("{}: Client {}, ID {}", orgId, client, id);
-        if (adminService.register(orgId, client)) {
-            SseEmitter emitter = sseService.subscribe(id, orgId, client);
-            fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
+        try {
+            log.info("{}: Client {}, ID {}", orgId, client, id);
+            if (adminService.register(orgId, client)) {
+                SseEmitter emitter = sseService.subscribe(id, orgId, client);
+                fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
+                return emitter;
+            } else {
+                throw new IllegalArgumentException("Unknown orgId " + orgId);
+            }
+        } catch (Exception e) {
+            SseEmitter emitter = new SseEmitter();
+            emitter.completeWithError(e);
             return emitter;
-        } else {
-            throw new IllegalArgumentException("Unknown orgId " + orgId);
         }
     }
 
@@ -79,8 +83,4 @@ public class SseController {
     public void authorize() {
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity handleIllegalArgumentException(Exception e) {
-        return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
-    }
 }
