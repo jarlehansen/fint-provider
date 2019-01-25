@@ -59,7 +59,7 @@ public class AdminService {
 
     public boolean register(String orgId, String client) {
         if (!isRegistered(orgId) && orgNotEnabled(orgId)) {
-            log.warn("OrgId {} is not enabled!", orgId);
+            log.warn("OrgId '{}' is not enabled!", orgId);
             return false;
         } else {
             Event e = new Event(orgId, Constants.COMPONENT, DefaultActions.REGISTER_ORG_ID, client);

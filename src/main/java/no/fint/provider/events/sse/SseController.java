@@ -3,7 +3,6 @@ package no.fint.provider.events.sse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
@@ -38,7 +37,6 @@ public class SseController {
     private DownstreamSubscriber downstreamSubscriber;
 
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
-    @Synchronized
     @GetMapping("/{id}")
     public ResponseEntity<SseEmitter> subscribe(
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
@@ -50,7 +48,6 @@ public class SseController {
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
             return ResponseEntity.ok(emitter);
         } else {
-            log.warn("Invalid orgID {}", orgId);
             return ResponseEntity.badRequest().header("x-Error", "Invalid orgID " + orgId).build();
         }
     }
