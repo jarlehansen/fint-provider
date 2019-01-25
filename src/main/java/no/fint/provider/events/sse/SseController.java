@@ -44,19 +44,14 @@ public class SseController {
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
             @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
-        try {
-            log.info("{}: Client {}, ID {}", orgId, client, id);
-            if (adminService.register(orgId, client)) {
-                SseEmitter emitter = sseService.subscribe(id, orgId, client);
-                fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
-                return ResponseEntity.ok(emitter);
-            } else {
-                throw new IllegalArgumentException("Unknown orgId " + orgId);
-            }
-        } catch (Exception e) {
-            SseEmitter emitter = new SseEmitter();
-            emitter.completeWithError(e);
-            return ResponseEntity.badRequest().header("x-Error", e.getMessage()).body(emitter);
+        log.info("{}: Client {}, ID {}", orgId, client, id);
+        if (adminService.register(orgId, client)) {
+            SseEmitter emitter = sseService.subscribe(id, orgId, client);
+            fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
+            return ResponseEntity.ok(emitter);
+        } else {
+            log.warn("Invalid orgID {}", orgId);
+            return ResponseEntity.badRequest().header("x-Error", "Invalid orgID " + orgId).build();
         }
     }
 
