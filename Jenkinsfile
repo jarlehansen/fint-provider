@@ -12,10 +12,6 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/provider:build.${BUILD_NUMBER}"
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push dtr.fintlabs.no/beta/provider:build.${BUILD_NUMBER}"
-                }
                 withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
                     sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/provider:build.${BUILD_NUMBER}"
                     sh "docker push fintlabs.azurecr.io/provider:build.${BUILD_NUMBER}"
@@ -30,19 +26,15 @@ pipeline {
                 script {
                     VERSION = TAG_NAME[1..-1]
                 }
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/provider:${VERSION}"
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push dtr.fintlabs.no/beta/provider:${VERSION}"
+                sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/provider:${VERSION}"
+                withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
+                    sh "docker push fintlabs.azurecr.io/provider:${VERSION}"
                 }
             }
         }
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push dtr.fintlabs.no/beta/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
-                }
                 sh "docker tag ${GIT_COMMIT} fintlabs.azurecr.io/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
                 withDockerRegistry([credentialsId: 'fintlabs.azurecr.io', url: 'https://fintlabs.azurecr.io']) {
                     sh "docker push fintlabs.azurecr.io/provider:${BRANCH_NAME}.${BUILD_NUMBER}"
