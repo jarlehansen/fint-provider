@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,15 +25,19 @@ public class EventStateService {
     @Autowired
     private ProviderProps providerProps;
 
-    private Map<String,EventState> eventStates;
+    private Map<String, EventState> eventStates;
 
     @PostConstruct
     public void init() {
-        eventStates = hazelcastInstance.getMap(providerProps.getKey());
+        if (providerProps.isUseHazelcastForEventState()) {
+            eventStates = hazelcastInstance.getMap(providerProps.getKey());
+        } else {
+            eventStates = new ConcurrentSkipListMap<>();
+        }
+        log.info("Event States: {}", eventStates.getClass());
     }
 
     public void add(Event event, int timeToLiveInMinutes) {
-        log.trace("Add {}, ttl={}", event, timeToLiveInMinutes);
         eventStates.put(event.getCorrId(), new EventState(event, timeToLiveInMinutes));
     }
 
@@ -42,7 +47,10 @@ public class EventStateService {
 
     public List<Event> getExpiredEvents() {
         List<EventState> expired = eventStates.values().stream().filter(EventState::expired).collect(Collectors.toList());
-        expired.stream().map(EventState::getCorrId).forEach(eventStates::remove);
+        long count = expired.stream().map(EventState::getCorrId).peek(eventStates::remove).count();
+        if (count > 0) {
+            log.info("Removed {} expired events", count);
+        }
         return expired.stream().map(EventState::getEvent).collect(Collectors.toList());
     }
 

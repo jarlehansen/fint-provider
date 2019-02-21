@@ -23,7 +23,7 @@ class EventStateServiceSpec extends Specification {
         eventStateService.init()
 
         then:
-        1 * hazelcastInstance.getMap('current-corrids') >> Mock(IMap)
+        eventStateService.eventStates != null
     }
 
     def "Add and get new EventState"() {
