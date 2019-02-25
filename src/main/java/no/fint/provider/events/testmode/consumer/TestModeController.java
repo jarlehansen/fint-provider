@@ -3,6 +3,7 @@ package no.fint.provider.events.testmode.consumer;
 
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
+import no.fint.event.model.DefaultActions;
 import no.fint.event.model.Event;
 import no.fint.events.FintEventListener;
 import no.fint.events.FintEvents;
@@ -40,6 +41,7 @@ public class TestModeController implements FintEventListener {
                 fintEvents.registerUpstreamListener(event.getOrgId(), this);
             }
         }));
+        fintEvents.sendDownstream(new Event("", TestModeConstants.SOURCE, DefaultActions.REGISTER_ORG_ID, TestModeConstants.CLIENT));
     }
 
     @PostMapping
