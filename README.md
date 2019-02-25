@@ -1,7 +1,7 @@
 # FINT provider
 
 [![Build Status](https://jenkins.fintlabs.no/buildStatus/icon?job=FINTLabs/fint-provider/master)](https://jenkins.fintlabs.no/job/FINTLabs/fint-provider/master)
-[![Coverage Status](https://coveralls.io/repos/github/FINTprosjektet/fint-provider/badge.svg?branch=master)](https://coveralls.io/github/FINTprosjektet/fint-provider?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/FINTLabs/fint-provider/badge.svg?branch=master)](https://coveralls.io/github/FINTLabs/fint-provider?branch=master)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
 ## Configuration
