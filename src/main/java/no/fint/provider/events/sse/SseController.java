@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +42,17 @@ public class SseController {
     public ResponseEntity<SseEmitter> subscribe(
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
-            @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
+            @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) throws IOException {
         log.info("{}: Client {}, ID {}", orgId, client, id);
         if (adminService.register(orgId, client)) {
             SseEmitter emitter = sseService.subscribe(id, orgId, client);
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
             return ResponseEntity.ok(emitter);
         } else {
-            return ResponseEntity.badRequest().header("x-Error", "Invalid orgID " + orgId).build();
+            // TODO: This trick will "stall" clients that aren't enabled, so they won't keep reconnecting.
+            SseEmitter emitter = new SseEmitter();
+            emitter.send(SseEmitter.event().comment("Invalid orgID " + orgId));
+            return ResponseEntity.ok().header("x-Error", "Invalid orgID " + orgId).body(emitter);
         }
     }
 

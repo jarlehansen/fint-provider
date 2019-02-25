@@ -5,6 +5,7 @@ import no.fint.events.FintEvents
 import no.fint.provider.events.admin.AdminService
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
+import org.hamcrest.CoreMatchers
 import org.springframework.test.web.servlet.MockMvc
 
 class SseControllerSpec extends MockMvcSpecification {
@@ -47,7 +48,7 @@ class SseControllerSpec extends MockMvcSpecification {
         1 * adminService.register('rogfk.no', 'client') >> false
         0 * sseService.subscribe('123', 'rogfk.no', 'client')
         0 * fintEvents.registerDownstreamListener('rogfk.no', downstreamSubscriber)
-        response.andExpect(status().is4xxClientError())
+        response.andExpect(header().string('x-Error', CoreMatchers.startsWith('Invalid orgID')))
 
     }
 
