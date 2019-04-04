@@ -35,7 +35,7 @@ public class StatusController {
         log.trace("Event data: {}", event.getData());
         event.setOrgId(orgId);
         if (StringUtils.isNotEmpty(source)) {
-            event.setClient(client + "@" + source);
+            event.setClient(client + " " + source);
         } else {
             event.setClient(client);
         }
