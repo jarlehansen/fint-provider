@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class SseOrg {
+    private String path;
     private String orgId;
     private List<SseClient> clients;
 }
