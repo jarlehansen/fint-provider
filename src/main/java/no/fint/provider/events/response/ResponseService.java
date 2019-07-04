@@ -51,6 +51,7 @@ public class ResponseService {
             fintEvents.sendUpstream(event);
             fintAuditService.audit(event, Status.UPSTREAM_QUEUE);
         } else {
+            fintAuditService.audit(event, Status.ADAPTER_RESPONSE_ORPHANED);
             throw new UnknownEventException(event.getCorrId());
         }
     }
