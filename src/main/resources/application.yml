@@ -1,5 +1,9 @@
 server:
   context-path: '/provider'
 
+spring:
+  mvc:
+    logResolvedException: false
+
 fint:
   version: '@version@'

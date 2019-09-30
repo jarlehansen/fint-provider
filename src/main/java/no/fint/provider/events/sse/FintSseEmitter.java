@@ -2,10 +2,11 @@ package no.fint.provider.events.sse;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.apache.commons.lang3.time.DatePrinter;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,6 +17,7 @@ public class FintSseEmitter extends SseEmitter {
     private String client;
     private String registered;
     private final AtomicInteger eventCounter = new AtomicInteger();
+    private static final DatePrinter DATE_PRINTER = FastDateFormat.getInstance("HH:mm:ss dd/MM/yyyy");
 
     public FintSseEmitter() {
         setRegisteredDate();
@@ -29,8 +31,7 @@ public class FintSseEmitter extends SseEmitter {
     }
 
     private void setRegisteredDate() {
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-        registered = formatter.format(new Date());
+        registered = DATE_PRINTER.format(new Date());
     }
 
 	@Override
