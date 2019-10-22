@@ -32,4 +32,7 @@ public class ProviderProps {
     @Value("${fint.provider.assets.endpoint:}")
     private String assetsEndpoint;
 
+    @Value("${server.context-path:/}")
+    private String contextPath;
+
 }

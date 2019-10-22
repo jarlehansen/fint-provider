@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.HeaderConstants;
 import no.fint.events.FintEvents;
 import no.fint.provider.events.Constants;
+import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class SseController {
     @Autowired
     private DownstreamSubscriber downstreamSubscriber;
 
+    @Autowired
+    private ProviderProps props;
+
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @GetMapping("/{id}")
     public ResponseEntity<SseEmitter> subscribe(
@@ -61,7 +65,7 @@ public class SseController {
             List<SseClient> sseClients = new ArrayList<>();
             value.forEach(emitter -> sseClients.add(new SseClient(emitter.getRegistered(), emitter.getId(), emitter.getClient(), emitter.getEventCounter().get())));
 
-            orgs.add(new SseOrg(key, sseClients));
+            orgs.add(new SseOrg(props.getContextPath(), key, sseClients));
         });
         return orgs;
     }

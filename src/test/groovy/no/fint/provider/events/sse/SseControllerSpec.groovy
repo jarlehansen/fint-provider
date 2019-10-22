@@ -2,6 +2,7 @@ package no.fint.provider.events.sse
 
 import no.fint.event.model.HeaderConstants
 import no.fint.events.FintEvents
+import no.fint.provider.events.ProviderProps
 import no.fint.provider.events.admin.AdminService
 import no.fint.provider.events.subscriber.DownstreamSubscriber
 import no.fint.test.utils.MockMvcSpecification
@@ -14,13 +15,15 @@ class SseControllerSpec extends MockMvcSpecification {
     private FintEvents fintEvents
     private MockMvc mockMvc
     private AdminService adminService
+    private ProviderProps props
 
     void setup() {
         sseService = Mock()
         fintEvents = Mock()
         adminService = Mock()
+        props = Mock()
         downstreamSubscriber = Mock(DownstreamSubscriber)
-        controller = new SseController(sseService: sseService, fintEvents: fintEvents, downstreamSubscriber: downstreamSubscriber, adminService: adminService)
+        controller = new SseController(sseService: sseService, fintEvents: fintEvents, downstreamSubscriber: downstreamSubscriber, adminService: adminService, props: props)
         mockMvc = standaloneSetup(controller)
     }
 
