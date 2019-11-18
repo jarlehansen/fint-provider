@@ -28,6 +28,7 @@ public class JanitorService {
         eventStateService.getExpiredEvents().forEach(event -> {
             log.debug("Event expired: {}", event);
             event.setResponseStatus(ResponseStatus.ERROR);
+            event.setStatusCode("EXPIRED");
             event.setStatus(Status.ADAPTER_NOT_CONFIRMED);
             event.setMessage("Event expired");
             fintAuditService.audit(event);
