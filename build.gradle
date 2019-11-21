@@ -50,7 +50,7 @@ dependencies {
     compile('org.glassfish.jersey.core:jersey-client:2.29.1')
     compile('org.glassfish.jersey.core:jersey-common:2.29.1')
     
-    compile('no.fint:fint-audit-mongo-plugin:1.7.0-rc-1')
+    compile('no.fint:fint-audit-mongo-plugin:1.7.0-rc-2')
     compile('no.fint:fint-events:2.2.0')
     compile('no.fint:fint-event-model:3.0.0')
     compile('no.fint:fint-springfox-extension:0.0.1')
