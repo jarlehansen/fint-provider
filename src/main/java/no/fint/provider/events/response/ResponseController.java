@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.metrics.annotation.Timed;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -24,6 +25,7 @@ public class ResponseController {
     private ResponseService responseService;
 
     @ApiOperation(value = "", notes = "Receives event object with response data.")
+    @Timed
     @PostMapping
     public void response(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                          @ApiParam(Constants.SWAGGER_EVENT) @RequestBody Event event) {

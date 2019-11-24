@@ -12,6 +12,7 @@ import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.metrics.annotation.Timed;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -41,6 +42,7 @@ public class SseController {
     private ProviderProps props;
 
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
+    @Timed
     @GetMapping("/{id}")
     public ResponseEntity<SseEmitter> subscribe(
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
@@ -57,6 +59,7 @@ public class SseController {
     }
 
     @ApiOperation(value = "", notes = "Returns all registered SSE clients.")
+    @Timed
     @GetMapping("/clients")
     public List<SseOrg> getClients() {
         Map<String, FintSseEmitters> clients = sseService.getSseClients();
@@ -71,12 +74,14 @@ public class SseController {
     }
 
     @ApiOperation(value = "", notes = "Remove all registered SSE clients.")
+    @Timed
     @DeleteMapping("/clients")
     public void removeSseClients() {
         sseService.removeAll();
     }
 
     @ApiOperation(value = "", notes = "Adapter starts the oauth process")
+    @Timed
     @GetMapping("/auth-init")
     public void authorize() {
     }

@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.metrics.annotation.Timed;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -45,11 +46,13 @@ public class AdminController {
     @Autowired
     private DownstreamSubscriber downstreamSubscriber;
 
+    @Timed
     @GetMapping("/audit/events")
     public List<MongoAuditEvent> getAllEvents() {
         return mongo.findAll(MongoAuditEvent.class);
     }
 
+    @Timed
     @GetMapping("/audit/events/since/{when}")
     public List<MongoAuditEvent> queryEventsSince(@PathVariable String when) {
         Duration duration = Duration.parse(when);
@@ -58,6 +61,7 @@ public class AdminController {
         return mongo.find(q, MongoAuditEvent.class);
     }
 
+    @Timed
     @GetMapping("/orgIds")
     public List<Map> getOrganizations() {
         return adminService.getOrgIds().entrySet().stream().map(entry -> ImmutableMap.of(
@@ -66,6 +70,7 @@ public class AdminController {
         )).collect(Collectors.toList());
     }
 
+    @Timed
     @GetMapping("/orgIds/{orgId:.+}")
     public ResponseEntity getOrganization(@ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId) {
         if (adminService.isRegistered(orgId)) {
@@ -78,6 +83,7 @@ public class AdminController {
         }
     }
 
+    @Timed
     @PostMapping("/orgIds/{orgId:.+}")
     public ResponseEntity registerOrgId(
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @PathVariable String orgId,

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.metrics.annotation.Timed;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -25,6 +26,7 @@ public class StatusController {
     private StatusService statusService;
 
     @ApiOperation(value = "", notes = "Post back the event with the status flag telling if the response can be handled or not.")
+    @Timed
     @PostMapping
     public void status(@ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
                        @ApiParam(Constants.SWAGGER_EVENT) @RequestBody Event event) {

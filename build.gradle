@@ -68,7 +68,10 @@ dependencies {
     compile('org.jooq:jool-java-8:0.9.14')
 
     compile('org.springframework.boot:spring-boot-starter-web')
-    runtime('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+
+    compile 'org.springframework.metrics:spring-metrics:0.5.1.RELEASE'
+    compile 'io.prometheus:simpleclient_common:0.8.0'
 
     testCompile('no.fint:fint-test-utils:0.0.4')
     testCompile("cglib:cglib-nodep:${cglibVersion}")

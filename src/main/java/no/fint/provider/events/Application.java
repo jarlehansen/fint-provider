@@ -7,6 +7,7 @@ import no.fint.events.annotations.EnableFintEvents;
 import no.fint.springfox.EnableSpringfoxExtension;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.metrics.export.prometheus.EnablePrometheusMetrics;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableFintAudit
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 ))
 @SwaggerDefinition(externalDocs = @ExternalDocs(value = "Go to the API list", url = "/api"))
 @EnableScheduling
+@EnablePrometheusMetrics
 @SpringBootApplication
 public class Application {
 

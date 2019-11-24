@@ -26,3 +26,16 @@ server:
 logging:
   level:
     no.fint.provider.events.sse: DEBUG
+
+management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  metrics:
+#    export:
+#      prometheus:
+#        enabled: true
+#
+  security:
+    enabled: false
