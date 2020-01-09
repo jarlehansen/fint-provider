@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PreDestroy;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -59,7 +58,7 @@ public class SseService {
                 try {
                     SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
                     emitter.send(builder);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                     log.debug("Details: {}", event, e);
                 }
@@ -73,7 +72,7 @@ public class SseService {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().comment("Heartbeat").reconnectTime(5000L);
                 emitter.send(builder);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.info("Error sending heartbeat to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                 log.debug("Details:", e);
             }
