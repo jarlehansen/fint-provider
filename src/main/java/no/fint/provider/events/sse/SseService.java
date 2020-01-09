@@ -61,6 +61,7 @@ public class SseService {
                 } catch (Exception e) {
                     log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                     log.debug("Details: {}", event, e);
+                    emitter.completeWithError(e);
                 }
             });
 
@@ -75,6 +76,7 @@ public class SseService {
             } catch (Exception e) {
                 log.info("Error sending heartbeat to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
                 log.debug("Details:", e);
+                emitter.completeWithError(e);
             }
         }));
     }
