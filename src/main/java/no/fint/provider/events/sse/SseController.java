@@ -49,7 +49,7 @@ public class SseController {
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
             @RequestHeader(value = "x-fint-actions", required = false, defaultValue = "") String actions,
             @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
-        log.info("{}: Client {}, ID {}", orgId, client, id);
+        log.info("{}: Client {}, ID {}, actions {}", orgId, client, id, actions);
         if (adminService.register(orgId, client)) {
             FintSseEmitter emitter = sseService.subscribe(id, orgId, client);
             if (StringUtils.isNotBlank(actions)) {
