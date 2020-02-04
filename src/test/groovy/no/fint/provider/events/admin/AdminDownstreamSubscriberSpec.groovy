@@ -38,4 +38,16 @@ class AdminDownstreamSubscriberSpec extends Specification {
         then:
         0 * adminService.register('rogfk.no', 'test')
     }
+
+    def 'Boostrap orgid registration'() {
+        given:
+        def event = new Event('', '', DefaultActions.REGISTER_ORG_ID.name(), '')
+
+        when:
+        subscriber.accept(event)
+
+        then:
+        2 * adminService.getOrgIds() >> ['jalla.org' : 12, 'balla.com': 14]
+        2 * fintEvents.sendUpstream(_ as Event)
+    }
 }
