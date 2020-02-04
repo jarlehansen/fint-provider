@@ -13,9 +13,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Slf4j
 @Service
@@ -54,21 +56,25 @@ public class SseService {
         FintSseEmitters emitters = clients.get(event.getOrgId());
         if (emitters == null) {
             log.info("No sse clients registered for {}", event.getOrgId());
+        } else if (emitters.stream().map(FintSseEmitter::getActions).flatMap(Set::stream).anyMatch(event.getAction()::equals)) {
+            log.debug("Only sending event to emitters supporting {}", event.getAction());
+            emitters.stream().filter(i -> i.getActions().contains(event.getAction())).forEach(consumeEvent(event));
         } else {
-            emitters.forEach(emitter -> {
-                if (!emitter.getActions().isEmpty() && !emitter.getActions().contains(event.getAction())) {
-                    log.debug("Skipping emitter {} for action {}", emitter.getId(), event.getAction());
-                    return;
-                }
-                try {
-                    SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
-                    emitter.send(builder);
-                } catch (IOException e) {
-                    log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
-                    log.debug("Details: {}", event, e);
-                }
-            });
+            emitters.stream().forEach(consumeEvent(event));
+        }
+    }
 
+    private Consumer<FintSseEmitter> consumeEvent(Event event) {
+        return (fintSseEmitter -> sendEvent(event, fintSseEmitter));
+    }
+
+    private void sendEvent(Event event, FintSseEmitter emitter) {
+        try {
+            SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
+            emitter.send(builder);
+        } catch (IOException e) {
+            log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
+            log.debug("Details: {}", event, e);
         }
     }
 
