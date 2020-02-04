@@ -65,17 +65,15 @@ public class SseService {
     }
 
     private Consumer<FintSseEmitter> consumeEvent(Event event) {
-        return (fintSseEmitter -> sendEvent(event, fintSseEmitter));
-    }
-
-    private void sendEvent(Event event, FintSseEmitter emitter) {
-        try {
-            SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
-            emitter.send(builder);
-        } catch (IOException e) {
-            log.info("Error sending message to SseEmitter {} {}: {}", emitter.getClient(), emitter.getId(), e.getMessage());
-            log.debug("Details: {}", event, e);
-        }
+        return (fintSseEmitter -> {
+            try {
+                SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
+                fintSseEmitter.send(builder);
+            } catch (IOException e) {
+                log.info("Error sending message to SseEmitter {} {}: {}", fintSseEmitter.getClient(), fintSseEmitter.getId(), e.getMessage());
+                log.debug("Details: {}", event, e);
+            }
+        });
     }
 
     public void sendHeartbeat() {
