@@ -30,7 +30,7 @@ public class SseService {
         clients.values().forEach(emitters -> emitters.forEach(FintSseEmitter::complete));
     }
 
-    public synchronized SseEmitter subscribe(String id, String orgId, String client) {
+    public synchronized FintSseEmitter subscribe(String id, String orgId, String client) {
         final FintSseEmitters fintSseEmitters = Optional
                 .ofNullable(clients.get(orgId))
                 .orElseGet(() -> FintSseEmitters.with(providerProps.getMaxNumberOfEmitters(), SseEmitter::complete));
@@ -56,6 +56,10 @@ public class SseService {
             log.info("No sse clients registered for {}", event.getOrgId());
         } else {
             emitters.forEach(emitter -> {
+                if (!emitter.getActions().isEmpty() && !emitter.getActions().contains(event.getAction())) {
+                    log.debug("Skipping emitter {} for action {}", emitter.getId(), event.getAction());
+                    return;
+                }
                 try {
                     SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
                     emitter.send(builder);
