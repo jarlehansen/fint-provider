@@ -57,13 +57,13 @@ public class SseService {
             log.info("No sse clients registered for {}", event.getOrgId());
         } else if (emitters.stream().map(FintSseEmitter::getActions).flatMap(Set::stream).anyMatch(event.getAction()::equals)) {
             log.debug("Only sending event to emitters supporting {}", event.getAction());
-            emitters.stream().filter(i -> i.getActions().contains(event.getAction())).forEach(consumeEvent(event));
+            emitters.stream().filter(i -> i.getActions().contains(event.getAction())).forEach(consumeEvent(emitters, event));
         } else {
-            emitters.stream().forEach(consumeEvent(event));
+            emitters.stream().forEach(consumeEvent(emitters, event));
         }
     }
 
-    private Consumer<FintSseEmitter> consumeEvent(Event event) {
+    private Consumer<FintSseEmitter> consumeEvent(FintSseEmitters emitters, Event event) {
         return (fintSseEmitter -> {
             try {
                 SseEmitter.SseEventBuilder builder = SseEmitter.event().id(event.getCorrId()).name(event.getAction()).data(event).reconnectTime(5000L);
@@ -71,7 +71,7 @@ public class SseService {
             } catch (Exception e) {
                 log.info("Error sending message to SseEmitter {} {}: {}", fintSseEmitter.getClient(), fintSseEmitter.getId(), e.getMessage());
                 log.debug("Details: {}", event, e);
-                    emitters.remove(emitter);
+                emitters.remove(fintSseEmitter);
             }
         });
     }
