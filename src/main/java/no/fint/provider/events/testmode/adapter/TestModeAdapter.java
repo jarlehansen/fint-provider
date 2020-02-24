@@ -1,7 +1,6 @@
 package no.fint.provider.events.testmode.adapter;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
 import no.fint.event.model.HeaderConstants;

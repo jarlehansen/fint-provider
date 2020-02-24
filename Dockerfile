@@ -1,7 +1,7 @@
 FROM gradle:4.10.3-jdk8-alpine as builder
 USER root
 COPY . .
-RUN gradle --no-daemon build
+RUN gradle --no-daemon -Peventhub build
 
 FROM gcr.io/distroless/java
 ENV JAVA_TOOL_OPTIONS -XX:+ExitOnOutOfMemoryError
