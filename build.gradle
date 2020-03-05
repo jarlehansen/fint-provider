@@ -74,6 +74,7 @@ dependencies {
     compile('org.jooq:jool-java-8:0.9.14')
 
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.apache.tomcat.embed:tomcat-embed-core:8.5.45')
     runtime('org.springframework.boot:spring-boot-starter-actuator')
 
     testCompile('no.fint:fint-test-utils:0.0.4')
