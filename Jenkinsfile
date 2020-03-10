@@ -1,10 +1,13 @@
 pipeline {
+    parameters {
+        string(name: 'BUILD_FLAGS', defaultValue: '', description: 'Gradle build flags')
+    }
     agent { label 'docker' }
     stages {
         stage('Build') {
             steps {
                 sh 'git clean -fdx'
-                sh "docker build -t ${GIT_COMMIT} ."
+                sh "docker build --tag ${GIT_COMMIT} --build-arg buildFlags=${params.BUILD_FLAGS} ."
             }
         }
         stage('Publish Latest') {
