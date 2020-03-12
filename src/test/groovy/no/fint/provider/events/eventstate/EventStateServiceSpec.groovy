@@ -1,7 +1,6 @@
 package no.fint.provider.events.eventstate
 
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.core.IMap
 import no.fint.event.model.Event
 import no.fint.provider.events.ProviderProps
 import spock.lang.Specification

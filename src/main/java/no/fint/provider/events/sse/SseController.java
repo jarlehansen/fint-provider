@@ -11,6 +11,7 @@ import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 @Slf4j
 @Api(tags = {"sse"}, description = "These endpoint is for handling SSE clients.")
-@RequestMapping(value = "/sse")
+@RequestMapping(value = "/sse", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @RestController
 public class SseController {
 
@@ -41,7 +42,7 @@ public class SseController {
     private ProviderProps props;
 
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
