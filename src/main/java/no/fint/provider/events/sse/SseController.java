@@ -54,7 +54,7 @@ public class SseController {
         if (adminService.register(orgId, client)) {
             FintSseEmitter emitter = sseService.subscribe(id, orgId, client);
             if (StringUtils.isNotBlank(actions)) {
-                emitter.getActions().addAll(Arrays.asList(StringUtils.split(actions, ",;:")));
+                emitter.getActions().addAll(Arrays.asList(StringUtils.split(actions, ",;: ")));
             }
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
             return ResponseEntity.ok(emitter);

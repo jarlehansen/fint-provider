@@ -92,7 +92,9 @@ class SseServiceSpec extends Specification {
 
     def "Run complete method for all registered emitters when shutting down"() {
         given:
-        def emitter = Mock(FintSseEmitter)
+        def emitter = Mock(FintSseEmitter) {
+            getActions() >> []
+        }
         def emitters = FintSseEmitters.with(5)
         emitters.add(emitter)
         def clients = ['hfk.no': emitters] as ConcurrentHashMap
@@ -109,6 +111,7 @@ class SseServiceSpec extends Specification {
         given:
         def emitter = Mock(FintSseEmitter) {
             getId() >> 'fake'
+            getActions() >> []
         }
         def emitters = FintSseEmitters.with(5)
         emitters.add(emitter)

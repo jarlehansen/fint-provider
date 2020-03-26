@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -11,6 +12,7 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
     private final int maxSize;
     private final ConcurrentLinkedDeque<FintSseEmitter> emitters;
     private final Consumer<FintSseEmitter> removeCallback;
+    private final ConcurrentSkipListSet<String> actions;
 
     public FintSseEmitters(int maxSize, Consumer<FintSseEmitter> removeCallback) {
         this.maxSize = maxSize;
@@ -20,6 +22,7 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
         } else {
             this.removeCallback = removeCallback;
         }
+        actions = new ConcurrentSkipListSet<>();
     }
 
     public void add(FintSseEmitter emitter) {
@@ -29,6 +32,7 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
         }
 
         emitters.addFirst(emitter);
+        actions.addAll(emitter.getActions());
     }
 
     public void remove(FintSseEmitter emitter) {
@@ -37,6 +41,10 @@ public class FintSseEmitters implements Iterable<FintSseEmitter> {
 
     public Optional<FintSseEmitter> get(String id) {
         return emitters.stream().filter(registered -> registered.getId().equals(id)).findFirst();
+    }
+
+    public boolean supportsAction(String action) {
+        return actions.contains(action);
     }
 
     public int size() {

@@ -12,11 +12,11 @@ import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Slf4j
 @Service
@@ -55,12 +55,16 @@ public class SseService {
         FintSseEmitters emitters = clients.get(event.getOrgId());
         if (emitters == null) {
             log.info("No sse clients registered for {}", event.getOrgId());
-        } else if (emitters.stream().map(FintSseEmitter::getActions).flatMap(Set::stream).anyMatch(event.getAction()::equals)) {
+        } else if (emitters.supportsAction(event.getAction())) {
             log.debug("Only sending event to emitters supporting {}", event.getAction());
-            emitters.stream().filter(i -> i.getActions().contains(event.getAction())).forEach(consumeEvent(emitters, event));
+            emitters.stream().filter(supports(event)).forEach(consumeEvent(emitters, event));
         } else {
             emitters.stream().forEach(consumeEvent(emitters, event));
         }
+    }
+
+    private Predicate<FintSseEmitter> supports(Event event) {
+        return fintSseEmitter -> fintSseEmitter.getActions().contains(event.getAction());
     }
 
     private Consumer<FintSseEmitter> consumeEvent(FintSseEmitters emitters, Event event) {
