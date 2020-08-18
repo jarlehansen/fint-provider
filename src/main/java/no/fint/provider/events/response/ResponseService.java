@@ -43,8 +43,10 @@ public class ResponseService {
     }
 
     private void sendHealthCheckResponse(Event event) {
+        fintAuditService.audit(event);
         event.setStatus(Status.UPSTREAM_QUEUE);
         fintEvents.sendUpstream(event);
+        fintAuditService.audit(event, Status.UPSTREAM_QUEUE);
     }
 
     private void sendResponse(Event event) {
