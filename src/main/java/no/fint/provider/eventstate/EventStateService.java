@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -46,13 +45,13 @@ public class EventStateService {
         return Optional.ofNullable(eventStates.remove(event.getCorrId()));
     }
 
-    public Stream<Event> getExpiredEvents() {
+    public List<Event> getExpiredEvents() {
         List<EventState> expired = eventStates.values().stream().filter(EventState::expired).collect(Collectors.toList());
         long count = expired.stream().map(EventState::getCorrId).peek(eventStates::remove).count();
         if (count > 0) {
             log.info("Removed {} expired events", count);
         }
-        return expired.stream().map(EventState::getEvent);
+        return expired.stream().map(EventState::getEvent).collect(Collectors.toList());
     }
 
     public Collection<EventState> getEventStates() {
