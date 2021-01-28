@@ -12,7 +12,7 @@ class EventsServiceSpec extends Specification {
 
         when:
         service.register('test.org')
-        service.add(event)
+        service.accept(event)
         def result = service.drainEvents('test.org')
         service.unregister('test.org')
 
@@ -26,7 +26,7 @@ class EventsServiceSpec extends Specification {
         def event = new Event(orgId: 'test.org')
 
         when:
-        service.add(event)
+        service.accept(event)
         def result = service.drainEvents('test.org')
 
         then:

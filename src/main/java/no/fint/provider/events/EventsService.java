@@ -1,6 +1,7 @@
 package no.fint.provider.events;
 
 import no.fint.event.model.Event;
+import no.fint.events.FintEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 @Service
-public class EventsService {
+public class EventsService implements FintEventListener {
     private final int capacity;
     private final ConcurrentMap<String, BlockingQueue<Event>> eventQueues = new ConcurrentSkipListMap<>();
 
@@ -29,7 +30,8 @@ public class EventsService {
         eventQueues.remove(orgId);
     }
 
-    public void add(Event event) {
+    @Override
+    public void accept(Event event) {
         final Queue<Event> queue = eventQueues.get(event.getOrgId());
         if (queue != null) {
             queue.offer(event);

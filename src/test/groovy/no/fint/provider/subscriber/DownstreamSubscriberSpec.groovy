@@ -4,7 +4,6 @@ import no.fint.audit.FintAuditService
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
 import no.fint.provider.ProviderProps
-import no.fint.provider.events.EventsService
 import no.fint.provider.eventstate.EventStateService
 import no.fint.provider.sse.SseService
 import spock.lang.Specification
@@ -25,7 +24,6 @@ class DownstreamSubscriberSpec extends Specification {
                 sseService: sseService,
                 eventStateService: eventStateService,
                 fintAuditService: Mock(FintAuditService),
-                eventsService: Mock(EventsService),
                 providerProps: props
         )
     }
