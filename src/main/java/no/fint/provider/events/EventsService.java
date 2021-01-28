@@ -47,6 +47,11 @@ public class EventsService implements FintEventListener {
 
     @Override
     public void accept(Event event) {
+        if (event.isHealthCheck()) {
+            event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
+        } else {
+            eventStateService.add(event, providerProps.getStatusTtl());
+        }
         final Queue<Event> queue = eventQueues.get(event.getOrgId());
         if (queue != null) {
             queue.offer(event);
@@ -59,14 +64,7 @@ public class EventsService implements FintEventListener {
         if (queue != null) {
             queue.drainTo(result);
         }
-        result.forEach(event -> {
-            if (event.isHealthCheck()) {
-                event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
-            } else {
-                eventStateService.add(event, providerProps.getStatusTtl());
-            }
-            fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER);
-        });
+        result.forEach(event -> fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER));
         return result;
     }
 
