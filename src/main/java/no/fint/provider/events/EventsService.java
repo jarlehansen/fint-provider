@@ -1,7 +1,14 @@
 package no.fint.provider.events;
 
+import no.fint.audit.FintAuditService;
 import no.fint.event.model.Event;
+import no.fint.event.model.Status;
+import no.fint.event.model.health.Health;
+import no.fint.event.model.health.HealthStatus;
 import no.fint.events.FintEventListener;
+import no.fint.provider.Constants;
+import no.fint.provider.ProviderProps;
+import no.fint.provider.eventstate.EventStateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +24,17 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class EventsService implements FintEventListener {
     private final int capacity;
     private final ConcurrentMap<String, BlockingQueue<Event>> eventQueues = new ConcurrentSkipListMap<>();
+    private final EventStateService eventStateService;
+    private final FintAuditService fintAuditService;
+    private final ProviderProps providerProps;
 
-    public EventsService(@Value("${fint.provider.events.capacity:100}") int capacity) {
+    public EventsService(
+            @Value("${fint.provider.events.capacity:100}") int capacity,
+            EventStateService eventStateService, FintAuditService fintAuditService, ProviderProps providerProps) {
         this.capacity = capacity;
+        this.eventStateService = eventStateService;
+        this.fintAuditService = fintAuditService;
+        this.providerProps = providerProps;
     }
 
     public void register(String orgId) {
@@ -44,6 +59,14 @@ public class EventsService implements FintEventListener {
         if (queue != null) {
             queue.drainTo(result);
         }
+        result.forEach(event -> {
+            if (event.isHealthCheck()) {
+                event.addObject(new Health(Constants.COMPONENT, HealthStatus.RECEIVED_IN_PROVIDER_FROM_CONSUMER));
+            } else {
+                eventStateService.add(event, providerProps.getStatusTtl());
+            }
+            fintAuditService.audit(event, Status.DELIVERED_TO_ADAPTER);
+        });
         return result;
     }
 
