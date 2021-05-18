@@ -35,6 +35,7 @@ afterEvaluate {
 sourceCompatibility = 1.8
 
 repositories {
+    mavenCentral()
     maven {
         url 'https://repo.fintlabs.no/releases'
     }
