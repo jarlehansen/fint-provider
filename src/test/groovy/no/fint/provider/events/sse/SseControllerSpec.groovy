@@ -30,6 +30,7 @@ class SseControllerSpec extends MockMvcSpecification {
     def "Subscribe to sse client"() {
         when:
         def response = mockMvc.perform(get('/sse/123')
+                .header('x-allowed-asset-ids', 'rogfk.no,bar.rogfk.no')
                 .header(HeaderConstants.ORG_ID, 'rogfk.no')
                 .header(HeaderConstants.CLIENT, 'client'))
 
@@ -43,6 +44,7 @@ class SseControllerSpec extends MockMvcSpecification {
     def "Subscribe to sse client with invalid org should fail"() {
         when:
         def response = mockMvc.perform(get('/sse/123')
+                .header('x-allowed-asset-ids', 'rogfk.no,bar.rogfk.no')
                 .header(HeaderConstants.ORG_ID, 'rogfk.no')
                 .header(HeaderConstants.CLIENT, 'client'))
 
