@@ -44,9 +44,11 @@ public class SseController {
     @ApiOperation(value = "Connect SSE client", notes = "Endpoint to register SSE client.")
     @GetMapping(value = "/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> subscribe(
+            @RequestHeader("x-allowed-asset-ids") String[] allowedAssetIds,
             @ApiParam(Constants.SWAGGER_X_ORG_ID) @RequestHeader(HeaderConstants.ORG_ID) String orgId,
             @ApiParam("ID of client.") @RequestHeader(HeaderConstants.CLIENT) String client,
             @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
+        log.info("{} should be within {}", orgId, allowedAssetIds);
         log.info("{}: Client {}, ID {}", orgId, client, id);
         if (adminService.register(orgId, client)) {
             SseEmitter emitter = sseService.subscribe(id, orgId, client);
