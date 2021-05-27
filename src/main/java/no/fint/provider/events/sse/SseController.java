@@ -11,12 +11,14 @@ import no.fint.provider.events.ProviderProps;
 import no.fint.provider.events.admin.AdminService;
 import no.fint.provider.events.subscriber.DownstreamSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,9 @@ public class SseController {
             @ApiParam("Global unique id for the client. Typically a UUID.") @PathVariable String id) {
         log.info("{} should be within {}", orgId, allowedAssetIds);
         log.info("{}: Client {}, ID {}", orgId, client, id);
+        if (!Arrays.asList(allowedAssetIds).contains(orgId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).header("x-Error", "Invalid orgID " + orgId).build();
+        }
         if (adminService.register(orgId, client)) {
             SseEmitter emitter = sseService.subscribe(id, orgId, client);
             fintEvents.registerDownstreamListener(orgId, downstreamSubscriber);
